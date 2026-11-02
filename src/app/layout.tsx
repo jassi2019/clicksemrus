@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Tracker from "@/components/Tracker";
+import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import JsonLd from "@/components/JsonLd";
 import { orgJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -39,8 +40,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {settings.announcement && (
           <div className="bg-gradient-to-r from-brand to-brand-2 text-center text-xs font-semibold text-white py-2 px-4">{settings.announcement}</div>
         )}
+        <Splash />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pt-20">{children}</main>
         <Footer />
         <WhatsAppButton number={settings.whatsapp || SITE.whatsapp} />
         <Tracker />

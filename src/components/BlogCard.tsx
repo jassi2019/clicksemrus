@@ -4,10 +4,7 @@ import type { Post } from "@/lib/posts";
 import { readingTime } from "@/lib/markdown";
 
 const GRADIENTS = [
-  "from-brand/60 via-[#5b3cff]/40 to-brand-2/40",
-  "from-accent/60 via-[#ff7a59]/30 to-brand/40",
-  "from-brand-2/60 via-brand/30 to-lime/30",
-  "from-lime/50 via-brand-2/30 to-brand/50",
+  "from-[#e9e9f3] to-[#c9cce0]", "from-[#dcdbff] to-[#b9b4ff]", "from-[#d9f1ff] to-[#b6e3ff]", "from-[#efeff5] to-[#d2d4e3]",
 ];
 
 export default function BlogCard({ post, i = 0, featured = false }: { post: Post; i?: number; featured?: boolean }) {
