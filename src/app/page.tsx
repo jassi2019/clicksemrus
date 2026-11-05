@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, Star, Zap, Target, BarChart3, TrendingUp, Flame } from "lucide-react";
-import { SITE, SERVICES } from "@/lib/site";
-import { pageMeta, faqJsonLd } from "@/lib/seo";
-import { getAllPosts } from "@/lib/posts";
+import { ArrowRight, Zap, Target, BarChart3, TrendingUp, Flame, Star, Award } from "lucide-react";
+import { SITE, SERVICES, INDUSTRIES, WORK } from "@/lib/site";
+import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
+import { getAllPosts, getSettings } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
+import { getReviews } from "@/lib/reviews";
 import ServiceIcon from "@/components/ServiceIcon";
 import Reveal from "@/components/Reveal";
 import LeadForm from "@/components/LeadForm";
@@ -14,6 +15,8 @@ import JsonLd from "@/components/JsonLd";
 import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import TiltCard from "@/components/TiltCard";
 import Counter from "@/components/Counter";
+import Reviews from "@/components/Reviews";
+import WorkGrid from "@/components/WorkGrid";
 import { Sphere, Ring, Pill, Cube } from "@/components/Shapes";
 
 export const revalidate = 3600;
@@ -32,10 +35,10 @@ const PROCESS = [
   { icon: TrendingUp, t: "Scale profitably", d: "Once cost per lead is proven, we scale budgets and channels to grow revenue, not just traffic." },
 ];
 
-const TESTIMONIALS = [
-  { n: "Rohit S.", r: "Founder, D2C skincare brand, Gurugram", q: "Our Meta Ads ROAS went from 1.4 to 3.8 in two months. The creative testing process is the real difference." },
-  { n: "Dr. Neha K.", r: "Dental clinic, South Delhi", q: "We now get 60 to 80 calls a month from Google Maps alone. Local SEO done right." },
-  { n: "Amit V.", r: "Real estate consultancy, Noida", q: "Transparent reporting and real leads. First agency that actually showed cost per site visit." },
+const WHY = [
+  { t: "Reports in rupees, not impressions", d: "Every report starts with leads, cost per lead and revenue. Impressions and reach are footnotes." },
+  { t: "7-day launch, no month-long onboarding", d: "Tracking, creatives and first campaigns go live within a week of signing. You see data in the dashboard from day one." },
+  { t: "No long lock-ins", d: "Month to month after an initial 3-month SEO commitment. We keep clients by performing, not by contract." },
 ];
 
 const FAQS = [
@@ -47,12 +50,17 @@ const FAQS = [
 ];
 
 export default async function Home() {
-  const [posts, trends] = await Promise.all([getAllPosts(), liveTrendPosts("IN", 3)]);
+  const [posts, trends, reviews, settings] = await Promise.all([
+    getAllPosts(),
+    liveTrendPosts("IN", 3),
+    getReviews(),
+    getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
+  ]);
   const latest = [...trends, ...posts].slice(0, 3);
 
   return (
     <>
-      <JsonLd data={faqJsonLd(FAQS)} />
+      <JsonLd data={[faqJsonLd(FAQS), reviewJsonLd(reviews)]} />
 
       {/* 3D scroll-through hero */}
       <ScrollSceneLoader />
@@ -81,7 +89,7 @@ export default async function Home() {
             { v: 50, s: "+", d: 0, l: "Brands scaled across India" },
             { v: 24, s: "h", d: 0, l: "Trend-to-creative turnaround" },
           ].map((s, i) => (
-            <Reveal key={s.l} delay={i * 80}>
+            <Reveal key={s.l} delay={i * 90}>
               <TiltCard className="p-7">
                 <p className="font-display text-5xl font-extrabold"><Counter to={s.v} suffix={s.s} decimals={s.d} /></p>
                 <p className="text-muted mt-2 text-sm font-medium">{s.l}</p>
@@ -89,7 +97,7 @@ export default async function Home() {
             </Reveal>
           ))}
         </div>
-        <p className="container-x relative text-xs text-muted mt-6">Representative client performance. Your numbers depend on industry and budget.</p>
+        {settings.showStatsNote && <p className="container-x relative text-xs text-muted mt-6">Numbers from client dashboards, Jan to Oct 2026.</p>}
       </section>
 
       {/* services */}
@@ -104,9 +112,9 @@ export default async function Home() {
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
             {SERVICES.map((s, i) => (
-              <Reveal key={s.slug} delay={i * 60}>
+              <Reveal key={s.slug} delay={(i % 3) * 90}>
                 <Link href={`/services/${s.slug}`} className="block h-full group">
-                  <TiltCard className="p-7 h-full">
+                  <TiltCard className="p-7 h-full overflow-hidden">
                     <span className="inline-grid place-items-center w-14 h-14 rounded-2xl bg-[#0b0b14] text-white group-hover:bg-brand transition shadow-[0_14px_30px_-14px_rgba(11,11,20,.6)]">
                       <ServiceIcon name={s.icon} size={24} />
                     </span>
@@ -114,6 +122,73 @@ export default async function Home() {
                     <p className="text-muted mt-2 leading-relaxed">{s.short}</p>
                     <span className="inline-flex items-center gap-1 font-bold text-brand mt-5 group-hover:gap-3 transition-all">Explore <ArrowRight size={16} /></span>
                   </TiltCard>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* why us */}
+      <section className="relative overflow-hidden py-24 bg-bg-2 border-y border-border">
+        <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
+          <Reveal variant="right">
+            <span className="eyebrow">Why ClickSemrus</span>
+            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">The ClickSemrus <span className="gradient-text">difference</span></h2>
+            <p className="text-muted mt-5 text-lg">We built the agency we wished we could hire: fast, transparent and judged on revenue.</p>
+            <div className="flex flex-wrap gap-3 mt-8">
+              <span className="card !transform-none px-5 py-3 inline-flex items-center gap-2 font-bold"><Star size={18} className="text-sun" fill="currentColor" /> {reviews.rating.toFixed(1)} ★ client rating</span>
+              <span className="card !transform-none px-5 py-3 inline-flex items-center gap-2 font-bold"><Award size={18} className="text-brand" /> 50+ brands scaled</span>
+            </div>
+          </Reveal>
+          <div className="grid gap-4">
+            {WHY.map((w, i) => (
+              <Reveal key={w.t} delay={i * 90}>
+                <div className="card p-6 flex gap-5 items-start">
+                  <span className="font-display text-3xl font-extrabold text-brand/40 leading-none">0{i + 1}</span>
+                  <div>
+                    <h3 className="font-display text-xl font-bold">{w.t}</h3>
+                    <p className="text-muted mt-1 leading-relaxed text-sm">{w.d}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* work */}
+      <section className="relative overflow-hidden py-24">
+        <div className="container-x">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <Reveal className="max-w-2xl">
+              <span className="eyebrow">Our work</span>
+              <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Work we&apos;re proud of</h2>
+            </Reveal>
+            <Link href="/case-studies" className="btn btn-ghost">View all work <ArrowRight size={16} /></Link>
+          </div>
+          <Reveal delay={90} className="mt-12">
+            <WorkGrid items={WORK} limit={3} showTabs={false} />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* industries */}
+      <section className="relative overflow-hidden py-24 bg-bg-2 border-y border-border">
+        <div className="container-x">
+          <Reveal className="max-w-2xl">
+            <span className="eyebrow">Industries</span>
+            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Built for businesses across every sector</h2>
+            <p className="text-muted mt-5 text-lg">Playbooks, benchmarks and creative formats that already work in your category.</p>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+            {INDUSTRIES.map((ind, i) => (
+              <Reveal key={ind.slug} delay={(i % 3) * 90}>
+                <Link href={`/industries/${ind.slug}`} className="card p-7 h-full flex flex-col group">
+                  <span className="font-display text-sm font-bold text-brand tracking-widest">0{i + 1}</span>
+                  <h3 className="font-display text-2xl font-bold mt-3">{ind.name}</h3>
+                  <p className="text-muted mt-2 text-sm flex-1">{ind.short}</p>
+                  <span className="inline-flex items-center gap-1 font-bold text-brand mt-5 group-hover:gap-3 transition-all">See playbook <ArrowRight size={16} /></span>
                 </Link>
               </Reveal>
             ))}
@@ -147,33 +222,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* testimonials */}
-      <section className="relative overflow-hidden py-28">
-        <Sphere className="w-28 h-28 right-[8%] bottom-10 tint" delay={-5} />
-        <div className="container-x relative">
-          <Reveal className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow">Client love</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5">Results our clients talk about</h2>
-          </Reveal>
-          <div className="grid md:grid-cols-3 gap-6 mt-14">
-            {TESTIMONIALS.map((t, i) => (
-              <Reveal key={t.n} delay={i * 90}>
-                <TiltCard className="p-8 h-full flex flex-col">
-                  <div className="flex text-sun mb-4">{[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}</div>
-                  <blockquote className="text-lg leading-relaxed flex-1 font-medium">“{t.q}”</blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3">
-                    <span className="w-11 h-11 rounded-full bg-[#0b0b14] grid place-items-center text-white font-bold">{t.n[0]}</span>
-                    <span><p className="font-bold">{t.n}</p><p className="text-muted text-sm">{t.r}</p></span>
-                  </figcaption>
-                </TiltCard>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* google reviews */}
+      <Reviews data={reviews} />
 
       {/* blog */}
-      <section className="relative py-16 bg-bg-2 border-y border-border">
+      <section className="relative py-16">
         <div className="container-x relative">
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <Reveal>
@@ -183,13 +236,13 @@ export default async function Home() {
             <Link href="/blog" className="btn btn-ghost">All articles <ArrowRight size={16} /></Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6 mt-12">
-            {latest.map((p, i) => <Reveal key={p.slug} delay={i * 80}><BlogCard post={p} i={i} /></Reveal>)}
+            {latest.map((p, i) => <Reveal key={p.slug} delay={i * 90}><BlogCard post={p} i={i} /></Reveal>)}
           </div>
         </div>
       </section>
 
       {/* lead form */}
-      <section id="audit" className="relative overflow-hidden py-28">
+      <section id="audit" className="relative overflow-hidden py-28 bg-bg-2 border-y border-border">
         <Pill className="w-64 h-24 left-[-60px] bottom-10 rotate-[20deg]" delay={-3} />
         <div className="container-x relative grid lg:grid-cols-2 gap-12 items-start">
           <Reveal>
@@ -202,12 +255,12 @@ export default async function Home() {
               ))}
             </ul>
           </Reveal>
-          <Reveal delay={100}><div className="card p-7 md:p-9"><LeadForm source="/#audit" /></div></Reveal>
+          <Reveal delay={90}><div className="card p-7 md:p-9 !transform-none"><LeadForm source="/#audit" /></div></Reveal>
         </div>
       </section>
 
       {/* faq */}
-      <section className="container-x py-12 max-w-3xl">
+      <section className="container-x py-16 max-w-3xl">
         <Reveal className="text-center">
           <span className="eyebrow">FAQs</span>
           <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-5">Questions we hear every week</h2>

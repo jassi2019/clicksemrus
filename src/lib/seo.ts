@@ -67,6 +67,21 @@ export const websiteJsonLd = () => ({
   potentialAction: { "@type": "SearchAction", target: `${SITE.url}/blog?q={search_term_string}`, "query-input": "required name=search_term_string" },
 });
 
+export const reviewJsonLd = (data: { rating: number; total: number; reviews: { name: string; rating: number; text: string }[] }) => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE.url}/#organization`,
+  name: SITE.name,
+  url: SITE.url,
+  aggregateRating: { "@type": "AggregateRating", ratingValue: data.rating, reviewCount: data.total, bestRating: 5, worstRating: 1 },
+  review: data.reviews.slice(0, 5).map((r) => ({
+    "@type": "Review",
+    author: { "@type": "Person", name: r.name },
+    reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+    reviewBody: r.text,
+  })),
+});
+
 export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",

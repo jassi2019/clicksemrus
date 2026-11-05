@@ -16,7 +16,11 @@ export default function Header() {
     window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
   }, []);
-  useEffect(() => setOpen(false), [path]);
+  const [lastPath, setLastPath] = useState(path);
+  if (path !== lastPath) {
+    setLastPath(path);
+    setOpen(false);
+  }
   if (path?.startsWith("/admin")) return null;
 
   return (

@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     announcement: String(b.announcement || "").trim().slice(0, 160),
     autoPublishTrends: b.autoPublishTrends !== false,
     trendGeo: String(b.trendGeo || "IN").toUpperCase().slice(0, 2),
+    showStatsNote: b.showStatsNote === true,
   };
   await saveSettings(clean);
   revalidatePath("/", "layout");

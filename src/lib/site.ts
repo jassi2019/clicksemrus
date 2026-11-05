@@ -14,6 +14,8 @@ export const SITE = {
   locale: "en_IN",
   twitterHandle: "@clicksemrus",
   foundingYear: 2024,
+  googlePlaceId: process.env.GOOGLE_PLACE_ID || "",
+  googleReviewUrl: process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL || "",
 };
 
 export type Service = {
@@ -174,6 +176,7 @@ export const SERVICES: Service[] = [
 export const NAV = [
   { href: "/services", label: "Services" },
   { href: "/case-studies", label: "Results" },
+  { href: "/industries", label: "Industries" },
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
@@ -181,3 +184,207 @@ export const NAV = [
 ];
 
 export const BLOG_CATEGORIES = ["Trending", "SEO", "Social Media", "Paid Ads", "Content", "Branding", "Entertainment Marketing", "Web"] as const;
+
+/* ---------------------------------------------------------------- industries */
+export type Industry = {
+  slug: string;
+  name: string;
+  short: string;
+  headline: string;
+  description: string;
+  painPoints: string[];
+  channels: string[];
+  faqs: { q: string; a: string }[];
+  keywords: string[];
+};
+
+export const INDUSTRIES: Industry[] = [
+  {
+    slug: "retail-ecommerce",
+    name: "Retail & E-Commerce",
+    short: "D2C brands, marketplace sellers and offline stores that want online orders.",
+    headline: "Digital marketing for retail and e-commerce brands in Delhi NCR",
+    description:
+      "From Lajpat Nagar boutiques going online to D2C brands shipping across India, we build full-funnel systems: product feeds, Shopping and Meta catalogue ads, abandoned-cart recovery and SEO for category pages, all tracked to revenue.",
+    painPoints: ["Ad spend rising but ROAS flat or falling", "Marketplace commissions eating margins, no owned channel", "Traffic arrives but carts get abandoned"],
+    channels: ["Meta catalogue & Advantage+ ads", "Google Shopping & Performance Max", "WhatsApp cart recovery", "Category-page SEO"],
+    faqs: [
+      { q: "Do you work with Shopify and WooCommerce stores?", a: "Yes. We set up pixels, feeds, server-side tracking and checkout CRO on Shopify, WooCommerce and custom Next.js stores." },
+      { q: "What ROAS should an e-commerce brand expect?", a: "It depends on margin, AOV and creative. We benchmark your category in the audit and set a target before scaling spend." },
+    ],
+    keywords: ["ecommerce marketing agency delhi", "d2c marketing agency", "shopify marketing delhi ncr"],
+  },
+  {
+    slug: "restaurants-food",
+    name: "Restaurants & Food",
+    short: "Restaurants, cloud kitchens, cafes and food brands that need footfall and direct orders.",
+    headline: "Restaurant and food marketing that fills tables and reduces aggregator dependence",
+    description:
+      "Delhi NCR eats out more than any other city. We make sure your restaurant, cafe or cloud kitchen is the one people find on Google Maps, see on Instagram at 8 pm and order from directly on WhatsApp.",
+    painPoints: ["Large commissions to delivery apps on every order", "Empty tables on weekdays", "Instagram page with great food photos but no bookings"],
+    channels: ["Google Business Profile & local SEO", "Instagram reels & influencer tastings", "WhatsApp direct-order funnels", "Geo-targeted Meta ads"],
+    faqs: [
+      { q: "Can you help us get orders outside delivery apps?", a: "Yes. We build a direct-order channel on WhatsApp or your website and drive repeat customers to it with offers and retargeting." },
+      { q: "Do you shoot food content?", a: "Our creative team does on-location reel shoots across Delhi NCR, including menu launches and festive specials." },
+    ],
+    keywords: ["restaurant marketing agency delhi", "cloud kitchen marketing", "cafe instagram marketing delhi"],
+  },
+  {
+    slug: "healthcare-clinics",
+    name: "Healthcare & Clinics",
+    short: "Dental, dermatology, IVF, physiotherapy and multi-speciality clinics looking for patient enquiries.",
+    headline: "Patient-acquisition marketing for clinics and hospitals in Delhi NCR",
+    description:
+      "Patients search before they book. We get your clinic ranking on Google Maps for treatment keywords, run compliant Google and Meta campaigns and set up WhatsApp appointment flows, so the front desk gets real enquiries, not just impressions.",
+    painPoints: ["Competitors outrank you on Google Maps for your own treatments", "High cost per lead from generic ads", "Reviews are few, old or unanswered"],
+    channels: ["Local SEO & Google Business Profile", "Treatment landing pages + Google Search ads", "Review generation workflows", "WhatsApp appointment automation"],
+    faqs: [
+      { q: "Is healthcare advertising allowed on Google and Meta?", a: "Yes, with restrictions. We write compliant copy, avoid prohibited claims and follow platform healthcare policies so campaigns stay live." },
+      { q: "How do you handle patient privacy?", a: "Lead data stays in your CRM or WhatsApp; we never publish patient information and follow consent-based messaging." },
+    ],
+    keywords: ["healthcare marketing agency delhi", "dental clinic marketing", "doctor seo delhi ncr"],
+  },
+  {
+    slug: "education-coaching",
+    name: "Education & Coaching",
+    short: "Coaching institutes, schools, ed-tech and skill academies that need admissions.",
+    headline: "Admission-focused marketing for coaching institutes and ed-tech in Delhi NCR",
+    description:
+      "Exam seasons, batch launches and counselling calls all have a calendar. We plan campaigns around it: Search ads on course keywords, YouTube and reels featuring faculty, WhatsApp nurture for enquiries and landing pages that convert parents and students.",
+    painPoints: ["Enquiries spike only in admission season", "Low show-up rate from online enquiries", "Hard to stand out among hundreds of institutes"],
+    channels: ["Google Search & YouTube ads", "Faculty-led reels & moment marketing", "WhatsApp enquiry nurture", "SEO for course pages"],
+    faqs: [
+      { q: "Can you run campaigns only during admission season?", a: "Yes. Many institutes run paid campaigns seasonally and keep SEO and social running year round. We plan the mix with you." },
+      { q: "Do you help with counsellor follow-up?", a: "We set up WhatsApp automation and lead routing so every enquiry gets a reply within minutes and counsellors see a clean pipeline." },
+    ],
+    keywords: ["coaching institute marketing delhi", "education marketing agency", "edtech lead generation"],
+  },
+  {
+    slug: "real-estate",
+    name: "Real Estate",
+    short: "Developers, channel partners and brokers who want qualified site visits.",
+    headline: "Real estate lead generation that delivers site visits, not junk enquiries",
+    description:
+      "Gurugram, Noida and Dwarka Expressway launches live and die on lead quality. We build project landing pages, run Google and Meta campaigns with budget and location qualifiers, and route leads to WhatsApp and your CRM with instant follow-up.",
+    painPoints: ["Hundreds of leads, very few site visits", "Portal leads shared with ten other brokers", "No visibility on which campaign brought the booking"],
+    channels: ["Project landing pages + Google Search ads", "Meta lead forms with qualifying questions", "WhatsApp & CRM lead routing", "YouTube walkthrough videos"],
+    faqs: [
+      { q: "What is a realistic cost per site visit?", a: "It varies by ticket size and micro-market. We share benchmarks for your segment after the audit and optimise toward site visits, not raw leads." },
+      { q: "Do you work with individual brokers?", a: "Yes, as long as you have RERA registration and a project inventory. We also work with developer sales teams directly." },
+    ],
+    keywords: ["real estate marketing agency gurugram", "real estate lead generation noida", "property ads delhi ncr"],
+  },
+  {
+    slug: "fashion-beauty",
+    name: "Fashion & Beauty",
+    short: "Apparel labels, salons, skincare and cosmetics brands that live on Instagram.",
+    headline: "Fashion and beauty marketing built for Instagram-first audiences",
+    description:
+      "Fashion and beauty are won on creative. We run reel-led content calendars, creator collaborations, Meta catalogue ads and salon booking funnels, with the trend desk turning what India is watching into on-brand posts within 24 hours.",
+    painPoints: ["Beautiful feed, no sales", "Influencer spends with no tracking", "Seasonal drops get no reach without paid push"],
+    channels: ["Reels & UGC content production", "Influencer & creator campaigns", "Meta catalogue & retargeting ads", "Salon booking via WhatsApp"],
+    faqs: [
+      { q: "Do you manage influencer collaborations end to end?", a: "Yes: discovery, negotiation, briefs, content approval and UTM or promo-code tracking so you know what each creator delivered." },
+      { q: "Can you help a salon get bookings?", a: "We combine Google Maps optimisation, Instagram reels and a WhatsApp booking flow so clients book without calling." },
+    ],
+    keywords: ["fashion marketing agency delhi", "beauty brand marketing", "salon marketing delhi ncr"],
+  },
+];
+
+/* ---------------------------------------------------------------- work */
+export type WorkType = "website" | "creative" | "reel";
+
+export type WorkItem = {
+  slug: string;
+  title: string;
+  client: string;
+  industry: string;
+  type: WorkType;
+  cover: string;
+  result: string;
+  summary: string;
+  challenge: string;
+  approach: string;
+  services: string[];
+};
+
+export const WORK: WorkItem[] = [
+  {
+    slug: "glowroot-skincare-store",
+    title: "D2C skincare store relaunch",
+    client: "GlowRoot (D2C skincare)",
+    industry: "Retail & E-Commerce",
+    type: "website",
+    cover: "/work/glowroot.svg",
+    result: "Store conversion rate up from 0.9% to 2.4%",
+    summary: "A Shopify rebuild with faster pages, ingredient-led product storytelling and a WhatsApp cart-recovery flow.",
+    challenge: "Traffic from Meta ads was landing on slow product pages with no trust signals. Carts were abandoned at the shipping step and there was no recovery channel.",
+    approach: "We rebuilt the theme for speed, added ingredient explainers and review widgets, simplified checkout to a single step and connected WhatsApp cart recovery with a 10-minute and 24-hour nudge.",
+    services: ["web-design-development", "whatsapp-email-marketing", "meta-ads"],
+  },
+  {
+    slug: "smilecraft-dental-campaign",
+    title: "Dental clinic local campaign creatives",
+    client: "SmileCraft Dental (South Delhi)",
+    industry: "Healthcare & Clinics",
+    type: "creative",
+    cover: "/work/smilecraft.svg",
+    result: "74 calls a month from Google Maps and Search",
+    summary: "Google Business Profile overhaul, treatment landing pages and a creative set for Search and Display campaigns.",
+    challenge: "The clinic was invisible for implant and aligner searches, had 11 reviews and a website that did not mention treatments by name.",
+    approach: "We rewrote the Business Profile, launched a review workflow at the reception desk, built treatment pages and designed ad creatives around outcomes and pricing transparency.",
+    services: ["seo", "google-ads-ppc", "branding-creative"],
+  },
+  {
+    slug: "urbannest-real-estate-reels",
+    title: "Project walkthrough reels",
+    client: "UrbanNest Realty (Noida)",
+    industry: "Real Estate",
+    type: "reel",
+    cover: "/work/urbannest.svg",
+    result: "Cost per site visit down 52%",
+    summary: "A series of 20 walkthrough and locality reels used organically and as Meta video ads for a new launch.",
+    challenge: "Static brochure ads were generating low-intent leads. Prospects could not picture the project or the neighbourhood.",
+    approach: "We scripted and shot walkthroughs, commute explainers and resident interviews, then ran them as Meta video ads with budget and location qualifiers routed to WhatsApp.",
+    services: ["meta-ads", "social-media-marketing", "branding-creative"],
+  },
+  {
+    slug: "tandoor-tales-ordering",
+    title: "Direct-order website for a cloud kitchen",
+    client: "Tandoor Tales (Gurugram)",
+    industry: "Restaurants & Food",
+    type: "website",
+    cover: "/work/tandoor-tales.svg",
+    result: "31% of orders now come direct instead of via aggregators",
+    summary: "A mobile-first ordering site with WhatsApp checkout, promoted through Google Maps and geo-targeted Instagram ads.",
+    challenge: "Almost every order came through delivery apps, with commissions wiping out margins on combos.",
+    approach: "We built a lightweight menu site with WhatsApp ordering, added it to the Business Profile and ran Instagram offers within a 5 km radius with a direct-order coupon.",
+    services: ["web-design-development", "seo", "meta-ads"],
+  },
+  {
+    slug: "pathshala-admissions-creatives",
+    title: "Admission season creative system",
+    client: "Pathshala Coaching (Delhi)",
+    industry: "Education & Coaching",
+    type: "creative",
+    cover: "/work/pathshala.svg",
+    result: "Batches filled 3 weeks before the session started",
+    summary: "A modular creative kit for Search, Display and Instagram with faculty-led hooks and exam countdown formats.",
+    challenge: "Each season the institute rebuilt creatives from scratch and launched late, losing the early-enquiry window to competitors.",
+    approach: "We designed a reusable template system, pre-produced faculty videos and scheduled campaigns against the exam calendar with WhatsApp follow-up for every enquiry.",
+    services: ["branding-creative", "google-ads-ppc", "whatsapp-email-marketing"],
+  },
+  {
+    slug: "maison-ira-fashion-reels",
+    title: "Festive collection reels",
+    client: "Maison Ira (Fashion label)",
+    industry: "Fashion & Beauty",
+    type: "reel",
+    cover: "/work/maison-ira.svg",
+    result: "Festive drop sold out in 11 days",
+    summary: "Trend-led reels and creator collaborations for a Diwali collection, amplified with Meta catalogue ads.",
+    challenge: "The label had a loyal but small following and no budget for a big influencer campaign.",
+    approach: "We produced 15 reels using trending audio within 24 hours of each trend, partnered with six micro creators on a performance basis and retargeted engaged viewers with catalogue ads.",
+    services: ["social-media-marketing", "influencer-marketing", "meta-ads"],
+  },
+];
