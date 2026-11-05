@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { SERVICES, SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import ServiceIcon from "@/components/ServiceIcon";
+import ServiceArt from "@/components/ServiceArt";
 import Reveal from "@/components/Reveal";
 import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
@@ -26,7 +27,8 @@ export default function ServicesPage() {
       <section className="container-x grid sm:grid-cols-2 lg:grid-cols-3 gap-5 pb-10">
         {SERVICES.map((s, i) => (
           <Reveal key={s.slug} delay={i * 50}>
-            <Link href={`/services/${s.slug}`} className="card p-6 block h-full group">
+            <Link href={`/services/${s.slug}`} className="card p-6 block h-full group relative overflow-hidden">
+              <ServiceArt slug={s.slug} />
               <span className="inline-grid place-items-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand/30 to-brand-2/20 border border-border text-brand-2"><ServiceIcon name={s.icon} /></span>
               <h2 className="font-display text-xl font-bold mt-5">{s.name}</h2>
               <p className="text-muted text-sm mt-2">{s.short}</p>

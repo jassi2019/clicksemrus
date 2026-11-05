@@ -6,6 +6,7 @@ import { getAllPosts, getSettings } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
 import { getReviews } from "@/lib/reviews";
 import ServiceIcon from "@/components/ServiceIcon";
+import ServiceArt from "@/components/ServiceArt";
 import Reveal from "@/components/Reveal";
 import LeadForm from "@/components/LeadForm";
 import FAQ from "@/components/FAQ";
@@ -115,6 +116,7 @@ export default async function Home() {
               <Reveal key={s.slug} delay={(i % 3) * 90}>
                 <Link href={`/services/${s.slug}`} className="block h-full group">
                   <TiltCard className="p-7 h-full overflow-hidden">
+                    <ServiceArt slug={s.slug} />
                     <span className="inline-grid place-items-center w-14 h-14 rounded-2xl bg-[#0b0b14] text-white group-hover:bg-brand transition shadow-[0_14px_30px_-14px_rgba(11,11,20,.6)]">
                       <ServiceIcon name={s.icon} size={24} />
                     </span>
