@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, TrendingUp } from "lucide-react";
-import { SITE, WORK } from "@/lib/site";
+import { SITE, WORK, serviceUrl } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import Reveal from "@/components/Reveal";
 import CTA from "@/components/CTA";
@@ -52,7 +52,7 @@ export default function CaseStudies() {
                   <p className="font-display text-5xl font-bold gradient-text mt-5">{c.metric}</p>
                   <p className="font-semibold flex items-center gap-1 mt-1"><TrendingUp size={16} className="text-lime" /> {c.label}</p>
                   <p className="text-sm text-muted mt-4 flex-1">{c.story}</p>
-                  <Link href={`/services/${c.slug}`} className="inline-flex items-center gap-1 text-sm font-semibold text-brand mt-5">How we do it <ArrowRight size={14} /></Link>
+                  <Link href={serviceUrl(c.slug)} className="inline-flex items-center gap-1 text-sm font-semibold text-brand mt-5">How we do it <ArrowRight size={14} /></Link>
                 </article>
               </Reveal>
             ))}

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE, SERVICES, BLOG_CATEGORIES, INDUSTRIES, WORK } from "@/lib/site";
+import { SITE, BLOG_CATEGORIES, INDUSTRIES, WORK, SERVICE_CATEGORIES, ALL_SUB_SERVICES, LOCATIONS } from "@/lib/site";
 import { getAllPosts } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
 import { slugify } from "@/lib/markdown";
@@ -13,7 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: SITE.url, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${SITE.url}/services`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    ...SERVICES.map((s) => ({ url: `${SITE.url}/services/${s.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 })),
+    ...SERVICE_CATEGORIES.map((c) => ({ url: `${SITE.url}/services/${c.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.9 })),
+    ...ALL_SUB_SERVICES.map((x) => ({ url: `${SITE.url}/services/${x.category.slug}/${x.service.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...LOCATIONS.map((l) => ({ url: `${SITE.url}/locations/${l.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 })),
     { url: `${SITE.url}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/case-studies`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     ...WORK.map((w) => ({ url: `${SITE.url}/case-studies/${w.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 })),

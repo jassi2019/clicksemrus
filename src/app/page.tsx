@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Zap, Target, BarChart3, TrendingUp, Flame, Star, Award } from "lucide-react";
-import { SITE, SERVICES, INDUSTRIES, WORK } from "@/lib/site";
+import { SITE, SERVICES, INDUSTRIES, WORK, serviceUrl } from "@/lib/site";
 import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
 import { getAllPosts, getSettings } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
@@ -114,7 +114,7 @@ export default async function Home() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
             {SERVICES.map((s, i) => (
               <Reveal key={s.slug} delay={(i % 3) * 90}>
-                <Link href={`/services/${s.slug}`} className="block h-full group">
+                <Link href={serviceUrl(s.slug)} className="block h-full group">
                   <TiltCard className="p-7 h-full overflow-hidden">
                     <ServiceArt slug={s.slug} />
                     <span className="inline-grid place-items-center w-14 h-14 rounded-2xl bg-[#0b0b14] text-white group-hover:bg-brand transition shadow-[0_14px_30px_-14px_rgba(11,11,20,.6)]">

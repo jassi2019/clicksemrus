@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowRight, TrendingUp } from "lucide-react";
-import { SITE, WORK, SERVICES, INDUSTRIES } from "@/lib/site";
+import { SITE, WORK, SERVICES, INDUSTRIES, serviceUrl } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import ServiceIcon from "@/components/ServiceIcon";
 import Reveal from "@/components/Reveal";
@@ -78,7 +78,7 @@ export default async function WorkPage({ params }: { params: Promise<{ slug: str
             <h3 className="font-bold">Services used</h3>
             <ul className="mt-3 space-y-2 text-sm">
               {services.map((s) => (
-                <li key={s.slug}><Link href={`/services/${s.slug}`} className="flex items-center gap-2 text-muted hover:text-fg"><ServiceIcon name={s.icon} size={16} className="text-brand" />{s.name}</Link></li>
+                <li key={s.slug}><Link href={serviceUrl(s.slug)} className="flex items-center gap-2 text-muted hover:text-fg"><ServiceIcon name={s.icon} size={16} className="text-brand" />{s.name}</Link></li>
               ))}
             </ul>
           </div>

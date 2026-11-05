@@ -8,6 +8,17 @@ const nextConfig: NextConfig = {
       "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
   },
+  async redirects() {
+    // Legacy single-level service slugs that became sub-services under a category.
+    const moved: Record<string, string> = {
+      "google-ads-ppc": "/services/paid-ads/google-ads-ppc",
+      "meta-ads": "/services/paid-ads/meta-ads",
+      "content-marketing": "/services/social-media-marketing/content-marketing",
+      "influencer-marketing": "/services/social-media-marketing/influencer-marketing",
+      "whatsapp-email-marketing": "/services/automation-crm/whatsapp-email-marketing",
+    };
+    return Object.entries(moved).map(([from, destination]) => ({ source: `/services/${from}`, destination, permanent: true }));
+  },
   async headers() {
     return [
       {
