@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Zap, Target, BarChart3, TrendingUp, Flame, Star, Award } from "lucide-react";
-import { SITE, SERVICES, INDUSTRIES, WORK, serviceUrl } from "@/lib/site";
+import { SITE, SERVICES, INDUSTRIES, WORK, HOME_FAQS, serviceUrl } from "@/lib/site";
 import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
 import { getAllPosts, getSettings } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
@@ -42,13 +42,7 @@ const WHY = [
   { t: "No long lock-ins", d: "Month to month after an initial 3-month SEO commitment. We keep clients by performing, not by contract." },
 ];
 
-const FAQS = [
-  { q: "Which digital marketing services does ClickSemrus offer?", a: "SEO, social media marketing, Google Ads, Meta Ads, content marketing, web design and development, influencer marketing, WhatsApp and email marketing, and branding. Most clients combine two or three channels." },
-  { q: "Do you work only with businesses in Delhi NCR?", a: "We are based in Delhi NCR and serve clients across India and abroad. Everything from strategy calls to reporting works remotely." },
-  { q: "How soon can we see results?", a: "Paid ads generate leads within the first week. SEO typically shows measurable growth in 8 to 12 weeks and compounds after that." },
-  { q: "What does it cost?", a: "Packages start at Rs 15,000 per month for single-channel services. See our pricing page for details or request a custom quote." },
-  { q: "Is there a lock-in contract?", a: "No long lock-ins. We work month to month after an initial 3-month commitment for SEO, because that is how long it takes to prove results." },
-];
+const FAQS = HOME_FAQS;
 
 export default async function Home() {
   const [posts, trends, reviews, settings] = await Promise.all([
@@ -100,6 +94,28 @@ export default async function Home() {
         </div>
         {settings.showStatsNote && <p className="container-x relative text-xs text-muted mt-6">Numbers from client dashboards, Jan to Oct 2026.</p>}
       </section>
+
+      {/* trend desk ticker */}
+      {latest.length > 0 && (
+        <div className="border-y border-border bg-[#0b0b14] text-white py-3 overflow-hidden">
+          <div className="container-x flex items-center gap-4">
+            <span className="shrink-0 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"><Flame size={14} className="text-sun" /> Trend desk <span className="hidden sm:inline text-white/50 normal-case tracking-normal font-medium">Trend → creative in 24h</span></span>
+            <div className="flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
+              <div className="marquee !gap-10 text-sm" style={{ animationDuration: "40s" }}>
+                {[0, 1].map((k) => (
+                  <div key={k} className="flex gap-10">
+                    {latest.map((p) => (
+                      <Link key={`${k}-${p.slug}`} href={`/blog/${p.slug}`} className="whitespace-nowrap inline-flex items-center gap-2 text-white/80 hover:text-white">
+                        <span className="w-1.5 h-1.5 rounded-full bg-sun" />{p.title}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* services */}
       <section className="relative overflow-hidden py-24">

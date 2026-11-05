@@ -684,3 +684,17 @@ export const LOCATIONS: Location[] = [
     ],
   },
 ];
+
+/* ---------------------------------------------------------------- shared copy (homepage FAQ, pricing summary, chat) */
+export const HOME_FAQS = [
+  { q: "Which digital marketing services does ClickSemrus offer?", a: "SEO, social media marketing, Google Ads, Meta Ads, content marketing, web design and development, influencer marketing, WhatsApp and email marketing, and branding. Most clients combine two or three channels." },
+  { q: "Do you work only with businesses in Delhi NCR?", a: "We are based in Delhi NCR and serve clients across India and abroad. Everything from strategy calls to reporting works remotely." },
+  { q: "How soon can we see results?", a: "Paid ads generate leads within the first week. SEO typically shows measurable growth in 8 to 12 weeks and compounds after that." },
+  { q: "What does it cost?", a: "Packages start at Rs 15,000 per month for single-channel services. See our pricing page for details or request a custom quote." },
+  { q: "Is there a lock-in contract?", a: "No long lock-ins. We work month to month after an initial 3-month commitment for SEO, because that is how long it takes to prove results." },
+];
+
+export const PRICING_SUMMARY = `Starter from Rs 15,000/month (one channel: SEO, social or ads; GA4 and conversion tracking; monthly report).
+Growth from Rs 40,000/month (two channels, 20 posts + 4 reels, up to 3 ad campaigns with creatives, landing page CRO, live dashboard, dedicated growth manager).
+Scale from Rs 90,000/month (all channels, daily content and trend creatives in 24h, unlimited campaigns, influencer and WhatsApp automation, weekly strategy call).
+Prices exclude 18% GST and ad spend (paid directly to Google/Meta). Website design and branding are quoted per project. SEO plans need a 3-month initial commitment; ads and social are month to month.`;
