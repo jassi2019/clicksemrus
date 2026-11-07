@@ -1,18 +1,30 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { CheckCircle2, Loader2, ArrowRight, ChevronDown, Plus, Minus } from "lucide-react";
 import { SERVICES } from "@/lib/site";
 import { trackEvent } from "./Tracker";
 
 const SERVICE_OPTIONS = [...SERVICES.map((s) => s.name), "Complete Digital Marketing"];
+/** Chips shown before "+ more" is pressed. */
+const PRIMARY = ["SEO Services", "Social Media Marketing", "Google Ads (PPC)", "Meta Ads (Facebook & Instagram)"];
+const SECONDARY = SERVICE_OPTIONS.filter((n) => !PRIMARY.includes(n));
+
+/** Split a single "Name" field: first word becomes firstName, the rest lastName. */
+function splitName(full: string): { firstName: string; lastName: string } {
+  const parts = full.trim().split(/\s+/).filter(Boolean);
+  return { firstName: parts[0] ?? "", lastName: parts.slice(1).join(" ") };
+}
 
 export default function LeadForm({ compact = false, source = "" }: { compact?: boolean; source?: string }) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [error, setError] = useState("");
   const [services, setServices] = useState<string[]>([]);
   const [phone, setPhone] = useState("");
+  const [moreServices, setMoreServices] = useState(false);
+  const [details, setDetails] = useState(false);
   const path = usePathname();
+  void compact;
 
   function toggle(name: string) {
     setServices((cur) => (cur.includes(name) ? cur.filter((x) => x !== name) : [...cur, name]));
@@ -28,18 +40,21 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
     }
     setError("");
     setState("loading");
+    const { firstName, lastName } = splitName(String(fd.get("name") ?? ""));
     const body = {
-      firstName: fd.get("firstName"),
-      lastName: fd.get("lastName"),
-      company: fd.get("company"),
-      website: fd.get("website"),
+      firstName,
+      lastName,
+      company: fd.get("company") ?? "",
+      website: fd.get("website") ?? "",
       email: fd.get("email"),
       phone: `+91${digits}`,
       services,
-      message: fd.get("message"),
+      message: fd.get("message") ?? "",
       consent: fd.get("consent") === "on",
       hp: fd.get("hp"),
+      source: "form",
       page: source || path,
+      path,
     };
     try {
       const res = await fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -62,36 +77,37 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
       </div>
     );
 
-  const full = compact ? "" : "sm:col-span-2";
+  const chips = moreServices ? SERVICE_OPTIONS : PRIMARY;
 
   return (
-    <form onSubmit={onSubmit} className={`grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
+    <form onSubmit={onSubmit} className="grid gap-3">
       {/* honeypot */}
       <input name="hp" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-      <input required name="firstName" placeholder="First name" className="input" autoComplete="given-name" maxLength={60} />
-      <input required name="lastName" placeholder="Last name" className="input" autoComplete="family-name" maxLength={60} />
-      <input required name="company" placeholder="Company / brand" className="input" autoComplete="organization" maxLength={100} />
-      <input name="website" placeholder="Website (optional)" className="input" type="url" autoComplete="url" maxLength={200} inputMode="url" />
-      <input required name="email" placeholder="Email address" className="input" type="email" autoComplete="email" maxLength={120} />
-      <div className="flex input !p-0 overflow-hidden items-stretch">
-        <span className="px-3 grid place-items-center text-sm font-semibold text-muted bg-surface-2 border-r border-border select-none shrink-0">IN +91</span>
-        <input
-          required
-          name="phone"
-          placeholder="98765 43210"
-          className="flex-1 min-w-0 bg-transparent px-3 py-[.85rem] outline-none"
-          type="tel"
-          inputMode="numeric"
-          autoComplete="tel-national"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, "").slice(0, 11))}
-          aria-label="Mobile number"
-        />
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <input required name="name" placeholder="Your name" className="input" autoComplete="name" maxLength={120} aria-label="Your name" />
+        <div className="flex input !p-0 overflow-hidden items-stretch">
+          <span className="px-3 grid place-items-center text-sm font-semibold text-muted bg-surface-2 border-r border-border select-none shrink-0">IN +91</span>
+          <input
+            required
+            name="phone"
+            placeholder="98765 43210"
+            className="flex-1 min-w-0 bg-transparent px-3 py-[.85rem] outline-none"
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, "").slice(0, 11))}
+            aria-label="Mobile number"
+          />
+        </div>
       </div>
-      <fieldset className={full}>
-        <legend className="text-sm font-semibold mb-2">What do you need help with?</legend>
+      <input required name="email" placeholder="Work email" className="input" type="email" autoComplete="email" maxLength={120} aria-label="Email address" />
+
+      <fieldset>
+        <legend className="text-xs font-semibold text-muted mb-2">What do you need help with?</legend>
         <div className="flex flex-wrap gap-2">
-          {SERVICE_OPTIONS.map((name) => {
+          {chips.map((name) => {
             const on = services.includes(name);
             return (
               <button
@@ -105,18 +121,41 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
               </button>
             );
           })}
+          <button
+            type="button"
+            onClick={() => setMoreServices((v) => !v)}
+            aria-expanded={moreServices}
+            className="px-3 py-1.5 rounded-full text-xs font-bold border border-dashed border-border text-brand hover:bg-surface-2 inline-flex items-center gap-1"
+          >
+            {moreServices ? <><Minus size={12} /> Less</> : <><Plus size={12} /> {SECONDARY.length} more</>}
+          </button>
         </div>
       </fieldset>
-      <textarea name="message" placeholder="Tell us about your goals" className={`input min-h-24 ${full}`} maxLength={2000} />
-      <label className={`flex gap-3 items-start text-xs text-muted ${full}`}>
-        <input required name="consent" type="checkbox" className="mt-0.5 accent-[#4f46e5]" />
-        <span>I agree to be contacted by ClickSemrus on email/WhatsApp about my enquiry.</span>
+
+      <details className="group rounded-xl border border-border bg-surface-2/60 open:bg-surface" onToggle={(e) => setDetails((e.currentTarget as HTMLDetailsElement).open)}>
+        <summary className="list-none cursor-pointer select-none flex items-center justify-between gap-3 px-4 py-2.5 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+          <span>Add details <span className="text-muted font-medium">(optional)</span></span>
+          <ChevronDown size={16} className={`text-muted transition-transform ${details ? "rotate-180" : ""}`} />
+        </summary>
+        <div className="grid gap-3 px-4 pb-4 pt-1">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input name="company" placeholder="Company / brand" className="input" autoComplete="organization" maxLength={100} />
+            <input name="website" placeholder="Website" className="input" type="text" autoComplete="url" maxLength={200} inputMode="url" />
+          </div>
+          <textarea name="message" placeholder="Tell us about your goals, budget or timeline" className="input min-h-20" maxLength={2000} />
+        </div>
+      </details>
+
+      <label className="flex gap-2.5 items-center text-xs text-muted">
+        <input required name="consent" type="checkbox" className="accent-[#4f46e5] w-4 h-4" />
+        <span>I agree to be contacted on email/WhatsApp.</span>
       </label>
-      <button disabled={state === "loading"} className={`btn btn-primary ${full} disabled:opacity-60`}>
+
+      <button disabled={state === "loading"} className="btn btn-primary disabled:opacity-60 w-full sm:w-auto">
         {state === "loading" ? <Loader2 className="animate-spin" size={18} /> : <>Get My Free Growth Plan <ArrowRight size={18} /></>}
       </button>
-      {error && <p className={`text-accent text-sm ${full}`} role="alert">{error}</p>}
-      <p className={`text-xs text-muted ${full}`}>No spam. Free audit, no obligation. We reply within 2 business hours.</p>
+      {error && <p className="text-accent text-sm" role="alert">{error}</p>}
+      <p className="text-[11px] text-muted">No spam. Free audit, no obligation. We reply within 2 business hours.</p>
     </form>
   );
 }
