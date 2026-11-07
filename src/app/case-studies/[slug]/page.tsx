@@ -53,9 +53,16 @@ export default async function WorkPage({ params }: { params: Promise<{ slug: str
           <p className="text-muted mt-2 font-medium">{w.client}</p>
           <p className="text-muted text-lg mt-5 leading-relaxed">{w.summary}</p>
           <p className="mt-6 inline-flex items-center gap-2 font-bold text-lg"><TrendingUp className="text-lime" size={22} /> {w.result}</p>
-          {(w.url || w.instagram || w.facebook) && (
+          {w.deliverables && (
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {w.deliverables.map((d) => <li key={d} className="text-xs font-bold px-3 py-1.5 rounded-full bg-[#0b0b14] text-white">{d}</li>)}
+            </ul>
+          )}
+          {(w.url || w.instagram || w.facebook || w.appStore || w.playStore) && (
             <div className="mt-6 flex items-center gap-3 flex-wrap">
               {w.url && <a href={w.url} target="_blank" rel="noopener noreferrer" className="btn btn-accent">Open live site <ExternalLink size={16} /></a>}
+              {w.playStore && <a href={w.playStore} target="_blank" rel="noopener noreferrer" className="btn btn-dark">Google Play</a>}
+              {w.appStore && <a href={w.appStore} target="_blank" rel="noopener noreferrer" className="btn btn-dark">App Store</a>}
               {w.instagram && <a href={w.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center w-11 h-11 rounded-full border border-border bg-surface hover:bg-[#0b0b14] hover:text-white transition"><InstagramIcon size={18} /></a>}
               {w.facebook && <a href={w.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid place-items-center w-11 h-11 rounded-full border border-border bg-surface hover:bg-[#0b0b14] hover:text-white transition"><FacebookIcon size={18} /></a>}
             </div>

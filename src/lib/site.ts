@@ -314,6 +314,10 @@ export type WorkItem = {
   shotMobileSize?: [number, number];
   instagram?: string;
   facebook?: string;
+  /** Plain-language list of what ClickSemrus delivered. */
+  deliverables?: string[];
+  appStore?: string;
+  playStore?: string;
 };
 
 export const WORK: WorkItem[] = [
@@ -330,15 +334,16 @@ export const WORK: WorkItem[] = [
     shotMobile: "/work/shots/delhidental-mobile.jpg",
     shotMobileSize: [390, 16279],
     facebook: "https://www.facebook.com/DrKathuriasDentistry/",
-    result: "Ranking for 'best dentist in Delhi' with a conversion-first site",
+    result: "Full backend + frontend ownership: faster site, cleaner server, better rankings",
     summary: "A fast WordPress rebuild for a 30-year-old multi-speciality clinic: treatment pages, celebrity trust section, click-to-call and WhatsApp booking.",
     challenge: "The old site was slow, hit by malware and did not rank for implant or smile-makeover searches despite decades of reputation.",
     approach: "We cleaned and hardened the server, rebuilt the site on a lightweight theme with LiteSpeed caching, wrote treatment and location pages, and set up Google Business Profile optimisation with a review flow.",
-    services: ["web-design-development", "seo", "google-ads-ppc"],
+    services: ["web-design-development", "seo"],
+    deliverables: ["Backend & frontend development", "Hosting & server handling", "Speed & SEO optimisation", "Ongoing maintenance"],
   },
   {
     slug: "smiledentalcarecentre",
-    title: "Smile Dental Care Centre: 2-location clinic site",
+    title: "Smile Dental Care Centre: GMB + SEO + website",
     client: "Smile Dental Care Centre, East of Kailash & Faridabad",
     industry: "Healthcare & Clinics",
     type: "website",
@@ -350,11 +355,12 @@ export const WORK: WorkItem[] = [
     shotMobileSize: [390, 24000],
     instagram: "https://www.instagram.com/smiledentalcarecentre/",
     facebook: "https://www.facebook.com/smiledentalcarecentre1/",
-    result: "Appointment form + WhatsApp booking above the fold on every page",
-    summary: "Clinic website with instant booking, Google rating badge, 1.45 lakh patient trust counters and a weekly SEO blog calendar.",
+    result: "GMB ranking for East of Kailash and Faridabad, plus organic leads from the site",
+    summary: "Two-location clinic growth: Google Business Profile (GMB) ranking, website SEO, a booking-first website and a weekly content calendar that brings organic leads.",
     challenge: "Two locations, 25 years of history and zero online booking. Patients were calling only during clinic hours.",
-    approach: "We designed a booking-first layout, added click-to-call and WhatsApp CTAs, built location and treatment pages, and run a scheduled blog programme for long-tail dental searches.",
-    services: ["web-design-development", "seo", "content-marketing"],
+    approach: "We optimise and rank both Google Business Profiles, run on-page and technical SEO, built the booking-first website with click-to-call and WhatsApp, and publish scheduled blogs for long-tail dental searches.",
+    services: ["seo", "web-design-development", "content-marketing"],
+    deliverables: ["GMB (Google Business Profile) SEO", "Website SEO", "Website development", "Organic lead generation"],
   },
   {
     slug: "sdcc-international",
@@ -388,11 +394,12 @@ export const WORK: WorkItem[] = [
     shotMobileSize: [390, 8473],
     instagram: "https://www.instagram.com/purexa.in/",
     facebook: "https://www.facebook.com/Purexaoralwellness/",
-    result: "Shopify store with combos, spin-to-win offers and WhatsApp support",
+    result: "End-to-end D2C store: build, handling and optimisation",
     summary: "E-commerce build for a dentist-backed oral care brand: shop by concern, best-seller combos, gamified discounts and a ProCare dentist network page.",
     challenge: "A new D2C brand needed a store that explained products by concern, converted first-time buyers and supported dentist referrals.",
     approach: "We set up the Shopify theme, product and combo structure, offer popups, WhatsApp chat and Meta Pixel tracking, with creatives for launch campaigns.",
     services: ["web-design-development", "meta-ads", "branding-creative"],
+    deliverables: ["Backend & frontend development", "Store handling & maintenance", "Performance optimisation", "Launch creatives"],
   },
   {
     slug: "blameless",
@@ -408,11 +415,33 @@ export const WORK: WorkItem[] = [
     shotMobileSize: [390, 6228],
     instagram: "https://www.instagram.com/liv.blameless/",
     facebook: "https://www.facebook.com/share/12LcMx1zN78/",
-    result: "Clean, editorial storefront with offer ticker and chat support",
-    summary: "Shopify storefront for a clean-beauty brand: hero ritual messaging, sunscreen and serum collections, buy-one-get-one ticker and a chat widget.",
+    result: "Performance + influencer + social, with content created in-house",
+    summary: "Growth partner for a clean-beauty brand: Meta and Google performance campaigns, influencer collaborations, daily social media and reels/content creation.",
     challenge: "The brand needed a premium look that still pushed offers hard and worked flawlessly on mobile, where most of its Instagram traffic lands.",
-    approach: "We designed a calm, editorial theme, structured collections by routine, added the offer ticker and announcement bar, and connected Instagram shopping and Meta Pixel.",
-    services: ["web-design-development", "social-media-marketing", "meta-ads"],
+    approach: "We run performance marketing on Meta and Google, manage influencer seeding and paid collaborations, publish the social calendar and produce the reels, statics and UGC-style content that feed all of it.",
+    services: ["meta-ads", "influencer-marketing", "social-media-marketing", "content-marketing"],
+    deliverables: ["Performance marketing", "Influencer marketing", "Social media marketing", "Content creation"],
+  },
+  {
+    slug: "taiyari-neet-ki",
+    title: "Taiyari NEET Ki: iOS + Android app and landing page",
+    client: "Taiyari NEET Ki (NEET preparation)",
+    industry: "Education & Coaching",
+    type: "website",
+    cover: "/work/taiyarineetki.jpg",
+    url: "https://taiyarineetki.com/",
+    shotDesktop: "/work/shots/taiyarineetki-desktop.jpg",
+    shotDesktopSize: [1200, 8341],
+    shotMobile: "/work/shots/taiyarineetki-mobile.jpg",
+    shotMobileSize: [390, 15717],
+    appStore: "https://apps.apple.com/app/taiyari-neet-ki/id6740091521",
+    playStore: "https://play.google.com/store/apps/details?id=com.taiyarineetki.app",
+    result: "Live on the App Store and Google Play with a conversion-focused landing page",
+    summary: "A complete NEET learning app for iOS and Android (topic-wise explanations, MCQ practice, PYQs, mock tests) plus the landing page that drives installs.",
+    challenge: "Students needed one app that explains concepts and lets them practise, and the brand needed a landing page that converts search and ad traffic into installs.",
+    approach: "We designed and developed the app for both platforms, shipped it to the App Store and Google Play, and built a fast landing page with install CTAs, feature sections and pricing.",
+    deliverables: ["iOS app development", "Android app development", "Landing page design & development", "App Store & Play Store launch"],
+    services: ["web-design-development", "branding-creative"],
   },
 ];
 

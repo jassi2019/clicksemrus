@@ -24,7 +24,7 @@ function MegaMenu({ open, onClose, id }: { open: boolean; onClose: () => void; i
       aria-label="Services menu"
       className={`absolute left-1/2 -translate-x-1/2 top-full mt-3 w-[min(960px,calc(100vw-2rem))] transition-all duration-200 ${open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"}`}
     >
-      <div className="glass rounded-3xl overflow-hidden shadow-[0_40px_80px_-30px_rgba(11,11,20,.35)]">
+      <div className="mega-panel rounded-3xl overflow-hidden shadow-[0_40px_80px_-30px_rgba(11,11,20,.45)]">
         <div className="grid grid-cols-[280px_1fr]">
           <ul className="p-3 border-r border-border bg-surface-2/60">
             {SERVICE_CATEGORIES.map((c, i) => (
@@ -152,7 +152,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <div className="md:hidden pointer-events-auto mt-2 container-x rounded-3xl glass max-h-[calc(100vh-6rem)] overflow-y-auto">
+        <div className="md:hidden pointer-events-auto mt-2 container-x rounded-3xl mega-panel max-h-[calc(100vh-6rem)] overflow-y-auto">
           <nav className="py-4 flex flex-col gap-1" aria-label="Mobile">
             {NAV.map((n) =>
               n.href === "/services" ? (

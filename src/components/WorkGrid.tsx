@@ -4,6 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, TrendingUp, ExternalLink, Monitor, Smartphone, X, MousePointer2 } from "lucide-react";
 import FacebookIcon from "./FacebookIcon";
+
+function AppleIcon({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.2 1-4.1 2.5-1.8 3-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.9-4.1ZM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.5 2.9-1.3Z" /></svg>;
+}
+function PlayIcon({ size = 14 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.5v17c0 .4.4.7.8.5l9.4-8.5L4.8 3c-.4-.2-.8.1-.8.5Zm11.6 7.6 2.6-2.3c.5-.4 1.2-.4 1.7 0l1.5.9c.6.3.6 1.2 0 1.6l-1.5.9c-.5.3-1.2.3-1.7 0l-2.6-1.1Zm-1.4 1.3L5.7 20.8l9.2-5.4-.7-3Zm0-1.2.7-3L5.7 3.2l8.5 8Z" /></svg>;
+}
 import type { WorkItem, WorkType } from "@/lib/site";
 import InstagramIcon from "./InstagramIcon";
 import { trackEvent } from "./Tracker";
@@ -159,6 +166,17 @@ export default function WorkGrid({ items, limit, showTabs = true }: { items: Wor
               <h3 className="font-display text-xl font-bold leading-snug"><Link href={`/case-studies/${w.slug}`} className="hover:text-brand transition">{w.title}</Link></h3>
               <p className="text-sm font-semibold flex items-start gap-1.5 text-lime"><TrendingUp size={16} className="shrink-0 mt-0.5" /> {w.result}</p>
               <p className="text-sm text-muted line-clamp-2">{w.summary}</p>
+              {w.deliverables && (
+                <ul className="flex flex-wrap gap-1.5 mt-1">
+                  {w.deliverables.map((d) => <li key={d} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-surface-2 border border-border">{d}</li>)}
+                </ul>
+              )}
+              {(w.appStore || w.playStore) && (
+                <div className="flex gap-2 mt-1">
+                  {w.playStore && <a href={w.playStore} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-[#0b0b14] text-white text-xs font-bold px-3 py-1.5 hover:bg-brand transition"><PlayIcon size={12} /> Google Play</a>}
+                  {w.appStore && <a href={w.appStore} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg bg-[#0b0b14] text-white text-xs font-bold px-3 py-1.5 hover:bg-brand transition"><AppleIcon size={12} /> App Store</a>}
+                </div>
+              )}
               <div className="flex items-center gap-3 mt-auto pt-3 flex-wrap">
                 <Link href={`/case-studies/${w.slug}`} className="inline-flex items-center gap-1 text-sm font-bold text-brand hover:gap-2 transition-all">Case study <ArrowRight size={14} /></Link>
                 {w.url && (
@@ -208,6 +226,8 @@ export default function WorkGrid({ items, limit, showTabs = true }: { items: Wor
               <span className="ml-auto flex items-center gap-2">
                 {active.instagram && <a href={active.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center w-9 h-9 rounded-full bg-white/10 hover:bg-white hover:text-[#0b0b14] transition"><InstagramIcon size={16} /></a>}
                 {active.facebook && <a href={active.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid place-items-center w-9 h-9 rounded-full bg-white/10 hover:bg-white hover:text-[#0b0b14] transition"><FacebookIcon size={16} /></a>}
+                {active.playStore && <a href={active.playStore} target="_blank" rel="noopener noreferrer" className="btn btn-ghost !border-white/20 !bg-white/10 !text-white text-sm !py-2"><PlayIcon size={14} /> Google Play</a>}
+                {active.appStore && <a href={active.appStore} target="_blank" rel="noopener noreferrer" className="btn btn-ghost !border-white/20 !bg-white/10 !text-white text-sm !py-2"><AppleIcon size={14} /> App Store</a>}
                 <Link href={`/case-studies/${active.slug}`} className="btn btn-ghost !border-white/20 !bg-white/10 !text-white text-sm !py-2">Case study</Link>
                 {active.url && <a href={active.url} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("work_visit")} className="btn btn-accent text-sm !py-2">Open live site <ExternalLink size={14} /></a>}
               </span>

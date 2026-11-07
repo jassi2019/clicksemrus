@@ -32,12 +32,16 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#07070f", width: "device-width", initialScale: 1 };
 
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-WXKGP7JR";
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>));
   return (
     <html lang="en" className={`${inter.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col has-mobile-bar">
         <JsonLd data={[orgJsonLd(), websiteJsonLd()]} />
+        <Script id="gtm" strategy="afterInteractive">{`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}</Script>
+        <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} title="gtm" /></noscript>
         {settings.announcement && (
           <div className="bg-gradient-to-r from-brand to-brand-2 text-center text-xs font-semibold text-white py-2 px-4">{settings.announcement}</div>
         )}

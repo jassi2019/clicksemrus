@@ -91,6 +91,7 @@ body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); -
 .card-3d .shine { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; transform: translateZ(1px);
   background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), rgba(79,70,229,.10), transparent 45%); }
 .glass { background: rgba(255,255,255,.7); border: 1px solid rgba(10,10,30,.08); backdrop-filter: blur(16px); box-shadow: 0 20px 50px -24px rgba(10,10,30,.3); }
+.mega-panel { background: #ffffff; border: 1px solid rgba(10,10,30,.1); backdrop-filter: none; isolation: isolate; }
 .section-dark .glass { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
 
 .eyebrow { display: inline-flex; align-items: center; gap: .55rem; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
