@@ -46,10 +46,10 @@ async function viaClaude<T>(system: string, user: string): Promise<T> {
 }
 
 async function viaGemini<T>(system: string, user: string): Promise<T> {
-  const models = Array.from(new Set([process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-flash-latest"].filter(Boolean))) as string[];
+  const models = Array.from(new Set([process.env.GEMINI_MODEL, "gemini-flash-lite-latest", "gemini-3.8-flash", "gemini-flash-latest"].filter(Boolean))) as string[];
   let lastErr: Error | null = null;
   for (const model of models) {
-    try { return await geminiCall<T>(model, system, user); } catch (e) { lastErr = e as Error; if (!/404|not available|NOT_FOUND/i.test(lastErr.message)) break; }
+    try { return await geminiCall<T>(model, system, user); } catch (e) { lastErr = e as Error; if (!/404|NOT_FOUND|not available|429|RESOURCE_EXHAUSTED|quota|503|UNAVAILABLE|overloaded|timeout/i.test(lastErr.message)) break; }
   }
   throw lastErr || new Error("Gemini failed");
 }
@@ -57,6 +57,7 @@ async function viaGemini<T>(system: string, user: string): Promise<T> {
 async function geminiCall<T>(model: string, system: string, user: string): Promise<T> {
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
     method: "POST",
+    signal: AbortSignal.timeout(Number(process.env.GEMINI_TIMEOUT_MS || 70000)),
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
