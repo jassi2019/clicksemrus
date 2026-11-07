@@ -4,7 +4,7 @@ import { isAdmin } from "@/lib/auth";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { notifyIndex, indexLog, inspectUrl, indexNowKey, submitSitemap } from "@/lib/indexing";
 import { hasGoogleAuth } from "@/lib/google";
-import { hasAiWriter } from "@/lib/llm";
+import { hasAiWriter, generateJson, aiProviderLabel } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 
@@ -21,6 +21,15 @@ export async function POST(req: NextRequest) {
   if (!(await isAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
   const b = (await req.json().catch(() => ({}))) as { action?: string; urls?: string[]; url?: string; query?: string };
   try {
+    if (b.action === "aitest") {
+      const t0 = Date.now();
+      try {
+        const r = await generateJson<{ ok: boolean; note?: string }>("Respond with JSON only.", 'Return {"ok": true, "note": "hello from " + the model name you are}');
+        return NextResponse.json({ ok: true, provider: aiProviderLabel(), ms: Date.now() - t0, result: r });
+      } catch (e) {
+        return NextResponse.json({ ok: false, provider: aiProviderLabel(), ms: Date.now() - t0, error: (e as Error).message.slice(0, 400) });
+      }
+    }
     if (b.action === "refresh") {
       const snap = await refreshGsc();
       return NextResponse.json({ ok: Boolean(snap), snapshot: snap, error: snap ? undefined : "Search Console not configured or no access" });

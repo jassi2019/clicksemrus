@@ -109,8 +109,10 @@ export async function buildKeywordPost(o: Opportunity, date = new Date()): Promi
   if (!hasAiWriter()) return base;
   try {
     const ai = await writeKeywordPostWithClaude(o, base);
+    if (!ai.content) throw new Error("empty AI response");
     return { ...base, ...ai };
-  } catch {
+  } catch (e) {
+    console.error("keyword post AI failed:", (e as Error).message);
     return base;
   }
 }

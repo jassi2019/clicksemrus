@@ -236,8 +236,10 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
   if (!hasAiWriter()) return base;
   try {
     const ai = await writeWithClaude(t, base);
+    if (!ai.content) throw new Error("empty AI response");
     return { ...base, ...ai };
-  } catch {
+  } catch (e) {
+    console.error("trend post AI failed:", (e as Error).message);
     return base;
   }
 }
