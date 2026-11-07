@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE, SERVICES } from "./site";
+import { SITE, SERVICE_CATEGORIES, type Location } from "./site";
 import type { Post } from "./posts";
 
 export function pageMeta(opts: {
@@ -53,7 +53,7 @@ export const orgJsonLd = () => ({
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Digital Marketing Services",
-    itemListElement: SERVICES.map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: s.name, url: `${SITE.url}/services/${s.slug}` } })),
+    itemListElement: SERVICE_CATEGORIES.map((c) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: c.name, url: `${SITE.url}/services/${c.slug}` } })),
   },
 });
 
@@ -65,6 +65,21 @@ export const websiteJsonLd = () => ({
   name: SITE.name,
   publisher: { "@id": `${SITE.url}/#organization` },
   potentialAction: { "@type": "SearchAction", target: `${SITE.url}/blog?q={search_term_string}`, "query-input": "required name=search_term_string" },
+});
+
+export const reviewJsonLd = (data: { rating: number; total: number; reviews: { name: string; rating: number; text: string }[] }) => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE.url}/#organization`,
+  name: SITE.name,
+  url: SITE.url,
+  aggregateRating: { "@type": "AggregateRating", ratingValue: data.rating, reviewCount: data.total, bestRating: 5, worstRating: 1 },
+  review: data.reviews.slice(0, 5).map((r) => ({
+    "@type": "Review",
+    author: { "@type": "Person", name: r.name },
+    reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+    reviewBody: r.text,
+  })),
 });
 
 export const breadcrumbJsonLd = (items: { name: string; path: string }[]) => ({
@@ -79,7 +94,7 @@ export const faqJsonLd = (faqs: { q: string; a: string }[]) => ({
   mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
 });
 
-export const serviceJsonLd = (s: (typeof SERVICES)[number]) => ({
+export const serviceJsonLd = (s: { name: string; description: string; slug: string }, path?: string) => ({
   "@context": "https://schema.org",
   "@type": "Service",
   name: s.name,
@@ -87,7 +102,27 @@ export const serviceJsonLd = (s: (typeof SERVICES)[number]) => ({
   serviceType: s.name,
   provider: { "@id": `${SITE.url}/#organization` },
   areaServed: "Delhi NCR, India",
-  url: `${SITE.url}/services/${s.slug}`,
+  url: `${SITE.url}${path || `/services/${s.slug}`}`,
+});
+
+export const localBusinessJsonLd = (loc: Location) => ({
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", "ProfessionalService"],
+  "@id": `${SITE.url}/locations/${loc.slug}#business`,
+  name: `${SITE.name} - ${loc.name}`,
+  url: `${SITE.url}/locations/${loc.slug}`,
+  parentOrganization: { "@id": `${SITE.url}/#organization` },
+  description: loc.intro,
+  email: SITE.email,
+  telephone: SITE.phone,
+  areaServed: [{ "@type": "City", name: loc.name }, ...loc.areas.map((a) => ({ "@type": "Place", name: `${a}, ${loc.name}` }))],
+  address: { "@type": "PostalAddress", addressLocality: loc.name, addressRegion: "Delhi NCR", addressCountry: "IN" },
+  priceRange: "₹₹",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: `Digital Marketing Services in ${loc.name}`,
+    itemListElement: SERVICE_CATEGORIES.map((c) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: `${c.name} in ${loc.name}`, url: `${SITE.url}/services/${c.slug}` } })),
+  },
 });
 
 export const articleJsonLd = (p: Post) => ({

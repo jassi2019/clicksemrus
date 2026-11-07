@@ -76,11 +76,18 @@ export function related(all: Post[], current: Post, n = 3) {
 export type Lead = {
   id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone: string;
+  company?: string;
+  website?: string;
+  services?: string[];
   service?: string;
   budget?: string;
   message?: string;
+  consent?: boolean;
+  source?: string;
   page?: string;
   createdAt: string;
   status: "new" | "contacted" | "won" | "lost";
@@ -104,6 +111,7 @@ export type Settings = {
   announcement?: string;
   autoPublishTrends?: boolean;
   trendGeo?: string;
+  showStatsNote?: boolean;
 };
 
 export async function getSettings(): Promise<Settings> {

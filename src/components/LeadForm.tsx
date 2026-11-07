@@ -5,21 +5,50 @@ import { CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 import { SERVICES } from "@/lib/site";
 import { trackEvent } from "./Tracker";
 
+const SERVICE_OPTIONS = [...SERVICES.map((s) => s.name), "Complete Digital Marketing"];
+
 export default function LeadForm({ compact = false, source = "" }: { compact?: boolean; source?: string }) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [error, setError] = useState("");
+  const [services, setServices] = useState<string[]>([]);
+  const [phone, setPhone] = useState("");
   const path = usePathname();
+
+  function toggle(name: string) {
+    setServices((cur) => (cur.includes(name) ? cur.filter((x) => x !== name) : [...cur, name]));
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setState("loading");
     const fd = new FormData(e.currentTarget);
-    const body = Object.fromEntries(fd.entries());
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length !== 10) {
+      setError("Enter a 10-digit Indian mobile number.");
+      return;
+    }
+    setError("");
+    setState("loading");
+    const body = {
+      firstName: fd.get("firstName"),
+      lastName: fd.get("lastName"),
+      company: fd.get("company"),
+      website: fd.get("website"),
+      email: fd.get("email"),
+      phone: `+91${digits}`,
+      services,
+      message: fd.get("message"),
+      consent: fd.get("consent") === "on",
+      hp: fd.get("hp"),
+      page: source || path,
+    };
     try {
-      const res = await fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...body, page: source || path }) });
-      if (!res.ok) throw new Error();
+      const res = await fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (!res.ok || !json.ok) throw new Error(json.error || "Request failed");
       setState("done");
       trackEvent("lead_submitted");
-    } catch {
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
       setState("error");
     }
   }
@@ -33,34 +62,61 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
       </div>
     );
 
+  const full = compact ? "" : "sm:col-span-2";
+
   return (
     <form onSubmit={onSubmit} className={`grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
-      <input name="website" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-      <input required name="name" placeholder="Your name" className="input" autoComplete="name" />
-      <input required name="phone" placeholder="Phone / WhatsApp number" className="input" type="tel" autoComplete="tel" pattern="[0-9+ ]{10,15}" />
-      <input required name="email" placeholder="Email address" className="input" type="email" autoComplete="email" />
-      <select name="service" className="input" defaultValue="">
-        <option value="" disabled>Service you need</option>
-        {SERVICES.map((s) => (
-          <option key={s.slug} value={s.name}>{s.name}</option>
-        ))}
-        <option value="Complete Digital Marketing">Complete Digital Marketing</option>
-      </select>
-      <select name="budget" className="input" defaultValue="">
-        <option value="" disabled>Monthly budget</option>
-        <option>Under Rs 25,000</option>
-        <option>Rs 25,000 to 50,000</option>
-        <option>Rs 50,000 to 1,00,000</option>
-        <option>Rs 1,00,000 to 3,00,000</option>
-        <option>Above Rs 3,00,000</option>
-      </select>
-      {!compact && <input name="company" placeholder="Business / website (optional)" className="input" />}
-      <textarea name="message" placeholder="Tell us about your goals" className={`input min-h-24 ${compact ? "" : "sm:col-span-2"}`} />
-      <button disabled={state === "loading"} className={`btn btn-primary ${compact ? "" : "sm:col-span-2"} disabled:opacity-60`}>
+      {/* honeypot */}
+      <input name="hp" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+      <input required name="firstName" placeholder="First name" className="input" autoComplete="given-name" maxLength={60} />
+      <input required name="lastName" placeholder="Last name" className="input" autoComplete="family-name" maxLength={60} />
+      <input required name="company" placeholder="Company / brand" className="input" autoComplete="organization" maxLength={100} />
+      <input name="website" placeholder="Website (optional)" className="input" type="url" autoComplete="url" maxLength={200} inputMode="url" />
+      <input required name="email" placeholder="Email address" className="input" type="email" autoComplete="email" maxLength={120} />
+      <div className="flex input !p-0 overflow-hidden items-stretch">
+        <span className="px-3 grid place-items-center text-sm font-semibold text-muted bg-surface-2 border-r border-border select-none shrink-0">IN +91</span>
+        <input
+          required
+          name="phone"
+          placeholder="98765 43210"
+          className="flex-1 min-w-0 bg-transparent px-3 py-[.85rem] outline-none"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel-national"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, "").slice(0, 11))}
+          aria-label="Mobile number"
+        />
+      </div>
+      <fieldset className={full}>
+        <legend className="text-sm font-semibold mb-2">What do you need help with?</legend>
+        <div className="flex flex-wrap gap-2">
+          {SERVICE_OPTIONS.map((name) => {
+            const on = services.includes(name);
+            return (
+              <button
+                type="button"
+                key={name}
+                aria-pressed={on}
+                onClick={() => toggle(name)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${on ? "bg-brand text-white border-brand" : "border-border bg-surface hover:bg-surface-2"}`}
+              >
+                {name}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+      <textarea name="message" placeholder="Tell us about your goals" className={`input min-h-24 ${full}`} maxLength={2000} />
+      <label className={`flex gap-3 items-start text-xs text-muted ${full}`}>
+        <input required name="consent" type="checkbox" className="mt-0.5 accent-[#4f46e5]" />
+        <span>I agree to be contacted by ClickSemrus on email/WhatsApp about my enquiry.</span>
+      </label>
+      <button disabled={state === "loading"} className={`btn btn-primary ${full} disabled:opacity-60`}>
         {state === "loading" ? <Loader2 className="animate-spin" size={18} /> : <>Get My Free Growth Plan <ArrowRight size={18} /></>}
       </button>
-      {state === "error" && <p className="text-accent text-sm sm:col-span-2">Something went wrong. Please WhatsApp us instead.</p>}
-      <p className={`text-xs text-muted ${compact ? "" : "sm:col-span-2"}`}>No spam. Free audit, no obligation. We reply within 2 business hours.</p>
+      {error && <p className={`text-accent text-sm ${full}`} role="alert">{error}</p>}
+      <p className={`text-xs text-muted ${full}`}>No spam. Free audit, no obligation. We reply within 2 business hours.</p>
     </form>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import * as THREE from "three";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -13,8 +14,7 @@ const ease = (t: number) => t * t * (3 - 2 * t);
 
 /** Camera: starts in front of the sphere, flies through the exploded particle field. */
 function Rig({ progress, mouse, mobile }: { progress: P; mouse: React.MutableRefObject<{ x: number; y: number }>; mobile: boolean }) {
-  const { camera } = useThree();
-  useFrame(() => {
+  useFrame(({ camera }) => {
     const p = progress.current;
     const z = lerp(mobile ? 10 : 8, -9, ease(p));
     const tx = mobile ? 0 : lerp(1.6, 0, range(p, 0.6, 0.9)) + mouse.current.x * 0.3;
@@ -27,36 +27,53 @@ function Rig({ progress, mouse, mobile }: { progress: P; mouse: React.MutableRef
   return null;
 }
 
+/** Deterministic pseudo-random (mulberry32) so particle layout is stable and pure. */
+function prng(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+type Particle = { dir: THREE.Vector3; r: number; s: number; spin: number };
+const PARTICLE_CACHE = new Map<number, { data: Particle[]; colors: Float32Array }>();
+
+function particleData(count: number) {
+  const hit = PARTICLE_CACHE.get(count);
+  if (hit) return hit;
+  const rnd = prng(count * 7919);
+  const data: Particle[] = [];
+  const colors = new Float32Array(count * 3);
+  const a = new THREE.Color("#ffffff"), b = new THREE.Color("#4f46e5"), d = new THREE.Color("#0b0b14");
+  for (let i = 0; i < count; i++) {
+    // fibonacci sphere distribution
+    const y = 1 - (i / (count - 1)) * 2;
+    const rad = Math.sqrt(1 - y * y);
+    const th = Math.PI * (3 - Math.sqrt(5)) * i;
+    data.push({ dir: new THREE.Vector3(Math.cos(th) * rad, y, Math.sin(th) * rad), r: 1.9 + rnd() * 0.25, s: 0.06 + rnd() * 0.09, spin: rnd() * Math.PI * 2 });
+    const pick = rnd();
+    const col = pick < 0.68 ? a : pick < 0.92 ? b : d;
+    colors.set([col.r, col.g, col.b], i * 3);
+  }
+  const out = { data, colors };
+  PARTICLE_CACHE.set(count, out);
+  return out;
+}
+
 /** 700 glossy micro-spheres packed into a ball that bursts outward as you scroll. */
 function ParticleSphere({ progress, count }: { progress: P; count: number }) {
   const ref = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const data = useMemo(() => {
-    const arr: { dir: THREE.Vector3; r: number; s: number; spin: number }[] = [];
-    for (let i = 0; i < count; i++) {
-      // fibonacci sphere distribution
-      const y = 1 - (i / (count - 1)) * 2;
-      const rad = Math.sqrt(1 - y * y);
-      const th = Math.PI * (3 - Math.sqrt(5)) * i;
-      const dir = new THREE.Vector3(Math.cos(th) * rad, y, Math.sin(th) * rad);
-      arr.push({ dir, r: 1.9 + Math.random() * 0.25, s: 0.06 + Math.random() * 0.09, spin: Math.random() * Math.PI * 2 });
-    }
-    return arr;
-  }, [count]);
-  const colors = useMemo(() => {
-    const c = new Float32Array(count * 3);
-    const a = new THREE.Color("#ffffff"), b = new THREE.Color("#4f46e5"), d = new THREE.Color("#0b0b14");
-    for (let i = 0; i < count; i++) {
-      const pick = Math.random();
-      const col = pick < 0.68 ? a : pick < 0.92 ? b : d;
-      c.set([col.r, col.g, col.b], i * 3);
-    }
-    return c;
-  }, [count]);
+  const dummyRef = useRef<THREE.Object3D | null>(null);
+  const { data, colors } = particleData(count);
 
   useFrame((s) => {
     const m = ref.current;
     if (!m) return;
+    const dummy = dummyRef.current ?? (dummyRef.current = new THREE.Object3D());
     const t = s.clock.elapsedTime;
     const p = progress.current;
     const burst = ease(range(p, 0.12, 0.75)); // 0 = packed sphere, 1 = fully exploded
@@ -130,12 +147,9 @@ export default function ScrollScene() {
   const progress = useRef(0);
   const mouse = useRef({ x: 0, y: 0 });
   const [p, setP] = useState(0);
-  const [ready, setReady] = useState(false);
-  const [mobile, setMobile] = useState(false);
+  const mobile = useMediaQuery("(max-width: 767px)");
 
   useEffect(() => {
-    setMobile(window.innerWidth < 768);
-    setReady(true);
     let raf = 0;
     const onScroll = () => {
       cancelAnimationFrame(raf);
@@ -150,10 +164,9 @@ export default function ScrollScene() {
       });
     };
     onScroll();
-    const onResize = () => { setMobile(window.innerWidth < 768); onScroll(); };
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onResize); cancelAnimationFrame(raf); };
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
   return (
@@ -165,7 +178,6 @@ export default function ScrollScene() {
       <div className="sticky top-0 h-[100svh] overflow-hidden bg-white">
         <div className="absolute inset-0 dots" />
         <div className="absolute inset-0" aria-hidden="true">
-          {ready && (
             <Canvas camera={{ position: [1.6, 0, 8], fov: mobile ? 60 : 50 }} dpr={[1, mobile ? 1.5 : 2]} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
               <ambientLight intensity={1.1} />
               <directionalLight position={[5, 6, 6]} intensity={2.4} />
@@ -175,7 +187,6 @@ export default function ScrollScene() {
               <ParticleSphere progress={progress} count={mobile ? 380 : 720} />
               <Core progress={progress} />
             </Canvas>
-          )}
         </div>
 
         {/* stage text overlays */}

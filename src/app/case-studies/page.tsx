@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, TrendingUp } from "lucide-react";
-import { SITE } from "@/lib/site";
+import { SITE, WORK, serviceUrl } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import Reveal from "@/components/Reveal";
 import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
+import WorkGrid from "@/components/WorkGrid";
 
 export const metadata = pageMeta({
-  title: "Results & Case Studies | Digital Marketing Agency Delhi NCR",
-  description: `See how ${SITE.name} grows brands in Delhi NCR: SEO traffic growth, Meta Ads ROAS, Google Ads cost per lead and social media results across industries.`,
+  title: "Our Work & Results | Digital Marketing Agency Delhi NCR",
+  description: `See how ${SITE.name} grows brands in Delhi NCR: websites, ad creatives and reels with real outcomes across SEO, Meta Ads, Google Ads and social media.`,
   path: "/case-studies",
+  keywords: ["digital marketing case studies delhi", "marketing agency portfolio", "website design portfolio delhi ncr"],
 });
 
 const CASES = [
@@ -26,23 +28,36 @@ export default function CaseStudies() {
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Results", path: "/case-studies" }])} />
       <section className="container-x pt-16 md:pt-24 pb-10 max-w-3xl">
-        <p className="eyebrow">Results</p>
-        <h1 className="font-display text-4xl md:text-6xl font-bold mt-3">Numbers our clients love to share</h1>
-        <p className="text-muted text-lg mt-5">Representative results from recent engagements across Delhi NCR. Client names are kept private; full case decks are shared on request.</p>
+        <p className="eyebrow">Our work</p>
+        <h1 className="font-display text-4xl md:text-6xl font-bold mt-3">Work we&apos;re proud of</h1>
+        <p className="text-muted text-lg mt-5">Websites, ad creatives and reels for businesses across Delhi NCR. Client names are shortened on request; full decks are shared on a call.</p>
       </section>
-      <section className="container-x grid md:grid-cols-2 lg:grid-cols-3 gap-5 pb-10">
-        {CASES.map((c, i) => (
-          <Reveal key={c.industry} delay={i * 60}>
-            <article className="card p-6 h-full flex flex-col">
-              <p className="text-xs text-muted">{c.industry}</p>
-              <p className="text-sm font-semibold text-brand-2 mt-1">{c.service}</p>
-              <p className="font-display text-5xl font-bold gradient-text mt-5">{c.metric}</p>
-              <p className="font-semibold flex items-center gap-1 mt-1"><TrendingUp size={16} className="text-lime" /> {c.label}</p>
-              <p className="text-sm text-muted mt-4 flex-1">{c.story}</p>
-              <Link href={`/services/${c.slug}`} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-2 mt-5">How we do it <ArrowRight size={14} /></Link>
-            </article>
+      <section className="container-x pb-16">
+        <WorkGrid items={WORK} />
+      </section>
+
+      <section className="bg-bg-2 border-y border-border py-20">
+        <div className="container-x">
+          <Reveal className="max-w-2xl">
+            <p className="eyebrow">Results</p>
+            <h2 className="font-display text-3xl md:text-5xl font-bold mt-3">Numbers our clients love to share</h2>
+            <p className="text-muted mt-4">Representative results from recent engagements across Delhi NCR.</p>
           </Reveal>
-        ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+            {CASES.map((c, i) => (
+              <Reveal key={c.industry} delay={(i % 3) * 90}>
+                <article className="card p-6 h-full flex flex-col">
+                  <p className="text-xs text-muted">{c.industry}</p>
+                  <p className="text-sm font-semibold text-brand mt-1">{c.service}</p>
+                  <p className="font-display text-5xl font-bold gradient-text mt-5">{c.metric}</p>
+                  <p className="font-semibold flex items-center gap-1 mt-1"><TrendingUp size={16} className="text-lime" /> {c.label}</p>
+                  <p className="text-sm text-muted mt-4 flex-1">{c.story}</p>
+                  <Link href={serviceUrl(c.slug)} className="inline-flex items-center gap-1 text-sm font-semibold text-brand mt-5">How we do it <ArrowRight size={14} /></Link>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </section>
       <CTA title="Want results like these?" sub="Book a free strategy call. We will show you the exact playbook for your industry." />
     </>

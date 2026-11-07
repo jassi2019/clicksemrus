@@ -18,6 +18,8 @@ export type Store = {
   lpush(key: string, value: unknown): Promise<void>;
   lrange<T>(key: string, start: number, stop: number): Promise<T[]>;
   ltrim(key: string, start: number, stop: number): Promise<void>;
+  /** Atomic counter that expires `ttlSec` after its first increment. Returns the new value. */
+  incr(key: string, ttlSec: number): Promise<number>;
 };
 
 const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
@@ -50,12 +52,17 @@ function redisStore(): Store {
     lpush: async (k, v) => { await r.lpush(k, JSON.stringify(v)); },
     lrange: async (k, a, b) => ((await r.lrange(k, a, b)) as unknown[]).map((x) => parse(x)) as never,
     ltrim: async (k, a, b) => { await r.ltrim(k, a, b); },
+    incr: async (k, ttl) => {
+      const n = await r.incr(k);
+      if (n === 1) await r.expire(k, ttl);
+      return n;
+    },
   };
 }
 
-type Mem = { kv: Map<string, unknown>; h: Map<string, Map<string, number>>; s: Map<string, Set<string>>; l: Map<string, unknown[]> };
+type Mem = { kv: Map<string, unknown>; h: Map<string, Map<string, number>>; s: Map<string, Set<string>>; l: Map<string, unknown[]>; c: Map<string, { n: number; exp: number }> };
 const g = globalThis as unknown as { __cs_mem?: Mem };
-const mem: Mem = g.__cs_mem || (g.__cs_mem = { kv: new Map(), h: new Map(), s: new Map(), l: new Map() });
+const mem: Mem = g.__cs_mem || (g.__cs_mem = { kv: new Map(), h: new Map(), s: new Map(), l: new Map(), c: new Map() });
 
 function memStore(): Store {
   return {
@@ -74,6 +81,13 @@ function memStore(): Store {
     lpush: async (k, v) => { const l = mem.l.get(k) || []; l.unshift(structuredClone(v)); mem.l.set(k, l); },
     lrange: async (k, a, b) => { const l = mem.l.get(k) || []; return structuredClone(l.slice(a, b === -1 ? undefined : b + 1)) as never; },
     ltrim: async (k, a, b) => { const l = mem.l.get(k) || []; mem.l.set(k, l.slice(a, b === -1 ? undefined : b + 1)); },
+    incr: async (k, ttl) => {
+      const now = Date.now();
+      const cur = mem.c.get(k);
+      const next = cur && cur.exp > now ? { n: cur.n + 1, exp: cur.exp } : { n: 1, exp: now + ttl * 1000 };
+      mem.c.set(k, next);
+      return next.n;
+    },
   };
 }
 

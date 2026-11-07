@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import MobileBar from "@/components/MobileBar";
+import ChatWidgetLoader from "@/components/ChatWidgetLoader";
 import JsonLd from "@/components/JsonLd";
 import { orgJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getSettings } from "@/lib/posts";
@@ -35,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>));
   return (
     <html lang="en" className={`${inter.variable} ${display.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col has-mobile-bar">
         <JsonLd data={[orgJsonLd(), websiteJsonLd()]} />
         {settings.announcement && (
           <div className="bg-gradient-to-r from-brand to-brand-2 text-center text-xs font-semibold text-white py-2 px-4">{settings.announcement}</div>
@@ -45,6 +47,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
         <WhatsAppButton number={settings.whatsapp || SITE.whatsapp} />
+        <ChatWidgetLoader enabled={Boolean(process.env.ANTHROPIC_API_KEY)} />
+        <MobileBar phone={settings.phone || SITE.phone} />
         <Tracker />
         {settings.gaId && (
           <>
