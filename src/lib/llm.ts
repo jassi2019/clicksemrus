@@ -31,11 +31,11 @@ function repairJson(src: string): string {
     if (inStr) {
       if (ch === "\\") { out += ch + (src[i + 1] ?? ""); i++; continue; }
       if (ch === '"') { inStr = false; out += ch; continue; }
-      if (ch === "
-") { out += "\n"; continue; }
-      if (ch === "") { out += "\r"; continue; }
-      if (ch === "	") { out += "\t"; continue; }
-      if (ch < " ") continue;
+      const code = ch.charCodeAt(0);
+      if (code === 10) { out += "\n"; continue; }
+      if (code === 13) { out += "\r"; continue; }
+      if (code === 9) { out += "\t"; continue; }
+      if (code < 32) continue;
       out += ch;
     } else {
       if (ch === '"') inStr = true;
