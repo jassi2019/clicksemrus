@@ -151,13 +151,17 @@ export default function GrowthPopup() {
   return (
     <>
       {minimised && !open && (
-        <button
-          type="button"
-          onClick={reopen}
-          className="gp-tab fixed left-4 bottom-20 md:bottom-5 z-40 inline-flex items-center gap-2 rounded-full bg-[#0b0b14] text-white text-xs font-bold pl-2 pr-4 py-2 shadow-[0_14px_30px_-12px_rgba(11,11,20,.7)] hover:bg-brand transition"
-        >
-          <span className="grid place-items-center w-6 h-6 rounded-full bg-sun text-[#0b0b14]"><Zap size={13} /></span>
-          Get my growth score
+        <button type="button" onClick={reopen} aria-label="Get my free growth score" className="gp-tab fixed left-4 bottom-20 md:bottom-5 z-40">
+          <span className="gp-tab__glow" aria-hidden="true" />
+          <span className="gp-tab__inner">
+            <span className="gp-tab__icon"><Zap size={15} /></span>
+            <span className="gp-tab__text">
+              <span className="gp-tab__kicker">Free · 30 sec</span>
+              <span className="gp-tab__label">Get my growth score</span>
+            </span>
+            <span className="gp-tab__arrow"><ArrowRight size={14} /></span>
+          </span>
+          <span className="gp-tab__badge" aria-hidden="true">New</span>
         </button>
       )}
 
