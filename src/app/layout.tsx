@@ -8,7 +8,6 @@ import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileBar from "@/components/MobileBar";
-import ChatWidgetLoader from "@/components/ChatWidgetLoader";
 import JsonLd from "@/components/JsonLd";
 import { orgJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getSettings } from "@/lib/posts";
@@ -47,7 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main className="flex-1 pt-20">{children}</main>
         <Footer />
         <WhatsAppButton number={settings.whatsapp || SITE.whatsapp} />
-        <ChatWidgetLoader enabled={Boolean(process.env.ANTHROPIC_API_KEY)} />
         <MobileBar phone={settings.phone || SITE.phone} />
         <Tracker />
         {settings.gaId && (
