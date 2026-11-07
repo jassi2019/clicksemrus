@@ -33,6 +33,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#07070f", width: "device-width", initialScale: 1 };
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-WXKGP7JR";
+const GA_FALLBACK = process.env.NEXT_PUBLIC_GA_ID || "";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>));
@@ -53,10 +54,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <MobileBar phone={settings.phone || SITE.phone} />
         <GrowthPopup />
         <Tracker />
-        {settings.gaId && (
+        {(settings.gaId || GA_FALLBACK) && (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.gaId}`} strategy="afterInteractive" />
-            <Script id="ga4" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.gaId}');`}</Script>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.gaId || GA_FALLBACK}`} strategy="afterInteractive" />
+            <Script id="ga4" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.gaId || GA_FALLBACK}');`}</Script>
           </>
         )}
         {settings.metaPixel && (

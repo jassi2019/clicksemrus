@@ -17,7 +17,7 @@ export type Post = {
   author: string;
   seoTitle?: string;
   seoDescription?: string;
-  source: "manual" | "trend" | "seed";
+  source: "manual" | "trend" | "seed" | "keyword";
   trendTopic?: string;
   trendTraffic?: string;
   outbound?: { title: string; url: string; source: string }[];
@@ -112,6 +112,7 @@ export type Settings = {
   autoPublishTrends?: boolean;
   trendGeo?: string;
   showStatsNote?: boolean;
+  keywordPostsPerDay?: number;
 };
 
 export async function getSettings(): Promise<Settings> {

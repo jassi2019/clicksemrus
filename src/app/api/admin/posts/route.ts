@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/auth";
 import { savePost, deletePost, getAllPosts, type Post } from "@/lib/posts";
+import { notifyIndex } from "@/lib/indexing";
 
 async function guard() {
   if (!(await isAdmin())) return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     author: b.author || "ClickSemrus Team",
     seoTitle: b.seoTitle,
     seoDescription: b.seoDescription,
-    source: b.source || "manual",
+    source: (b.source as Post["source"]) || "manual",
     trendTopic: b.trendTopic,
     trendTraffic: b.trendTraffic,
     outbound: b.outbound,
@@ -43,7 +44,8 @@ export async function POST(req: NextRequest) {
   revalidatePath("/blog");
   revalidatePath(`/blog/${saved.slug}`);
   revalidatePath("/");
-  return NextResponse.json({ ok: true, post: saved });
+  const indexed = saved.status === "published" ? await notifyIndex([`/blog/${saved.slug}`, "/blog", "/sitemap.xml"]) : [];
+  return NextResponse.json({ ok: true, post: saved, indexed });
 }
 
 export async function DELETE(req: NextRequest) {
