@@ -22,11 +22,35 @@ export function aiProviderLabel() {
   return p === "claude" ? "Claude" : p === "gemini" ? "Gemini" : p === "groq" ? "Groq" : "template";
 }
 
+/** Escape raw control characters that some models emit inside JSON string literals. */
+function repairJson(src: string): string {
+  let out = "";
+  let inStr = false;
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (inStr) {
+      if (ch === "\\") { out += ch + (src[i + 1] ?? ""); i++; continue; }
+      if (ch === '"') { inStr = false; out += ch; continue; }
+      if (ch === "
+") { out += "\n"; continue; }
+      if (ch === "") { out += "\r"; continue; }
+      if (ch === "	") { out += "\t"; continue; }
+      if (ch < " ") continue;
+      out += ch;
+    } else {
+      if (ch === '"') inStr = true;
+      out += ch;
+    }
+  }
+  return out;
+}
+
 function extractJson<T>(text: string): T {
   const cleaned = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
   const start = cleaned.indexOf("{");
   const end = cleaned.lastIndexOf("}");
-  return JSON.parse(cleaned.slice(start, end + 1)) as T;
+  const slice = cleaned.slice(start, end + 1);
+  try { return JSON.parse(slice) as T; } catch { return JSON.parse(repairJson(slice)) as T; }
 }
 
 async function viaClaude<T>(system: string, user: string): Promise<T> {
