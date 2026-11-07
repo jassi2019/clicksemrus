@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OG() {
-  const logoBuf = await fetch(new URL("../../public/logo.png", import.meta.url)).then((r) => r.arrayBuffer());
+  const logoBuf = await fetch(new URL("../../public/logo-160.png", import.meta.url)).then((r) => r.arrayBuffer());
   const bytes = new Uint8Array(logoBuf);
   let bin = "";
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
