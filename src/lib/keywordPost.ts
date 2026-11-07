@@ -1,4 +1,5 @@
 import { slugify } from "./markdown";
+import { db } from "./db";
 import type { Post } from "./posts";
 import type { Opportunity } from "./gsc";
 import { SITE } from "./site";
@@ -113,6 +114,7 @@ export async function buildKeywordPost(o: Opportunity, date = new Date()): Promi
     return { ...base, ...ai };
   } catch (e) {
     console.error("keyword post AI failed:", (e as Error).message);
+    try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "keyword", message: (e as Error).message.slice(0, 500) }); } catch {}
     return base;
   }
 }

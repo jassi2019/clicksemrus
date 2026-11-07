@@ -1,4 +1,5 @@
 import { slugify } from "./markdown";
+import { db } from "./db";
 import type { Post } from "./posts";
 import { SITE } from "./site";
 import { writeWithClaude } from "./ai";
@@ -240,6 +241,7 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
     return { ...base, ...ai };
   } catch (e) {
     console.error("trend post AI failed:", (e as Error).message);
+    try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "trend", message: (e as Error).message.slice(0, 500) }); } catch {}
     return base;
   }
 }

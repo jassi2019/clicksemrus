@@ -7,14 +7,15 @@ import { hasGoogleAuth } from "@/lib/google";
 import { hasAiWriter, generateJson, aiProviderLabel } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
+import { db } from "@/lib/db";
 
 export const maxDuration = 300;
 
 /** GET: snapshot + index log + config status. POST {action}: refresh | index(urls) | inspect(url) | write(query) | indexAll */
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
-  const [snapshot, log] = await Promise.all([getGscSnapshot(), indexLog(60)]);
-  return NextResponse.json({ ok: true, snapshot, log, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter() } });
+  const [snapshot, log, aiError] = await Promise.all([getGscSnapshot(), indexLog(60), db.get("ai:lastError").catch(() => null)]);
+  return NextResponse.json({ ok: true, snapshot, log, aiError, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter() } });
 }
 
 export async function POST(req: NextRequest) {
