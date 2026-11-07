@@ -306,10 +306,12 @@ export type WorkItem = {
   challenge: string;
   approach: string;
   services: string[];
-  /** Live site and full-page screenshots (desktop 1440x3600, mobile 390x4200). */
+  /** Live site and full-page screenshots with their pixel sizes. */
   url?: string;
   shotDesktop?: string;
+  shotDesktopSize?: [number, number];
   shotMobile?: string;
+  shotMobileSize?: [number, number];
   instagram?: string;
   facebook?: string;
 };
@@ -324,7 +326,9 @@ export const WORK: WorkItem[] = [
     cover: "/work/delhidental.jpg",
     url: "https://delhidental.com/",
     shotDesktop: "/work/shots/delhidental-desktop.jpg",
+    shotDesktopSize: [1200, 11126],
     shotMobile: "/work/shots/delhidental-mobile.jpg",
+    shotMobileSize: [390, 16279],
     facebook: "https://www.facebook.com/DrKathuriasDentistry/",
     result: "Ranking for 'best dentist in Delhi' with a conversion-first site",
     summary: "A fast WordPress rebuild for a 30-year-old multi-speciality clinic: treatment pages, celebrity trust section, click-to-call and WhatsApp booking.",
@@ -341,7 +345,9 @@ export const WORK: WorkItem[] = [
     cover: "/work/smiledentalcarecentre.jpg",
     url: "https://smiledentalcarecentre.com/",
     shotDesktop: "/work/shots/smiledentalcarecentre-desktop.jpg",
+    shotDesktopSize: [1200, 11969],
     shotMobile: "/work/shots/smiledentalcarecentre-mobile.jpg",
+    shotMobileSize: [390, 24000],
     instagram: "https://www.instagram.com/smiledentalcarecentre/",
     facebook: "https://www.facebook.com/smiledentalcarecentre1/",
     result: "Appointment form + WhatsApp booking above the fold on every page",
@@ -359,7 +365,9 @@ export const WORK: WorkItem[] = [
     cover: "/work/sdcc-international.jpg",
     url: "https://international.smiledentalcarecentre.com/",
     shotDesktop: "/work/shots/sdcc-international-desktop.jpg",
+    shotDesktopSize: [1200, 8932],
     shotMobile: "/work/shots/sdcc-international-mobile.jpg",
+    shotMobileSize: [390, 15363],
     result: "Treatment-plan funnel for NRI patients: country, city, treatment, WhatsApp",
     summary: "A dedicated international site with USD pricing, a fly-in planner widget and WhatsApp-first conversion for patients in the US, UK, Canada and Australia.",
     challenge: "Overseas patients needed prices, credentials and travel logistics in one place, in their currency, before they would message.",
@@ -375,7 +383,9 @@ export const WORK: WorkItem[] = [
     cover: "/work/purexa.jpg",
     url: "https://purexa.in/",
     shotDesktop: "/work/shots/purexa-desktop.jpg",
+    shotDesktopSize: [1200, 9468],
     shotMobile: "/work/shots/purexa-mobile.jpg",
+    shotMobileSize: [390, 8473],
     instagram: "https://www.instagram.com/purexa.in/",
     facebook: "https://www.facebook.com/Purexaoralwellness/",
     result: "Shopify store with combos, spin-to-win offers and WhatsApp support",
@@ -393,7 +403,9 @@ export const WORK: WorkItem[] = [
     cover: "/work/blameless.jpg",
     url: "https://blameless.in/",
     shotDesktop: "/work/shots/blameless-desktop.jpg",
+    shotDesktopSize: [1200, 6056],
     shotMobile: "/work/shots/blameless-mobile.jpg",
+    shotMobileSize: [390, 6228],
     instagram: "https://www.instagram.com/liv.blameless/",
     facebook: "https://www.facebook.com/share/12LcMx1zN78/",
     result: "Clean, editorial storefront with offer ticker and chat support",

@@ -16,35 +16,44 @@ const TABS: { key: "all" | WorkType; label: string }[] = [
 ];
 const TYPE_LABEL: Record<WorkType, string> = { website: "Website", creative: "Creative", reel: "Reel" };
 
-/** Screenshot dimensions captured by the portfolio script. */
-const DESK = { w: 1440, h: 3600 };
-const MOB = { w: 390, h: 4200 };
+/** Default screenshot dimensions (overridden per item when known). */
+const DESK: [number, number] = [1200, 6000];
+const MOB: [number, number] = [390, 8000];
+
+/** CSS vars for the scroll animation: distance and duration from image height vs. frame height. */
+function scrollVars(size: [number, number], frameAspect: number): React.CSSProperties {
+  const [w, h] = size;
+  const frameH = w / frameAspect; // frame height in image pixels
+  const shift = Math.max(0, 1 - frameH / h); // fraction of image height to travel
+  const dur = Math.max(6, Math.round((h - frameH) / 110)); // about 110px per second
+  return { "--shift": `${(-shift * 100).toFixed(2)}%`, "--dur": `${dur}s`, "--play": `${Math.round(dur * 2.2)}s` } as React.CSSProperties;
+}
 
 function host(url?: string) {
   try { return url ? new URL(url).host.replace(/^www\./, "") : ""; } catch { return ""; }
 }
 
 /** Browser chrome around a tall screenshot; the image scrolls on hover (desktop) or always (when `play`). */
-function BrowserFrame({ src, alt, play, className = "" }: { src: string; alt: string; play?: boolean; className?: string }) {
+function BrowserFrame({ src, alt, play, className = "", size = DESK }: { src: string; alt: string; play?: boolean; className?: string; size?: [number, number] }) {
   return (
-    <div className={`work-frame ${play ? "is-playing" : ""} ${className}`}>
+    <div className={`work-frame ${play ? "is-playing" : ""} ${className}`} style={scrollVars(size, 3 / 2)}>
       <div className="work-frame__bar">
         <span /><span /><span />
         <i className="work-frame__url">{alt}</i>
       </div>
       <div className="work-frame__view">
-        <Image src={src} alt={alt} width={DESK.w} height={DESK.h} className="work-frame__img" sizes="(min-width: 1024px) 420px, (min-width: 640px) 50vw, 100vw" />
+        <Image src={src} alt={alt} width={size[0]} height={size[1]} className="work-frame__img" sizes="(min-width: 1024px) 420px, (min-width: 640px) 50vw, 100vw" />
       </div>
     </div>
   );
 }
 
-function PhoneFrame({ src, alt, play }: { src: string; alt: string; play?: boolean }) {
+function PhoneFrame({ src, alt, play, size = MOB }: { src: string; alt: string; play?: boolean; size?: [number, number] }) {
   return (
-    <div className={`work-phone ${play ? "is-playing" : ""}`}>
+    <div className={`work-phone ${play ? "is-playing" : ""}`} style={scrollVars(size, 390 / 844)}>
       <span className="work-phone__notch" />
       <div className="work-phone__view">
-        <Image src={src} alt={alt} width={MOB.w} height={MOB.h} className="work-phone__img" sizes="260px" />
+        <Image src={src} alt={alt} width={size[0]} height={size[1]} className="work-phone__img" sizes="260px" />
       </div>
     </div>
   );
@@ -88,7 +97,7 @@ export default function WorkGrid({ items, limit, showTabs = true }: { items: Wor
           <article key={w.slug} className="card overflow-hidden group flex flex-col work-card" style={{ animationDelay: `${(i % 6) * 70}ms` }}>
             {w.shotDesktop ? (
               <button type="button" onClick={() => openPreview(w)} className="relative block w-full text-left bg-[#0b0b14] p-3 pb-0" aria-label={`Live preview of ${w.title}`}>
-                <BrowserFrame src={w.shotDesktop} alt={host(w.url) || w.title} />
+                <BrowserFrame src={w.shotDesktop} alt={host(w.url) || w.title} size={w.shotDesktopSize} />
                 <span className="work-hint absolute left-1/2 -translate-x-1/2 bottom-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 text-[#0b0b14] text-[11px] font-bold px-3 py-1.5 shadow-lg">
                   <MousePointer2 size={12} /> <span className="hidden sm:inline">Hover to scroll ·</span> Tap for live preview
                 </span>
@@ -144,9 +153,9 @@ export default function WorkGrid({ items, limit, showTabs = true }: { items: Wor
             <div className="relative flex-1 overflow-hidden p-4 sm:p-8 grid place-items-center bg-[radial-gradient(ellipse_at_top,rgba(79,70,229,.35),transparent_60%)]">
               <div className="absolute inset-0 dots opacity-30" />
               {view === "desktop" ? (
-                <BrowserFrame key={`d-${active.slug}`} src={active.shotDesktop!} alt={host(active.url) || active.title} play className="w-full max-w-[920px]" />
+                <BrowserFrame key={`d-${active.slug}`} src={active.shotDesktop!} alt={host(active.url) || active.title} play className="w-full max-w-[920px]" size={active.shotDesktopSize} />
               ) : (
-                <PhoneFrame key={`m-${active.slug}`} src={active.shotMobile!} alt={active.title} play />
+                <PhoneFrame key={`m-${active.slug}`} src={active.shotMobile!} alt={active.title} play size={active.shotMobileSize} />
               )}
             </div>
 

@@ -63,10 +63,10 @@ export default async function WorkPage({ params }: { params: Promise<{ slug: str
         </div>
         <Reveal delay={90} variant="zoom">
           {w.shotDesktop ? (
-            <div className="work-frame is-playing">
+            <div className="work-frame is-playing" style={{ "--shift": `${(-(1 - (w.shotDesktopSize ? w.shotDesktopSize[0] / 1.5 / w.shotDesktopSize[1] : 0.3)) * 100).toFixed(2)}%`, "--play": `${Math.round(((w.shotDesktopSize?.[1] ?? 6000) / 110) * 2.2)}s` } as React.CSSProperties}>
               <div className="work-frame__bar"><span /><span /><span /><i className="work-frame__url">{w.url?.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}</i></div>
               <div className="work-frame__view">
-                <Image src={w.shotDesktop} alt={w.title} width={1440} height={3600} className="work-frame__img" priority sizes="(min-width: 1024px) 600px, 100vw" />
+                <Image src={w.shotDesktop} alt={w.title} width={w.shotDesktopSize?.[0] ?? 1200} height={w.shotDesktopSize?.[1] ?? 6000} className="work-frame__img" priority sizes="(min-width: 1024px) 600px, 100vw" />
               </div>
             </div>
           ) : (
