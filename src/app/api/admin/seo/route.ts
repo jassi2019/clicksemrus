@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/auth";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
-import { notifyIndex, indexLog, inspectUrl, indexNowKey } from "@/lib/indexing";
+import { notifyIndex, indexLog, inspectUrl, indexNowKey, submitSitemap } from "@/lib/indexing";
 import { hasGoogleAuth } from "@/lib/google";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
@@ -26,6 +26,10 @@ export async function POST(req: NextRequest) {
     }
     if (b.action === "index" && b.urls?.length) {
       return NextResponse.json({ ok: true, indexed: await notifyIndex(b.urls.slice(0, 50)) });
+    }
+    if (b.action === "sitemap") {
+      const r = await submitSitemap();
+      return NextResponse.json({ ok: r === "ok", sitemap: r, error: r === "ok" ? undefined : r });
     }
     if (b.action === "indexAll") {
       const posts = await getAllPosts();

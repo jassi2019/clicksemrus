@@ -37,7 +37,7 @@ async function indexNowNotify(urls: string[]): Promise<string> {
   const res = await fetch("https://api.indexnow.org/indexnow", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },
-    body: JSON.stringify({ host, key, keyLocation: `${SITE.url}/indexnow/${key}.txt`, urlList: urls }),
+    body: JSON.stringify({ host, key, urlList: urls }),
   });
   return res.ok || res.status === 202 ? "ok" : `error ${res.status}`;
 }
@@ -57,6 +57,17 @@ export async function notifyIndex(paths: string[]): Promise<IndexLogEntry[]> {
     try { await db.lpush(LOG, entry); await db.ltrim(LOG, 0, 199); } catch {}
   }
   return entries;
+}
+
+/** Submit the sitemap to Google Search Console (needs the service account as Owner). */
+export async function submitSitemap(): Promise<string> {
+  if (!hasGoogleAuth()) return "not configured";
+  const token = await googleAccessToken(["https://www.googleapis.com/auth/webmasters"]);
+  if (!token) return "auth failed";
+  const siteUrl = process.env.GSC_SITE_URL || `${SITE.url}/`;
+  const feed = `${SITE.url}/sitemap.xml`;
+  const res = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/sitemaps/${encodeURIComponent(feed)}`, { method: "PUT", headers: { authorization: `Bearer ${token}` } });
+  return res.ok ? "ok" : `error ${res.status}: ${(await res.text().catch(() => "")).slice(0, 120)}`;
 }
 
 export async function indexLog(limit = 50): Promise<IndexLogEntry[]> {

@@ -4,7 +4,7 @@ import { fetchTrends, buildTrendPost } from "@/lib/trending";
 import { postExists, savePost, getSettings } from "@/lib/posts";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
-import { notifyIndex } from "@/lib/indexing";
+import { notifyIndex, submitSitemap } from "@/lib/indexing";
 
 export const maxDuration = 60;
 
@@ -65,6 +65,9 @@ export async function GET(req: NextRequest) {
 
   // 3. Indexing pings
   const indexed = created.length ? await notifyIndex([...created.map((s) => `/blog/${s}`), "/blog", "/sitemap.xml"]) : [];
+
+  const sitemap = await submitSitemap().catch((e: Error) => `error: ${e.message.slice(0, 80)}`);
+  notes.push(`sitemap submit: ${sitemap}`);
 
   return NextResponse.json({ ok: true, created, notes, indexed });
 }

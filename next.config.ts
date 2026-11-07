@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
       "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
   },
+  async rewrites() {
+    // IndexNow expects the key file at the site root: /<key>.txt
+    return [{ source: "/:key([a-f0-9]{16,64}).txt", destination: "/indexnow/:key.txt" }];
+  },
   async redirects() {
     // Legacy single-level service slugs that became sub-services under a category.
     const moved: Record<string, string> = {
