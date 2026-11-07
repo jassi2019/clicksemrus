@@ -14,37 +14,57 @@ export function WhatsAppIcon({ size = 24, className = "" }: { size?: number; cla
   );
 }
 
-/** Friendly support-agent avatar (inline SVG, no image request). */
-function AgentAvatar({ size = 56 }: { size?: number }) {
+/** Cute assistant robot (inline SVG, no image request). */
+function AgentAvatar({ size = 64 }: { size?: number }) {
   return (
     <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden="true">
       <defs>
-        <linearGradient id="wa-bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#6d63f0" />
-          <stop offset="1" stopColor="#4f46e5" />
+        <linearGradient id="rb-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#eef0ff" />
+          <stop offset="1" stopColor="#d9dcf5" />
         </linearGradient>
+        <linearGradient id="rb-body" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#e4e6f2" />
+        </linearGradient>
+        <linearGradient id="rb-visor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#2b2a44" />
+          <stop offset="1" stopColor="#0b0b14" />
+        </linearGradient>
+        <radialGradient id="rb-eye" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset=".45" stopColor="#8be9ff" />
+          <stop offset="1" stopColor="#1fb6ff" />
+        </radialGradient>
       </defs>
-      <circle cx="32" cy="32" r="32" fill="url(#wa-bg)" />
-      {/* body */}
-      <path d="M12 58c2-11 10-16 20-16s18 5 20 16" fill="#fff" />
-      {/* collar */}
-      <path d="M26 42l6 7 6-7" fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      {/* neck */}
-      <rect x="27" y="34" width="10" height="8" rx="3" fill="#f3c6a5" />
-      {/* face */}
-      <circle cx="32" cy="25" r="12" fill="#f8d2b3" />
-      {/* hair */}
-      <path d="M20 24c0-9 6-13 12-13s12 4 12 13c-2-3-5-5-12-5s-10 2-12 5z" fill="#1f1b3a" />
-      {/* headset band + mic */}
-      <path d="M19 26a13 13 0 0 1 26 0" fill="none" stroke="#1f1b3a" strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="17" y="24" width="4" height="7" rx="2" fill="#1f1b3a" />
-      <rect x="43" y="24" width="4" height="7" rx="2" fill="#1f1b3a" />
-      <path d="M45 31c0 5-4 7-8 7" fill="none" stroke="#1f1b3a" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="36.5" cy="38" r="1.8" fill="#1f1b3a" />
-      {/* eyes + smile */}
-      <circle cx="27.5" cy="26" r="1.5" fill="#1f1b3a" />
-      <circle cx="36.5" cy="26" r="1.5" fill="#1f1b3a" />
-      <path d="M28 30.5c2 2 6 2 8 0" fill="none" stroke="#1f1b3a" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="32" cy="32" r="32" fill="url(#rb-bg)" />
+      <g className="rb-bob">
+        {/* antenna */}
+        <rect x="30.6" y="8" width="2.8" height="7" rx="1.4" fill="#c9ccdd" />
+        <circle cx="32" cy="7.5" r="3" fill="#f5a800" />
+        <circle cx="31" cy="6.6" r="1" fill="#fff" opacity=".8" />
+        {/* ears */}
+        <rect x="9" y="24" width="5" height="12" rx="2.5" fill="#d7dae8" />
+        <rect x="50" y="24" width="5" height="12" rx="2.5" fill="#d7dae8" />
+        {/* head */}
+        <rect x="13" y="14" width="38" height="32" rx="15" fill="url(#rb-body)" stroke="#c9ccdd" strokeWidth="1" />
+        {/* visor */}
+        <rect x="18" y="20" width="28" height="18" rx="9" fill="url(#rb-visor)" />
+        <path d="M21 24c3-2.5 19-2.5 22 0" stroke="#ffffff" strokeOpacity=".18" strokeWidth="2" strokeLinecap="round" fill="none" />
+        {/* eyes */}
+        <ellipse cx="26.5" cy="29" rx="3.2" ry="3.8" fill="url(#rb-eye)" />
+        <ellipse cx="37.5" cy="29" rx="3.2" ry="3.8" fill="url(#rb-eye)" />
+        <circle cx="25.6" cy="27.8" r="1" fill="#fff" />
+        <circle cx="36.6" cy="27.8" r="1" fill="#fff" />
+        {/* smile */}
+        <path d="M28 34.5c2 1.6 6 1.6 8 0" stroke="#8be9ff" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+        {/* chin / body */}
+        <path d="M20 46c3 5 21 5 24 0v6a12 12 0 0 1-24 0z" fill="url(#rb-body)" stroke="#c9ccdd" strokeWidth="1" />
+        <rect x="27" y="48" width="10" height="3" rx="1.5" fill="#f5a800" />
+        {/* cheeks */}
+        <circle cx="19.5" cy="35" r="1.6" fill="#ffb5c2" opacity=".8" />
+        <circle cx="44.5" cy="35" r="1.6" fill="#ffb5c2" opacity=".8" />
+      </g>
     </svg>
   );
 }
@@ -89,9 +109,9 @@ export default function WhatsAppButton({ number }: { number: string }) {
               <span className="absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75 animate-ping" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#25D366]" />
             </span>
-            <span className="text-xs font-bold tracking-wide text-[#5c5f70]">ClickSemrus Support · Online</span>
+            <span className="text-xs font-bold tracking-wide text-[#5c5f70]">Semi · ClickSemrus Assistant · Online</span>
           </div>
-          <p className="text-sm leading-snug">Hi 👋 Need help growing your business? Chat with us on WhatsApp, we reply in minutes.</p>
+          <p className="text-sm leading-snug">Hi 👋 I’m Semi. Want more leads or sales? Chat with our team on WhatsApp, we reply in minutes.</p>
           <a
             href={href}
             target="_blank"

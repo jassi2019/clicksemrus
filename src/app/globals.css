@@ -193,7 +193,11 @@ select.input option { background: #fff; color: #0b0b14; }
 /* whatsapp float pulse */
 .wa-float::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: #25D366; opacity: .45; animation: wa-pulse 2.2s ease-out infinite; z-index: -1; }
 .wa-float svg:first-child { width: 100%; height: 100%; display: block; border-radius: inherit; }
+.rb-bob { animation: rb-bob 3.2s ease-in-out infinite; transform-origin: 32px 32px; }
+@keyframes rb-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 .wa-bubble { animation: wa-bubble-in .45s cubic-bezier(.2,.8,.2,1) both; transform-origin: bottom right; }
 @keyframes wa-bubble-in { from { opacity: 0; transform: translateY(10px) scale(.92); } to { opacity: 1; transform: none; } }
 @keyframes wa-pulse { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(1.55); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .wa-float::before, .wa-bubble { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .wa-float::before, .rb-bob { animation: rb-bob 3.2s ease-in-out infinite; transform-origin: 32px 32px; }
+@keyframes rb-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+.wa-bubble { animation: none; } }
