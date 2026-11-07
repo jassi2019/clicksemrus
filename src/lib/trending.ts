@@ -2,6 +2,7 @@ import { slugify } from "./markdown";
 import type { Post } from "./posts";
 import { SITE } from "./site";
 import { writeWithClaude } from "./ai";
+import { hasAiWriter } from "./llm";
 
 export type Trend = {
   title: string;
@@ -232,7 +233,7 @@ Yes. Timely articles get picked up by Google Discover and News, and the links an
 /** Build a post for a trend, using Claude when an API key is present, else the template. */
 export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post> {
   const base = composeTrendPost(t, date);
-  if (!process.env.ANTHROPIC_API_KEY) return base;
+  if (!hasAiWriter()) return base;
   try {
     const ai = await writeWithClaude(t, base);
     return { ...base, ...ai };

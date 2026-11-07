@@ -3,6 +3,7 @@ import { isAdmin } from "@/lib/auth";
 import { getGscSnapshot } from "@/lib/gsc";
 import { indexLog, indexNowKey } from "@/lib/indexing";
 import { hasGoogleAuth } from "@/lib/google";
+import { hasAiWriter } from "@/lib/llm";
 import SeoPanel from "@/components/admin/SeoPanel";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function SeoAdmin() {
   if (!(await isAdmin())) redirect("/admin/login");
   const [snapshot, log] = await Promise.all([getGscSnapshot(), indexLog(60)]);
-  const config = { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: Boolean(process.env.ANTHROPIC_API_KEY) };
+  const config = { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter() };
   return (
     <div className="space-y-6">
       <div>

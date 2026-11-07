@@ -4,6 +4,7 @@ import { isAdmin } from "@/lib/auth";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { notifyIndex, indexLog, inspectUrl, indexNowKey, submitSitemap } from "@/lib/indexing";
 import { hasGoogleAuth } from "@/lib/google";
+import { hasAiWriter } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 
@@ -13,7 +14,7 @@ export const maxDuration = 60;
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
   const [snapshot, log] = await Promise.all([getGscSnapshot(), indexLog(60)]);
-  return NextResponse.json({ ok: true, snapshot, log, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: Boolean(process.env.ANTHROPIC_API_KEY) } });
+  return NextResponse.json({ ok: true, snapshot, log, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter() } });
 }
 
 export async function POST(req: NextRequest) {

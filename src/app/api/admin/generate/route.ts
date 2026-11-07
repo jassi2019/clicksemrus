@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/auth";
 import { fetchTrends, buildTrendPost } from "@/lib/trending";
 import { savePost, postExists } from "@/lib/posts";
+import { hasAiWriter } from "@/lib/llm";
 
 export const maxDuration = 60;
 
@@ -29,5 +30,5 @@ export async function POST(req: NextRequest) {
   }
   revalidatePath("/");
   revalidatePath("/blog");
-  return NextResponse.json({ ok: true, created, skipped, ai: Boolean(process.env.ANTHROPIC_API_KEY) });
+  return NextResponse.json({ ok: true, created, skipped, ai: hasAiWriter() });
 }

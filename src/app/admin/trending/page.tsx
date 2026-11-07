@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { fetchTrends, classify } from "@/lib/trending";
 import TrendPanel from "@/components/admin/TrendPanel";
+import { hasAiWriter, aiProviderLabel } from "@/lib/llm";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function TrendingAdmin() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold">Trending engine</h1>
-        <p className="text-muted text-sm">Live from Google Trends India. Generate a blog post for any topic with one click. {process.env.ANTHROPIC_API_KEY ? "AI writer: on (Claude)." : "AI writer: off (template writer in use). Add ANTHROPIC_API_KEY in Vercel to enable."}</p>
+        <p className="text-muted text-sm">Live from Google Trends India. Generate a blog post for any topic with one click. {hasAiWriter() ? `AI writer: on (${aiProviderLabel()}).` : "AI writer: off (template writer in use). Add GEMINI_API_KEY (free), GROQ_API_KEY or ANTHROPIC_API_KEY in Vercel to enable."}</p>
       </div>
       <TrendPanel rows={rows} />
     </div>

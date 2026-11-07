@@ -3,6 +3,7 @@ import type { Post } from "./posts";
 import type { Opportunity } from "./gsc";
 import { SITE } from "./site";
 import { writeKeywordPostWithClaude } from "./ai";
+import { hasAiWriter } from "./llm";
 
 /**
  * Keyword-targeted articles for Search Console opportunities: queries that already
@@ -105,7 +106,7 @@ Yes. We serve clients across India remotely, with the same reporting and weekly 
 
 export async function buildKeywordPost(o: Opportunity, date = new Date()): Promise<Post> {
   const base = composeKeywordPost(o, date);
-  if (!process.env.ANTHROPIC_API_KEY) return base;
+  if (!hasAiWriter()) return base;
   try {
     const ai = await writeKeywordPostWithClaude(o, base);
     return { ...base, ...ai };

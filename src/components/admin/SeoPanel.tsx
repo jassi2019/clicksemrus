@@ -53,7 +53,7 @@ export default function SeoPanel({ snapshot, log, config }: { snapshot: GscSnaps
       <div className="card p-4 flex flex-wrap items-center gap-2">
         <Status ok={config.google} label="Google service account (Indexing API + Search Console)" />
         <Status ok={config.indexnow} label="IndexNow (Bing/Yandex)" />
-        <Status ok={config.ai} label="AI writer" />
+        <Status ok={config.ai} label="AI writer (Gemini / Groq / Claude)" />
         {!config.google && <p className="text-xs text-muted w-full">Add GOOGLE_SERVICE_ACCOUNT_JSON in Vercel and make that service account an Owner in Search Console to enable keyword data and instant indexing.</p>}
       </div>
 
