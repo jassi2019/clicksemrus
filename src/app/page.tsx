@@ -17,6 +17,8 @@ import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import TiltCard from "@/components/TiltCard";
 import Counter from "@/components/Counter";
 import Reviews from "@/components/Reviews";
+import InstagramFeed from "@/components/InstagramFeed";
+import { getInstagramFeed } from "@/lib/instagram";
 import WorkGrid from "@/components/WorkGrid";
 import { Sphere, Ring, Pill, Cube } from "@/components/Shapes";
 
@@ -45,10 +47,11 @@ const WHY = [
 const FAQS = HOME_FAQS;
 
 export default async function Home() {
-  const [posts, trends, reviews, settings] = await Promise.all([
+  const [posts, trends, reviews, igPosts, settings] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
+    getInstagramFeed(8),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
   ]);
   const latest = [...trends, ...posts].slice(0, 3);
@@ -242,6 +245,9 @@ export default async function Home() {
 
       {/* google reviews */}
       <Reviews data={reviews} />
+
+      {/* instagram live feed */}
+      <InstagramFeed posts={igPosts} />
 
       {/* blog */}
       <section className="relative py-16">

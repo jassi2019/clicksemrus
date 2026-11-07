@@ -231,3 +231,9 @@ select.input option { background: #fff; color: #0b0b14; }
 .gp-tab:hover { box-shadow: 0 22px 50px -14px rgba(79,70,229,.9); }
 .gp-tab:hover .gp-tab__inner { background: #16163a; }
 @media (prefers-reduced-motion: reduce) { .gp-fade, .gp-card, .gp-step, .gp-opt, .gp-tab, .gp-tab__glow, .gp-tab__inner::after, .gp-tab__icon, .gp-tab__arrow { animation: none; } }
+
+/* instagram feed */
+.ig-tile { box-shadow: 0 1px 2px rgba(10,10,30,.04), 0 14px 40px -24px rgba(10,10,30,.3); transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s; }
+.ig-tile:hover { transform: translateY(-6px) rotate(-.6deg); box-shadow: 0 30px 60px -28px rgba(79,70,229,.45); }
+.ig-grid > *:nth-child(4n+2) .ig-tile:hover { transform: translateY(-6px) rotate(.6deg); }
+@media (prefers-reduced-motion: reduce) { .ig-tile, .ig-tile:hover { transform: none; } }
