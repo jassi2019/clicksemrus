@@ -104,6 +104,55 @@ body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); -
 .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35; animation: float 16s ease-in-out infinite; pointer-events: none; }
 @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, -40px) scale(1.1); } }
 
+/* soft multi-stop mesh background (brand / sun / cyan at low opacity) */
+.mesh { background-color: var(--bg);
+  background-image:
+    radial-gradient(42rem 28rem at 8% 0%, rgba(79,70,229,.14), transparent 60%),
+    radial-gradient(34rem 24rem at 95% 10%, rgba(14,165,233,.12), transparent 60%),
+    radial-gradient(30rem 22rem at 70% 100%, rgba(245,158,11,.10), transparent 60%); }
+.section-tint { background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+/* numbered card: big faint 01 top-right */
+.num-card { position: relative; overflow: hidden; }
+.num-card::before { content: attr(data-num); position: absolute; top: -.35rem; right: .6rem; font-family: var(--font-display); font-weight: 800; font-size: 4.5rem; line-height: 1;
+  letter-spacing: -0.04em; color: var(--brand); opacity: .08; pointer-events: none; transition: opacity .3s, transform .3s; }
+.num-card:hover::before { opacity: .16; transform: translateY(-2px); }
+.num-card > * { position: relative; }
+
+/* timeline: vertical on mobile, horizontal on desktop */
+.timeline { position: relative; display: grid; gap: 1.5rem; }
+.timeline::before { content: ""; position: absolute; left: 1.1rem; top: 1.25rem; bottom: 1.25rem; width: 2px; background: linear-gradient(180deg, #4f46e5, #0ea5e9, #f59e0b); opacity: .5; border-radius: 2px; }
+.timeline-step { position: relative; padding-left: 3.25rem; }
+.timeline-dot { position: absolute; left: 0; top: 0; width: 2.25rem; height: 2.25rem; border-radius: 999px; display: grid; place-items: center; font-weight: 800; font-size: .8rem;
+  background: #0b0b14; color: #fff; box-shadow: 0 0 0 5px var(--bg), 0 10px 24px -12px rgba(11,11,20,.7); }
+.section-dark .timeline-dot { box-shadow: 0 0 0 5px var(--bg); background: #fff; color: #0b0b14; }
+@media (min-width: 1024px) {
+  .timeline { grid-template-columns: repeat(var(--steps, 4), minmax(0, 1fr)); gap: 1.25rem; }
+  .timeline::before { left: 1.25rem; right: 1.25rem; top: 1.1rem; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, #4f46e5, #0ea5e9, #f59e0b); }
+  .timeline-step { padding-left: 0; padding-top: 3.5rem; }
+  .timeline-dot { top: 0; left: 0; }
+}
+
+/* sticky in-page sub-nav for long service pages */
+.subnav { position: sticky; top: 5rem; z-index: 30; }
+.subnav a { padding: .45rem .9rem; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--muted); white-space: nowrap; transition: background .2s, color .2s; }
+.subnav a:hover { background: var(--surface-2); color: var(--fg); }
+.subnav a.is-cta { background: #0b0b14; color: #fff; }
+.subnav a.is-cta:hover { background: #4f46e5; }
+
+/* proof badges */
+.proof { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .9rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: .8rem; font-weight: 700;
+  box-shadow: 0 10px 24px -18px rgba(10,10,30,.35); }
+.proof > svg { color: var(--brand); }
+
+/* comparison table */
+.cmp { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .9rem; }
+.cmp th, .cmp td { padding: .85rem 1rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.cmp th { font-weight: 700; background: var(--surface-2); position: sticky; top: 0; }
+.cmp td:not(:first-child), .cmp th:not(:first-child) { text-align: center; }
+.cmp tr:last-child td { border-bottom: 0; }
+.cmp .is-featured { background: rgba(79,70,229,.06); }
+
 /* floating service illustrations */
 .service-art { position: absolute; top: 1rem; right: 1rem; width: 88px; height: 88px; opacity: .22; pointer-events: none;
   animation: float-y 6s ease-in-out infinite; transition: opacity .3s; }

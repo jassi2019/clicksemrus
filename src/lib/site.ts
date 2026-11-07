@@ -667,6 +667,38 @@ export function serviceUrl(slug: string): string {
   return `/services/${slug}`;
 }
 
+/* ---------------------------------------------------------------- portfolio helpers */
+/**
+ * WORK items relevant to a service or category slug. Matches items tagged with the slug itself,
+ * with the parent category's slug, or with any sibling in the same category. Falls back to all WORK.
+ */
+export function workForService(slug: string): WorkItem[] {
+  const cat = findCategory(slug) ?? findSubService(slug)?.category;
+  const related = new Set<string>([slug]);
+  if (cat) {
+    related.add(cat.slug);
+    if (cat.legacy) related.add(cat.legacy);
+    cat.subs.forEach((s) => related.add(s.slug));
+  }
+  const direct = WORK.filter((w) => w.services.includes(slug));
+  if (direct.length) return direct;
+  const viaCategory = WORK.filter((w) => w.services.some((s) => related.has(s)));
+  return viaCategory.length ? viaCategory : WORK;
+}
+
+/** WORK items for an industry name (or slug). Falls back to all WORK so no industry page is empty. */
+export function workForIndustry(name: string): WorkItem[] {
+  const ind = INDUSTRIES.find((i) => i.name === name || i.slug === name);
+  const label = ind?.name ?? name;
+  const direct = WORK.filter((w) => w.industry === label);
+  return direct.length ? direct : WORK;
+}
+
+/** Every location page shows the full portfolio; the caller applies a limit. */
+export function workForLocation(): WorkItem[] {
+  return WORK;
+}
+
 /* ---------------------------------------------------------------- locations */
 export type Location = {
   slug: string;
