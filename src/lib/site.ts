@@ -681,9 +681,10 @@ export function workForService(slug: string): WorkItem[] {
     cat.subs.forEach((s) => related.add(s.slug));
   }
   const direct = WORK.filter((w) => w.services.includes(slug));
-  if (direct.length) return direct;
-  const viaCategory = WORK.filter((w) => w.services.some((s) => related.has(s)));
-  return viaCategory.length ? viaCategory : WORK;
+  const viaCategory = WORK.filter((w) => !direct.includes(w) && w.services.some((s) => related.has(s)));
+  const rest = WORK.filter((w) => !direct.includes(w) && !viaCategory.includes(w));
+  // Most relevant first; the caller's limit decides how many are shown, so pages are never empty.
+  return [...direct, ...viaCategory, ...rest];
 }
 
 /** WORK items for an industry name (or slug). Falls back to all WORK so no industry page is empty. */
