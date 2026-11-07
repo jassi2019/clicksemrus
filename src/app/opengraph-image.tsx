@@ -11,7 +11,8 @@ export default function OG() {
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 64, background: "linear-gradient(135deg,#07070f 0%,#1a1340 50%,#0b2a33 100%)", color: "white", fontFamily: "sans-serif" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg,#7c5cff,#22d3ee)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>▶</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${SITE.url}/logo.png`} width={64} height={64} alt="" style={{ borderRadius: 999 }} />
           <div style={{ fontSize: 40, fontWeight: 700 }}>Click<span style={{ color: "#22d3ee" }}>Semrus</span></div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

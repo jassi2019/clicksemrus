@@ -28,7 +28,6 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: SITE.locale, url: SITE.url, siteName: SITE.name, title: `${SITE.name} | ${SITE.tagline}`, description: SITE.description },
   twitter: { card: "summary_large_image", site: SITE.twitterHandle },
   robots: { index: true, follow: true },
-  icons: { icon: "/icon.svg" },
 };
 
 export const viewport: Viewport = { themeColor: "#07070f", width: "device-width", initialScale: 1 };
