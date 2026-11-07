@@ -37,7 +37,7 @@ async function indexNowNotify(urls: string[]): Promise<string> {
   const res = await fetch("https://api.indexnow.org/indexnow", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },
-    body: JSON.stringify({ host, key, keyLocation: `${SITE.url}/indexnow/key`, urlList: urls }),
+    body: JSON.stringify({ host, key, keyLocation: `${SITE.url}/indexnow/${key}.txt`, urlList: urls }),
   });
   return res.ok || res.status === 202 ? "ok" : `error ${res.status}`;
 }
