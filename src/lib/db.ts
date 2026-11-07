@@ -36,7 +36,8 @@ function parse<T>(v: unknown): T | null {
 }
 
 function redisStore(): Store {
-  const r = new Redis({ url: url!, token: token! });
+  // cache: "default" keeps Redis reads from marking every route dynamic (the SDK defaults to no-store on Next).
+  const r = new Redis({ url: url!, token: token!, cache: "default" });
   return {
     get: async (k) => parse(await r.get(k)),
     set: async (k, v) => { await r.set(k, JSON.stringify(v)); },

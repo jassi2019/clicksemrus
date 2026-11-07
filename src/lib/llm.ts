@@ -46,7 +46,15 @@ async function viaClaude<T>(system: string, user: string): Promise<T> {
 }
 
 async function viaGemini<T>(system: string, user: string): Promise<T> {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const models = Array.from(new Set([process.env.GEMINI_MODEL, "gemini-3.8-flash", "gemini-flash-latest"].filter(Boolean))) as string[];
+  let lastErr: Error | null = null;
+  for (const model of models) {
+    try { return await geminiCall<T>(model, system, user); } catch (e) { lastErr = e as Error; if (!/404|not available|NOT_FOUND/i.test(lastErr.message)) break; }
+  }
+  throw lastErr || new Error("Gemini failed");
+}
+
+async function geminiCall<T>(model: string, system: string, user: string): Promise<T> {
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`, {
     method: "POST",
     headers: { "content-type": "application/json" },
