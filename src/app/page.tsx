@@ -189,7 +189,7 @@ export default async function Home() {
             <Link href="/case-studies" className="btn btn-ghost">View all work <ArrowRight size={16} /></Link>
           </div>
           <Reveal delay={90} className="mt-12">
-            <WorkGrid items={WORK} limit={3} showTabs={false} />
+            <WorkGrid items={WORK} limit={6} showTabs={false} />
           </Reveal>
         </div>
       </section>
