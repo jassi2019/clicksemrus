@@ -52,3 +52,7 @@ npm run dev
 - Evergreen seed articles: `src/content/seed-posts.ts`
 - Trend article templates and topic classification: `src/lib/trending.ts`
 - Auto-interlink keyword map: `src/lib/markdown.ts`
+
+## Deploy
+
+Production: https://clicksemrus.vercel.app (Vercel, auto-deploys from `main` of jassi2019/clicksemrus).
