@@ -8,6 +8,7 @@ import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileBar from "@/components/MobileBar";
+import GrowthPopup from "@/components/GrowthPopup";
 import JsonLd from "@/components/JsonLd";
 import { orgJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getSettings } from "@/lib/posts";
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Footer />
         <WhatsAppButton number={settings.whatsapp || SITE.whatsapp} />
         <MobileBar phone={settings.phone || SITE.phone} />
+        <GrowthPopup />
         <Tracker />
         {settings.gaId && (
           <>

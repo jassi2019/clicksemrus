@@ -201,3 +201,15 @@ select.input option { background: #fff; color: #0b0b14; }
 @media (prefers-reduced-motion: reduce) { .wa-float::before, .rb-bob { animation: rb-bob 3.2s ease-in-out infinite; transform-origin: 32px 32px; }
 @keyframes rb-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 .wa-bubble { animation: none; } }
+
+/* growth score popup */
+.gp-fade { animation: gp-fade .3s ease both; }
+@keyframes gp-fade { from { opacity: 0; } to { opacity: 1; } }
+.gp-card { animation: gp-card .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes gp-card { from { opacity: 0; transform: translateY(40px) scale(.96); } to { opacity: 1; transform: none; } }
+.gp-step { animation: gp-step .35s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes gp-step { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.gp-opt { animation: gp-step .35s cubic-bezier(.2,.8,.2,1) both; }
+.gp-opt:nth-child(2) { animation-delay: .05s; } .gp-opt:nth-child(3) { animation-delay: .1s; } .gp-opt:nth-child(4) { animation-delay: .15s; }
+.gp-tab { animation: gp-card .5s cubic-bezier(.2,.8,.2,1) both; }
+@media (prefers-reduced-motion: reduce) { .gp-fade, .gp-card, .gp-step, .gp-opt, .gp-tab { animation: none; } }
