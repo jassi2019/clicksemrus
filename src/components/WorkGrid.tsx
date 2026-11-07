@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, TrendingUp, ExternalLink, Monitor, Smartphone, X, MousePointer2 } from "lucide-react";
@@ -25,7 +25,7 @@ function scrollVars(size: [number, number], frameAspect: number): React.CSSPrope
   const [w, h] = size;
   const frameH = w / frameAspect; // frame height in image pixels
   const shift = Math.max(0, 1 - frameH / h); // fraction of image height to travel
-  const dur = Math.max(6, Math.round((h - frameH) / 110)); // about 110px per second
+  const dur = Math.max(5, Math.round((h - frameH) / 260)); // about 260px per second
   return { "--shift": `${(-shift * 100).toFixed(2)}%`, "--dur": `${dur}s`, "--play": `${Math.round(dur * 2.2)}s` } as React.CSSProperties;
 }
 
@@ -33,15 +33,58 @@ function host(url?: string) {
   try { return url ? new URL(url).host.replace(/^www\./, "") : ""; } catch { return ""; }
 }
 
-/** Browser chrome around a tall screenshot; the image scrolls on hover (desktop) or always (when `play`). */
+/** Auto-scrolls a real scroll container up and down; pauses while the visitor hovers, touches or scrolls themselves. */
+function useAutoScroll(active: boolean, pxPerSec = 220) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !active) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let dir = 1, raf = 0, last = performance.now(), paused = false, resumeAt = 0, hold = 0;
+    const pause = (ms: number) => { paused = true; resumeAt = performance.now() + ms; };
+    const tick = (now: number) => {
+      const dt = Math.min(50, now - last); last = now;
+      if (paused && now >= resumeAt) paused = false;
+      if (!paused) {
+        if (hold > 0) hold -= dt;
+        else {
+          el.scrollTop += (dir * pxPerSec * dt) / 1000;
+          const max = el.scrollHeight - el.clientHeight;
+          if (dir === 1 && el.scrollTop >= max - 1) { dir = -1; hold = 1400; }
+          else if (dir === -1 && el.scrollTop <= 1) { dir = 1; hold = 1400; }
+        }
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    const onEnter = () => pause(1e9);
+    const onLeave = () => pause(1200);
+    const onWheel = () => pause(2500);
+    const onTouchStart = () => pause(1e9);
+    const onTouchEnd = () => pause(2500);
+    el.addEventListener("mouseenter", onEnter); el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("wheel", onWheel, { passive: true });
+    el.addEventListener("touchstart", onTouchStart, { passive: true }); el.addEventListener("touchend", onTouchEnd);
+    hold = 900;
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener("mouseenter", onEnter); el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("wheel", onWheel); el.removeEventListener("touchstart", onTouchStart); el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [active, pxPerSec]);
+  return ref;
+}
+
+/** Browser chrome around a tall screenshot; the image scrolls on hover (desktop) or auto-scrolls in a real scroll container (when `play`). */
 function BrowserFrame({ src, alt, play, className = "", size = DESK }: { src: string; alt: string; play?: boolean; className?: string; size?: [number, number] }) {
+  const ref = useAutoScroll(Boolean(play), 240);
   return (
     <div className={`work-frame ${play ? "is-playing" : ""} ${className}`} style={scrollVars(size, 3 / 2)}>
       <div className="work-frame__bar">
         <span /><span /><span />
         <i className="work-frame__url">{alt}</i>
       </div>
-      <div className="work-frame__view">
+      <div className="work-frame__view" ref={ref}>
         <Image src={src} alt={alt} width={size[0]} height={size[1]} className="work-frame__img" sizes="(min-width: 1024px) 420px, (min-width: 640px) 50vw, 100vw" />
       </div>
     </div>
@@ -49,10 +92,11 @@ function BrowserFrame({ src, alt, play, className = "", size = DESK }: { src: st
 }
 
 function PhoneFrame({ src, alt, play, size = MOB }: { src: string; alt: string; play?: boolean; size?: [number, number] }) {
+  const ref = useAutoScroll(Boolean(play), 200);
   return (
     <div className={`work-phone ${play ? "is-playing" : ""}`} style={scrollVars(size, 390 / 844)}>
       <span className="work-phone__notch" />
-      <div className="work-phone__view">
+      <div className="work-phone__view" ref={ref}>
         <Image src={src} alt={alt} width={size[0]} height={size[1]} className="work-phone__img" sizes="260px" />
       </div>
     </div>
@@ -160,7 +204,7 @@ export default function WorkGrid({ items, limit, showTabs = true }: { items: Wor
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 border-t border-white/10 flex-wrap">
-              <p className="text-xs text-white/60 hidden md:block">Auto-scrolling full-page capture. Open the live site for the real thing.</p>
+              <p className="text-xs text-white/60 hidden md:block">Auto-scrolls to the footer. Scroll or swipe inside the frame to browse yourself.</p>
               <span className="ml-auto flex items-center gap-2">
                 {active.instagram && <a href={active.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center w-9 h-9 rounded-full bg-white/10 hover:bg-white hover:text-[#0b0b14] transition"><InstagramIcon size={16} /></a>}
                 {active.facebook && <a href={active.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid place-items-center w-9 h-9 rounded-full bg-white/10 hover:bg-white hover:text-[#0b0b14] transition"><FacebookIcon size={16} /></a>}
