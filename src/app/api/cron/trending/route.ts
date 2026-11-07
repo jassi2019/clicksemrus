@@ -6,7 +6,7 @@ import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { notifyIndex, submitSitemap } from "@/lib/indexing";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /**
  * Daily growth cron (see vercel.json). In one run:

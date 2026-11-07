@@ -5,7 +5,7 @@ import { fetchTrends, buildTrendPost } from "@/lib/trending";
 import { savePost, postExists } from "@/lib/posts";
 import { hasAiWriter } from "@/lib/llm";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** GET: list current trends. POST {title} : generate + save a post for that trend (or top N). */
 export async function GET(req: NextRequest) {

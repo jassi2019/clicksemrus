@@ -8,7 +8,7 @@ import { hasAiWriter } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** GET: snapshot + index log + config status. POST {action}: refresh | index(urls) | inspect(url) | write(query) | indexAll */
 export async function GET() {

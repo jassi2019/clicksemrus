@@ -61,7 +61,7 @@ async function geminiCall<T>(model: string, system: string, user: string): Promi
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
       contents: [{ role: "user", parts: [{ text: user }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: 8192, responseMimeType: "application/json" },
+      generationConfig: { temperature: 0.7, maxOutputTokens: 8192, responseMimeType: "application/json", ...(/gemini-3/.test(model) ? { thinkingConfig: { thinkingLevel: process.env.GEMINI_THINKING || "low" } } : {}) },
     }),
   });
   if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
