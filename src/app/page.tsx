@@ -80,7 +80,7 @@ export default async function Home() {
       <section className="relative overflow-hidden pt-28 pb-16">
         <Sphere className="w-36 h-36 -left-8 top-8" />
         <Ring className="w-40 h-40 right-[-30px] top-20" delay={-3} />
-        <div className="container-x relative grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="container-x relative grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {[
             { v: 3.2, s: "x", d: 1, l: "Average ROAS on paid campaigns" },
             { v: 180, s: "%", d: 0, l: "Average organic traffic growth in 6 months" },
@@ -88,8 +88,8 @@ export default async function Home() {
             { v: 24, s: "h", d: 0, l: "Trend-to-creative turnaround" },
           ].map((s, i) => (
             <Reveal key={s.l} delay={i * 90}>
-              <TiltCard className="p-7">
-                <p className="font-display text-5xl font-extrabold"><Counter to={s.v} suffix={s.s} decimals={s.d} /></p>
+              <TiltCard className="p-4 sm:p-7">
+                <p className="font-display text-3xl sm:text-5xl font-extrabold"><Counter to={s.v} suffix={s.s} decimals={s.d} /></p>
                 <p className="text-muted mt-2 text-sm font-medium">{s.l}</p>
               </TiltCard>
             </Reveal>
@@ -130,18 +130,18 @@ export default async function Home() {
             <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Every channel.<br />One goal: <span className="gradient-text">growth.</span></h2>
             <p className="text-muted mt-5 text-lg">Pick one service or let us run the full funnel. Every plan includes tracking, a live dashboard and a dedicated growth manager.</p>
           </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
             {SERVICES.map((s, i) => (
               <Reveal key={s.slug} delay={(i % 3) * 90}>
                 <Link href={serviceUrl(s.slug)} className="block h-full group">
-                  <TiltCard className="p-7 h-full overflow-hidden">
-                    <ServiceArt slug={s.slug} />
-                    <span className="inline-grid place-items-center w-14 h-14 rounded-2xl bg-[#0b0b14] text-white group-hover:bg-brand transition shadow-[0_14px_30px_-14px_rgba(11,11,20,.6)]">
-                      <ServiceIcon name={s.icon} size={24} />
+                  <TiltCard className="p-4 sm:p-7 h-full overflow-hidden">
+                    <span className="hidden sm:block"><ServiceArt slug={s.slug} /></span>
+                    <span className="inline-grid place-items-center w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#0b0b14] text-white group-hover:bg-brand transition shadow-[0_14px_30px_-14px_rgba(11,11,20,.6)]">
+                      <ServiceIcon name={s.icon} size={20} />
                     </span>
-                    <h3 className="font-display text-2xl font-bold mt-6">{s.name}</h3>
-                    <p className="text-muted mt-2 leading-relaxed">{s.short}</p>
-                    <span className="inline-flex items-center gap-1 font-bold text-brand mt-5 group-hover:gap-3 transition-all">Explore <ArrowRight size={16} /></span>
+                    <h3 className="font-display text-base sm:text-2xl font-bold mt-3 sm:mt-6 leading-snug">{s.name}</h3>
+                    <p className="text-muted mt-2 leading-relaxed hidden sm:block">{s.short}</p>
+                    <span className="inline-flex items-center gap-1 font-bold text-brand text-sm sm:text-base mt-3 sm:mt-5 group-hover:gap-3 transition-all">Explore <ArrowRight size={16} /></span>
                   </TiltCard>
                 </Link>
               </Reveal>
@@ -202,13 +202,13 @@ export default async function Home() {
             <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Built for businesses across every sector</h2>
             <p className="text-muted mt-5 text-lg">Playbooks, benchmarks and creative formats that already work in your category.</p>
           </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
             {INDUSTRIES.map((ind, i) => (
               <Reveal key={ind.slug} delay={(i % 3) * 90}>
-                <Link href={`/industries/${ind.slug}`} className="card p-7 h-full flex flex-col group">
-                  <span className="font-display text-sm font-bold text-brand tracking-widest">0{i + 1}</span>
-                  <h3 className="font-display text-2xl font-bold mt-3">{ind.name}</h3>
-                  <p className="text-muted mt-2 text-sm flex-1">{ind.short}</p>
+                <Link href={`/industries/${ind.slug}`} className="card p-4 sm:p-7 h-full flex flex-col group">
+                  <span className="font-display text-xs sm:text-sm font-bold text-brand tracking-widest">0{i + 1}</span>
+                  <h3 className="font-display text-base sm:text-2xl font-bold mt-2 sm:mt-3 leading-snug">{ind.name}</h3>
+                  <p className="text-muted mt-2 text-sm flex-1 hidden sm:block">{ind.short}</p>
                   <span className="inline-flex items-center gap-1 font-bold text-brand mt-5 group-hover:gap-3 transition-all">See playbook <ArrowRight size={16} /></span>
                 </Link>
               </Reveal>

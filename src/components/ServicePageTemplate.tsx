@@ -166,7 +166,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Everything in our {lower} plans</h2>
           <p className="text-muted mt-4 text-lg">Six deliverables, one owner, one dashboard. Nothing here is an add-on you discover on the invoice.</p>
         </Reveal>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 mt-8 sm:mt-12">
           {s.deliverables.map((d, i) => (
             <Reveal key={d} delay={(i % 3) * 90}>
               <div className="card num-card p-6 h-full" data-num={`0${i + 1}`}>

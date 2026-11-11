@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import HideOnAdmin from "@/components/HideOnAdmin";
 import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -49,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Splash />
         <Header />
         <main className="flex-1 pt-20">{children}</main>
-        <Footer />
+        <HideOnAdmin><Footer /></HideOnAdmin>
         <WhatsAppButton number={settings.whatsapp || SITE.whatsapp} />
         <MobileBar phone={settings.phone || SITE.phone} />
         <GrowthPopup />

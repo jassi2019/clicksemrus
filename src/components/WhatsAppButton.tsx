@@ -95,7 +95,7 @@ export default function WhatsAppButton({ number }: { number: string }) {
   return (
     <div className="fixed bottom-20 md:bottom-5 right-4 md:right-5 z-40 flex flex-col items-end gap-3">
       {showBubble && (
-        <div className="wa-bubble relative w-[260px] rounded-2xl rounded-br-md bg-white text-[#0b0b14] p-4 pr-9 shadow-[0_18px_44px_-16px_rgba(11,11,20,.45)] border border-black/5">
+        <div className="wa-bubble hidden sm:block relative w-[260px] rounded-2xl rounded-br-md bg-white text-[#0b0b14] p-4 pr-9 shadow-[0_18px_44px_-16px_rgba(11,11,20,.45)] border border-black/5">
           <button
             type="button"
             onClick={dismiss}
@@ -130,7 +130,7 @@ export default function WhatsAppButton({ number }: { number: string }) {
         rel="noopener noreferrer"
         onClick={() => trackEvent("whatsapp_click")}
         aria-label="Chat with us on WhatsApp"
-        className="wa-float relative block w-14 h-14 md:w-16 md:h-16 rounded-full shadow-[0_14px_34px_-10px_rgba(37,211,102,.75)] ring-4 ring-white hover:scale-105 transition"
+        className="wa-float relative block w-12 h-12 md:w-16 md:h-16 rounded-full shadow-[0_14px_34px_-10px_rgba(37,211,102,.75)] ring-4 ring-white hover:scale-105 transition"
       >
         <AgentAvatar size={64} />
         <span className="absolute -bottom-1 -right-1 grid place-items-center w-7 h-7 rounded-full bg-[#25D366] text-white ring-2 ring-white">

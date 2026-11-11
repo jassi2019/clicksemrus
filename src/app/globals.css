@@ -316,3 +316,17 @@ select.input option { background: #fff; color: #0b0b14; }
 .work-phone.is-playing .work-phone__view::-webkit-scrollbar { display: none; }
 .work-phone.is-playing .work-phone__img { position: static; }
 @media (prefers-reduced-motion: reduce) { .work-card:hover .work-frame__img, .work-frame.is-playing .work-frame__img, .work-phone.is-playing .work-phone__img { animation: none; transform: none; transition: none; } }
+
+/* mobile density: tighter sections, cards and display type below 640px */
+@media (max-width: 639px) {
+  .py-28, .py-24 { padding-top: 3.25rem; padding-bottom: 3.25rem; }
+  .py-16, .py-20 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+  .card.p-7, .card.p-8, .num-card.p-7, .num-card.p-8 { padding: 1.1rem; }
+  .num-card::before { font-size: 2.6rem; right: .5rem; top: -.2rem; }
+  .font-display.text-4xl { font-size: 1.85rem; line-height: 1.1; }
+  .font-display.text-5xl { font-size: 2.1rem; line-height: 1.08; }
+  .mt-14 { margin-top: 2rem; } .mt-12 { margin-top: 1.75rem; }
+  .text-lg { font-size: 1rem; }
+  .gap-6 { gap: .9rem; }
+  main { padding-bottom: 4.5rem; }
+}

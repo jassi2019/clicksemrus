@@ -151,7 +151,7 @@ export default function GrowthPopup() {
   return (
     <>
       {minimised && !open && (
-        <button type="button" onClick={reopen} aria-label="Get my free growth score" className="gp-tab fixed left-4 bottom-20 md:bottom-5 z-40">
+        <button type="button" onClick={reopen} aria-label="Get my free growth score" className="gp-tab hidden md:block fixed left-4 bottom-20 md:bottom-5 z-40">
           <span className="gp-tab__glow" aria-hidden="true" />
           <span className="gp-tab__inner">
             <span className="gp-tab__icon"><Zap size={15} /></span>
