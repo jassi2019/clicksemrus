@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, FileEdit, Flame, Users, Users2, Settings, LogOut, ExternalLink, Menu, Search, LayoutTemplate } from "lucide-react";
+import { LayoutDashboard, FileText, FileEdit, Flame, Users, Users2, Settings, LogOut, ExternalLink, Menu, Search, LayoutTemplate, Code2 } from "lucide-react";
 import { useState } from "react";
 import Logo from "../Logo";
 
@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/admin/seo", label: "Search & Indexing", icon: Search },
   { href: "/admin/builder", label: "Page builder", icon: LayoutTemplate },
   { href: "/admin/pages", label: "Pages", icon: FileEdit },
+  { href: "/admin/code", label: "Code editor", icon: Code2 },
   { href: "/admin/leads", label: "Leads", icon: Users },
   { href: "/admin/visitors", label: "Visitors", icon: Users2 },
   { href: "/admin/settings", label: "Settings", icon: Settings },

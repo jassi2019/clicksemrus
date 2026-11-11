@@ -57,6 +57,7 @@ Marketing website, blog engine and admin panel for **ClickSemrus**, a digital ma
 | Search & Indexing | GSC keyword opportunities, keyword post generation, Indexing API and IndexNow status |
 | Page builder | Block-based visual builder (Elementor-style) using the site's own design system: take over Home, About, Pricing, Contact or Services, or create new pages under `/p/<slug>`. See [Page builder](#page-builder) |
 | Pages | Edit headlines, intros, stats, plan names/prices, office hours, CTA band and announcement bar without touching code (`src/lib/pageContent.ts`) |
+| Code editor | Edit source files in the browser; every save is a GitHub commit that Vercel deploys. Shows deploy status and can revert a file to its previous commit. See [Code editor](#code-editor) |
 | Leads | Lead table with status, CSV export, WhatsApp notification log |
 | Visitors | Live activity and recent visitor sessions (first-party `cs_vid` cookie): pages, source, country/city, device, converted leads |
 | Settings | Phone, WhatsApp, owner WhatsApp for alerts, GA ID, announcement bar, stats note, cron and AI writer toggles, WhatsApp test send |
@@ -71,6 +72,16 @@ Admin → **Page builder** (`/admin/builder`) edits whole pages from blocks, ren
 - **Editor:** block list with drag-to-reorder (or up/down), duplicate, delete; grouped add-block palette; the selected block's form on the right; SEO fields; Save draft, Publish, Unpublish; a live preview iframe (`/p/preview/<slug>`, admin-only, shows drafts) with desktop/phone widths; Ctrl+S saves. Unsaved work is autosaved to the browser's localStorage and offered for restore on the next visit.
 - **Images:** the image fields have an Upload button (`POST /api/admin/upload`, up to 4 MB). Files are stored in Redis as base64 chunks and served from `/api/uploads/<id>` with immutable caching. Paste any external URL instead if you prefer.
 - **Storage:** `layout:<slug>` in Redis, slugs in the `layouts:index` set. Publishing calls `revalidatePath` for the route and `/`.
+
+## Code editor
+
+Admin → **Code editor** (`/admin/code`) is an advanced tool for editing the codebase without a laptop. Files are read from and written to GitHub through the Contents API (`src/lib/github.ts`), so nothing is edited on the server itself.
+
+- **Scope:** `src/app/**`, `src/components/**`, `src/lib/site.ts`, `src/lib/pageContent.ts`, `src/app/globals.css` and `README.md` (`.ts/.tsx/.css/.md/.json`). Everything else is refused by the API.
+- **Editing:** a plain monospace textarea with line numbers, Tab inserts two spaces, **Ctrl+S** saves. Each save commits to `GITHUB_BRANCH` with the message `admin: edit <path>` (plus a Co-Authored-By line). If the file changed on GitHub since it was opened the save is refused and must be reloaded first.
+- **Deploy status:** after a commit the editor polls `GET /api/admin/code?deploy=1`. With `VERCEL_TOKEN` + `VERCEL_PROJECT_ID` (+ `VERCEL_TEAM_ID` for team accounts) it shows Queued → Building → Live or Build failed with a link to the build log; without them it reports that the commit was pushed and Vercel will deploy in about two minutes.
+- **Safety:** a syntax or type error breaks the *next* deploy only; the previously deployed version stays live until a build succeeds. **Revert this file** commits the version from the previous commit that touched the file. **History** lists the last commits for the open file.
+- **Setup:** without `GITHUB_TOKEN` the page shows step-by-step instructions for creating a fine-grained personal access token (Repository access: only this repo; Permissions: Contents read and write) and adding it to Vercel.
 
 ## Environment variables
 
@@ -105,6 +116,12 @@ Set these in Vercel → Settings → Environment Variables (and in `.env.local` 
 | `WA_THANKYOU_TEMPLATE` | optional | Name of an approved Cloud API template for the lead thank-you, with two body variables: `{{1}}` first name, `{{2}}` agency name |
 | `CALLMEBOT_APIKEY` | optional | CallMeBot API key (free, owner alerts only) |
 | `CALLMEBOT_PHONE` | optional | The owner's number registered with CallMeBot, digits with country code |
+| `GITHUB_TOKEN` | optional | Fine-grained personal access token with **Contents: read and write** on the repo; enables Admin → Code editor (github.com/settings/personal-access-tokens/new) |
+| `GITHUB_REPO` | optional | Repository the code editor commits to, `owner/name` (default `jassi2019/clicksemrus`) |
+| `GITHUB_BRANCH` | optional | Branch the code editor reads and commits (default `main`) |
+| `VERCEL_TOKEN` | optional | Vercel account token (Account Settings → Tokens) for live deploy status in the code editor |
+| `VERCEL_PROJECT_ID` | optional | Vercel project ID (Project → Settings → General) |
+| `VERCEL_TEAM_ID` | optional | Vercel team ID (Team → Settings → General); only for projects under a team |
 
 Without a database the site works fully, but leads, analytics and manually written posts reset on each cold start.
 
