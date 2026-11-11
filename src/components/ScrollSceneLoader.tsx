@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useMediaQuery, useReducedMotion } from "@/lib/useMediaQuery";
-import HeroStatic from "./HeroStatic";
+import HeroStatic, { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 
 const ScrollScene = dynamic(() => import("./ScrollScene"), { ssr: false, loading: () => <HeroStatic /> });
 
@@ -12,7 +12,7 @@ type IdleWindow = Window & { requestIdleCallback?: (cb: () => void, opts?: { tim
  * Renders the three.js hero only on desktop (min-width: 768px), without reduced-motion,
  * and only after the browser is idle. Everyone else gets the static hero.
  */
-export default function ScrollSceneLoader() {
+export default function ScrollSceneLoader({ hero = HERO_DEFAULT }: { hero?: HeroContent }) {
   const desktop = useMediaQuery("(min-width: 768px)");
   const reduced = useReducedMotion();
   const [idle, setIdle] = useState(false);
@@ -27,6 +27,6 @@ export default function ScrollSceneLoader() {
     return () => clearTimeout(t);
   }, []);
 
-  if (!desktop || reduced || !idle) return <HeroStatic />;
-  return <ScrollScene />;
+  if (!desktop || reduced || !idle) return <HeroStatic hero={hero} />;
+  return <ScrollScene hero={hero} />;
 }

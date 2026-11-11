@@ -4,8 +4,10 @@ import Instagram from "./InstagramIcon";
 import { SITE, SERVICE_CATEGORIES, NAV, LOCATIONS, INDUSTRIES } from "@/lib/site";
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
+import { getContent } from "@/lib/pageContent";
 
-export default function Footer() {
+export default async function Footer() {
+  const c = await getContent("global");
   const hasPhone = !SITE.phone.includes("00000");
   return (
     <footer className="section-dark border-t border-border">
@@ -13,9 +15,7 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <Logo />
-            <p className="text-muted text-sm mt-4 leading-relaxed max-w-sm">
-              {SITE.name} is a performance-driven digital marketing agency in {SITE.city}. We turn clicks into customers with SEO, social media, paid ads, content and design.
-            </p>
+            <p className="text-muted text-sm mt-4 leading-relaxed max-w-sm">{c.get("footerBlurb")}</p>
             <div className="mt-6">
               <p className="font-semibold text-sm">Growth ideas, twice a month</p>
               <p className="text-muted text-xs mt-1 mb-3">Trend-based marketing angles for Indian businesses. No spam.</p>

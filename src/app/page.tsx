@@ -3,6 +3,7 @@ import { ArrowRight, Zap, Target, BarChart3, TrendingUp, Flame, Star, Award } fr
 import { SITE, SERVICES, INDUSTRIES, WORK, HOME_FAQS, serviceUrl } from "@/lib/site";
 import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
 import { getAllPosts, getSettings } from "@/lib/posts";
+import { getContent, parseStat, splitPair } from "@/lib/pageContent";
 import { liveTrendPosts } from "@/lib/trending";
 import { getReviews } from "@/lib/reviews";
 import ServiceIcon from "@/components/ServiceIcon";
@@ -47,21 +48,35 @@ const WHY = [
 const FAQS = HOME_FAQS;
 
 export default async function Home() {
-  const [posts, trends, reviews, igPosts, settings] = await Promise.all([
+  const [posts, trends, reviews, igPosts, settings, content] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(8),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
+    getContent("home"),
   ]);
   const latest = [...trends, ...posts].slice(0, 3);
+  const hero = {
+    eyebrow: content.get("heroEyebrow"),
+    headline: content.get("heroHeadline"),
+    headlineAccent: content.get("heroHeadlineAccent"),
+    sub: content.get("heroSub"),
+    primaryCta: content.get("heroPrimaryCta"),
+    secondaryCta: content.get("heroSecondaryCta"),
+  };
+  const stats = content.list("stats").slice(0, 4).map((item) => {
+    const [value, label] = splitPair(item);
+    const { value: v, suffix: s, decimals: d } = parseStat(value);
+    return { v, s, d, l: label || value };
+  });
 
   return (
     <>
       <JsonLd data={[faqJsonLd(FAQS), reviewJsonLd(reviews)]} />
 
       {/* 3D scroll-through hero */}
-      <ScrollSceneLoader />
+      <ScrollSceneLoader hero={hero} />
 
       {/* marquee */}
       <div className="border-y border-border bg-bg-2 py-4 overflow-hidden">
@@ -81,12 +96,7 @@ export default async function Home() {
         <Sphere className="w-36 h-36 -left-8 top-8" />
         <Ring className="w-40 h-40 right-[-30px] top-20" delay={-3} />
         <div className="container-x relative grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {[
-            { v: 3.2, s: "x", d: 1, l: "Average ROAS on paid campaigns" },
-            { v: 180, s: "%", d: 0, l: "Average organic traffic growth in 6 months" },
-            { v: 50, s: "+", d: 0, l: "Brands scaled across India" },
-            { v: 24, s: "h", d: 0, l: "Trend-to-creative turnaround" },
-          ].map((s, i) => (
+          {stats.map((s, i) => (
             <Reveal key={s.l} delay={i * 90}>
               <TiltCard className="p-4 sm:p-7">
                 <p className="font-display text-3xl sm:text-5xl font-extrabold"><Counter to={s.v} suffix={s.s} decimals={s.d} /></p>

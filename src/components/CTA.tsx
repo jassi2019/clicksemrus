@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { SITE } from "@/lib/site";
+import { getContent } from "@/lib/pageContent";
 import { Ring } from "./Shapes";
 
-export default function CTA({
-  title = "Ready to grow your business?",
-  sub = "Book a free 30-minute strategy call. You leave with a written plan and real numbers for your industry, no pitch deck.",
-}: {
-  title?: string;
-  sub?: string;
-}) {
+export default async function CTA({ title: titleProp, sub: subProp }: { title?: string; sub?: string }) {
+  const c = await getContent("global");
+  const title = titleProp ?? c.get("ctaHeadline");
+  const sub = subProp ?? c.get("ctaSub");
   const wa = `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Hi ClickSemrus! I want to book a free strategy call.")}`;
   return (
     <section className="section-dark relative overflow-hidden mt-24">

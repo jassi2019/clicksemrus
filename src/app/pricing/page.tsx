@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Check, Minus, ArrowRight, Megaphone, MapPin, Layers, Clock, Wrench } from "lucide-react";
 import { SITE, WORK } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
+import { getContent } from "@/lib/pageContent";
 import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
@@ -110,7 +111,9 @@ function CellValue({ v, featured }: { v: Cell; featured?: boolean }) {
   return <span className="text-sm font-semibold">{v}</span>;
 }
 
-export default function Pricing() {
+export default async function Pricing() {
+  const c = await getContent("pricing");
+  const plans = PLANS.map((p, i) => ({ ...p, name: c.get(`plan${i + 1}Name`) || p.name, price: c.get(`plan${i + 1}Price`) || p.price, desc: c.get(`plan${i + 1}Desc`) || p.desc }));
   return (
     <>
       <JsonLd data={[faqJsonLd(FAQS), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Pricing", path: "/pricing" }])]} />
@@ -122,12 +125,12 @@ export default function Pricing() {
         <div className="container-x relative pt-14 md:pt-20 pb-6 text-center max-w-3xl">
           <Reveal>
             <p className="eyebrow justify-center">Pricing</p>
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Transparent packages. <span className="gradient-text">No hidden fees.</span></h1>
-            <p className="text-muted text-lg mt-6">Pick a plan or ask for a custom quote. Every plan includes tracking, reporting and a real human who answers your WhatsApp.</p>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.get("headline")} <span className="gradient-text">{c.get("headlineAccent")}</span></h1>
+            <p className="text-muted text-lg mt-6">{c.get("intro")}</p>
           </Reveal>
         </div>
         <div className="container-x relative grid md:grid-cols-3 gap-5 pt-10 pb-14 items-stretch">
-          {PLANS.map((p, i) => (
+          {plans.map((p, i) => (
             <Reveal key={p.name} delay={i * 80}>
               <div className={`card p-7 h-full flex flex-col ${p.featured ? "border-brand/60 bg-gradient-to-b from-brand/15 to-transparent" : ""}`}>
                 <span className={`badge w-fit ${p.featured ? "bg-brand text-white" : "bg-surface-2 text-muted"}`}>{p.tag}</span>
@@ -142,7 +145,7 @@ export default function Pricing() {
             </Reveal>
           ))}
         </div>
-        <p className="container-x relative text-center text-xs text-muted pb-10">Prices exclude GST and ad spend. Website design and branding are quoted per project.</p>
+        <p className="container-x relative text-center text-xs text-muted pb-10">{c.get("footnote")}</p>
       </section>
 
       {/* comparison table */}
@@ -159,7 +162,7 @@ export default function Pricing() {
                 <thead>
                   <tr>
                     <th scope="col" className="w-[40%]">Feature</th>
-                    {PLANS.map((p) => <th key={p.name} scope="col" className={p.featured ? "is-featured" : ""}>{p.name}<span className="block text-[11px] font-semibold text-muted">from ₹{p.price}/mo</span></th>)}
+                    {plans.map((p) => <th key={p.name} scope="col" className={p.featured ? "is-featured" : ""}>{p.name}<span className="block text-[11px] font-semibold text-muted">from ₹{p.price}/mo</span></th>)}
                   </tr>
                 </thead>
                 <tbody>

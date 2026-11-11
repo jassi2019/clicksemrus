@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Zap, TrendingUp, Heart, Check } from "lucide-react";
 import { SERVICE_CATEGORIES, SITE, WORK, serviceUrl } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
+import { getContent } from "@/lib/pageContent";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServiceArt from "@/components/ServiceArt";
 import Reveal from "@/components/Reveal";
@@ -55,7 +56,8 @@ const CHANNEL_FIRST = [
   },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const c = await getContent("services");
   const total = SERVICE_CATEGORIES.reduce((n, c) => n + c.subs.length, 0);
   return (
     <>
@@ -68,8 +70,8 @@ export default function ServicesPage() {
         <div className="container-x relative pt-14 md:pt-20 pb-12">
           <Reveal className="max-w-3xl">
             <span className="eyebrow">Services</span>
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Full-funnel digital marketing services in <span className="gradient-text">Delhi NCR</span></h1>
-            <p className="text-muted mt-6 text-lg leading-relaxed">Seven service families, {total} specialist services, one team. Start with the channel that pays back fastest for your business, or hand us the whole funnel. Every engagement includes tracking, a live dashboard and a named growth manager.</p>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.get("headline")} <span className="gradient-text">{c.get("headlineAccent")}</span></h1>
+            <p className="text-muted mt-6 text-lg leading-relaxed">{c.get("intro").replace("{total}", String(total))}</p>
             <div className="flex gap-3 mt-8 flex-wrap">
               <Link href="/contact" className="btn btn-primary">Get a free audit <ArrowRight size={18} /></Link>
               <Link href="/pricing" className="btn btn-ghost">See pricing</Link>

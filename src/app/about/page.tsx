@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, IndianRupee, Zap, Eye, Palette, MessageCircle, FileText, Users, Lock } from "lucide-react";
-import { SITE, WORK, INDUSTRIES } from "@/lib/site";
+import { SITE, WORK } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
+import { getContent } from "@/lib/pageContent";
+import { renderMarkdown } from "@/lib/markdown";
 import Reveal from "@/components/Reveal";
 import TiltCard from "@/components/TiltCard";
 import Counter from "@/components/Counter";
@@ -37,7 +39,8 @@ const PRINCIPLES = [
   { icon: Lock, t: "Your data stays yours", d: "Accounts, domains and dashboards are created in your name. Leave any time with everything intact." },
 ];
 
-export default function About() {
+export default async function About() {
+  const c = await getContent("about");
   const industries = Array.from(new Set(WORK.map((w) => w.industry)));
   return (
     <>
@@ -50,8 +53,8 @@ export default function About() {
         <div className="container-x relative pt-14 md:pt-20 pb-14">
           <Reveal className="max-w-3xl">
             <span className="eyebrow">About us</span>
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">A growth team, <span className="gradient-text">not a vendor.</span></h1>
-            <p className="text-muted text-lg mt-6 leading-relaxed">{SITE.name} is a digital marketing agency in Delhi NCR that runs SEO, social media, paid ads, content, web development and automation for brands across India. We are judged on leads and revenue, and we report that way.</p>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.get("heroHeadline")} <span className="gradient-text">{c.get("heroHeadlineAccent")}</span></h1>
+            <p className="text-muted text-lg mt-6 leading-relaxed">{c.get("intro")}</p>
             <div className="flex gap-3 mt-8 flex-wrap">
               <Link href="/contact" className="btn btn-primary">Book a free call <ArrowRight size={18} /></Link>
               <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><InstagramIcon size={16} /> Follow our work</a>
@@ -64,14 +67,10 @@ export default function About() {
       <section className="container-x py-16 md:py-24 grid lg:grid-cols-[1fr_1.2fr] gap-12 items-start">
         <Reveal variant="right">
           <span className="eyebrow">Our story</span>
-          <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Why we started {SITE.name}</h2>
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">{c.get("storyHeadline")}</h2>
         </Reveal>
         <Reveal delay={90}>
-          <div className="prose">
-            <p>Before {SITE.name}, we sat on the client side of agency meetings in Delhi and Gurugram. Every month a beautiful PDF arrived: impressions up, reach up, engagement up. Every month the cost per lead quietly went up too, and nobody on the agency side could say which campaign had brought the last ten customers.</p>
-            <p>So in {SITE.foundingYear} we built the agency we wished we could have hired. One where tracking goes live before the first rupee is spent. One where the weekly update is a short note about what changed and what it did to cost per lead. One that launches in a week instead of spending a month on onboarding decks, and that keeps clients by performing rather than by contract.</p>
-            <p>Today we work with clinics in South Delhi and Faridabad, D2C brands shipping across India, a NEET-prep app, a clean-beauty label and businesses across {INDUSTRIES.length} industries. The work is different every time; the rules are the same: own the numbers, move fast, tell the truth.</p>
-          </div>
+          <div className="prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(c.get("story")) }} />
         </Reveal>
       </section>
 

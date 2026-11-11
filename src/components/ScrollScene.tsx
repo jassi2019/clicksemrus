@@ -5,6 +5,7 @@ import { useMediaQuery } from "@/lib/useMediaQuery";
 import * as THREE from "three";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 
 type P = React.MutableRefObject<number>;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -136,13 +137,14 @@ function Core({ progress }: { progress: P }) {
   );
 }
 
-const STAGES = [
-  { from: 0.0, to: 0.26, eyebrow: "Digital Marketing Agency · Delhi NCR", title: ["Make your brand", "impossible to ignore."], sub: "SEO, social, ads, content and websites, built around one number: revenue. Scroll to see how." },
+const stagesFor = (h: HeroContent) => [
+  { from: 0.0, to: 0.26, eyebrow: h.eyebrow, title: [h.headline, h.headlineAccent], sub: h.sub.replace(/Reports in rupees, not likes\.$/, "Scroll to see how.") },
   { from: 0.34, to: 0.62, eyebrow: "What we do", title: ["Every channel.", "One funnel."], sub: "Search, social, paid media, content and conversion-focused websites, run by one accountable team." },
   { from: 0.70, to: 1.0, eyebrow: "Why ClickSemrus", title: ["Reports in rupees,", "not likes."], sub: "Live dashboards, weekly optimisation, and a trend desk that posts within 24 hours.", cta: true },
 ];
 
-export default function ScrollScene() {
+export default function ScrollScene({ hero = HERO_DEFAULT }: { hero?: HeroContent }) {
+  const STAGES = stagesFor(hero);
   const wrap = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const mouse = useRef({ x: 0, y: 0 });
@@ -207,8 +209,8 @@ export default function ScrollScene() {
                   <p className="text-muted text-base md:text-xl mt-4 md:mt-6 leading-relaxed">{s.sub}</p>
                   {s.cta && (
                     <div className="flex flex-col sm:flex-row gap-3 mt-6 md:mt-8 pointer-events-auto">
-                      <Link href="/contact" className="btn btn-primary text-base !px-7 !py-4">Get a Free Growth Audit <ArrowRight size={18} /></Link>
-                      <Link href="/case-studies" className="btn btn-ghost text-base !px-7 !py-4">See Results</Link>
+                      <Link href="/contact" className="btn btn-primary text-base !px-7 !py-4">{hero.primaryCta} <ArrowRight size={18} /></Link>
+                      <Link href="/case-studies" className="btn btn-ghost text-base !px-7 !py-4">{hero.secondaryCta}</Link>
                     </div>
                   )}
                 </div>

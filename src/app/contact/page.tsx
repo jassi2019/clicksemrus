@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin, Clock, MessageCircle, ArrowRight, PhoneCall, FileS
 import InstagramIcon from "@/components/InstagramIcon";
 import { SITE, LOCATIONS } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
+import { getContent, splitPair } from "@/lib/pageContent";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
@@ -19,7 +20,9 @@ const NEXT = [
   { icon: CalendarCheck, t: "You decide", when: "No pressure", d: "Keep the plan and run it yourself, or start with us. Month to month after the first 90 days, and you own every account." },
 ];
 
-export default function Contact() {
+export default async function Contact() {
+  const c = await getContent("contact");
+  const hours = c.list("officeHours").map(splitPair);
   const tel = SITE.phone.replace(/\s/g, "");
   const wa = `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Hi ClickSemrus! I would like a free marketing audit.")}`;
   return (
@@ -32,8 +35,8 @@ export default function Contact() {
         <div className="container-x relative pt-14 md:pt-20 pb-12">
           <Reveal className="max-w-3xl">
             <p className="eyebrow">Contact</p>
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Let us build your <span className="gradient-text">growth plan.</span></h1>
-            <p className="text-muted mt-5 text-lg leading-relaxed">Fill the form and a strategist will call you within 2 business hours with first observations about your website and marketing. Prefer to talk now? Call or WhatsApp us directly.</p>
+            <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.get("headline")} <span className="gradient-text">{c.get("headlineAccent")}</span></h1>
+            <p className="text-muted mt-5 text-lg leading-relaxed">{c.get("intro")}</p>
           </Reveal>
         </div>
 
@@ -86,9 +89,9 @@ export default function Contact() {
               <div className="card p-5 !transform-none">
                 <h3 className="font-bold flex items-center gap-2"><Clock size={16} className="text-brand" /> Office hours</h3>
                 <ul className="mt-3 text-sm space-y-1.5">
-                  <li className="flex justify-between gap-4"><span className="text-muted">Monday to Saturday</span><span className="font-semibold">10:00 am to 7:00 pm IST</span></li>
-                  <li className="flex justify-between gap-4"><span className="text-muted">Sunday</span><span className="font-semibold">WhatsApp only</span></li>
-                  <li className="flex justify-between gap-4"><span className="text-muted">Form and WhatsApp replies</span><span className="font-semibold">Within 2 business hours</span></li>
+                  {hours.map(([label, value]) => (
+                    <li key={label} className="flex justify-between gap-4"><span className="text-muted">{label}</span><span className="font-semibold">{value}</span></li>
+                  ))}
                 </ul>
               </div>
             </Reveal>
