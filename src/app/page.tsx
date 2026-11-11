@@ -22,6 +22,9 @@ import InstagramFeed from "@/components/InstagramFeed";
 import { getInstagramFeed } from "@/lib/instagram";
 import WorkGrid from "@/components/WorkGrid";
 import { Sphere, Ring, Pill, Cube } from "@/components/Shapes";
+import { getPublishedLayout } from "@/lib/builderStore";
+import { faqsFromBlocks } from "@/lib/builder";
+import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const revalidate = 3600;
 
@@ -48,6 +51,17 @@ const WHY = [
 const FAQS = HOME_FAQS;
 
 export default async function Home() {
+  // Admin → Page builder can take over this route with a published layout.
+  const layout = await getPublishedLayout("home");
+  if (layout) {
+    const faqs = faqsFromBlocks(layout.blocks);
+    return (
+      <>
+        <JsonLd data={faqJsonLd(faqs.length ? faqs : FAQS)} />
+        <BlockRenderer blocks={layout.blocks} />
+      </>
+    );
+  }
   const [posts, trends, reviews, igPosts, settings, content] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),

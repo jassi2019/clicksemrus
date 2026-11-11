@@ -7,6 +7,8 @@ import { getContent, splitPair } from "@/lib/pageContent";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
+import { getPublishedLayout } from "@/lib/builderStore";
+import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
   title: `Contact ${SITE.name} | Free Digital Marketing Audit in Delhi NCR`,
@@ -21,6 +23,15 @@ const NEXT = [
 ];
 
 export default async function Contact() {
+  const layout = await getPublishedLayout("contact");
+  if (layout) {
+    return (
+      <>
+        <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Contact", path: "/contact" }])} />
+        <BlockRenderer blocks={layout.blocks} />
+      </>
+    );
+  }
   const c = await getContent("contact");
   const hours = c.list("officeHours").map(splitPair);
   const tel = SITE.phone.replace(/\s/g, "");

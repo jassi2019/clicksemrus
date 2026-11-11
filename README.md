@@ -55,10 +55,22 @@ Marketing website, blog engine and admin panel for **ClickSemrus**, a digital ma
 | Posts | Markdown editor with SEO preview, publish/unpublish, AI draft generation |
 | Trending | Current Google Trends India, one-click article generation, auto-publish toggle |
 | Search & Indexing | GSC keyword opportunities, keyword post generation, Indexing API and IndexNow status |
+| Page builder | Block-based visual builder (Elementor-style) using the site's own design system: take over Home, About, Pricing, Contact or Services, or create new pages under `/p/<slug>`. See [Page builder](#page-builder) |
 | Pages | Edit headlines, intros, stats, plan names/prices, office hours, CTA band and announcement bar without touching code (`src/lib/pageContent.ts`) |
 | Leads | Lead table with status, CSV export, WhatsApp notification log |
 | Visitors | Live activity and recent visitor sessions (first-party `cs_vid` cookie): pages, source, country/city, device, converted leads |
 | Settings | Phone, WhatsApp, owner WhatsApp for alerts, GA ID, announcement bar, stats note, cron and AI writer toggles, WhatsApp test send |
+
+## Page builder
+
+Admin → **Page builder** (`/admin/builder`) edits whole pages from blocks, rendered with the same classes and components as the coded pages so they look native.
+
+- **Blocks:** hero, rich text (markdown), features (icon or numbered cards, 2/3/4 columns), stats (animated counters), steps/timeline, services grid (pick from `SERVICES`), portfolio (pick from `WORK`), testimonials, FAQ (emits FAQ JSON-LD), CTA band, lead form, image, two columns, spacer and custom HTML (scripts, iframes and inline handlers are stripped). The registry with labels, defaults and the field schema that drives the editor form lives in `src/lib/builder.ts`; the renderer is `src/components/builder/BlockRenderer.tsx`.
+- **Take over an existing page:** choose Home, About, Pricing, Contact or Services and "Start from current page". A seed layout (`src/lib/builderSeeds.ts`) approximating the coded page (using the current Pages-panel copy) is created as a draft. Once **published**, the route renders the layout instead of the coded JSX (metadata and JSON-LD stay as coded). **Unpublish** or **Revert to code version** puts the coded page back instantly.
+- **New pages** are served at `/p/<slug>` (ISR, 60 s) with SEO title and description from the editor. Drafts return 404 publicly.
+- **Editor:** block list with drag-to-reorder (or up/down), duplicate, delete; grouped add-block palette; the selected block's form on the right; SEO fields; Save draft, Publish, Unpublish; a live preview iframe (`/p/preview/<slug>`, admin-only, shows drafts) with desktop/phone widths; Ctrl+S saves. Unsaved work is autosaved to the browser's localStorage and offered for restore on the next visit.
+- **Images:** the image fields have an Upload button (`POST /api/admin/upload`, up to 4 MB). Files are stored in Redis as base64 chunks and served from `/api/uploads/<id>` with immutable caching. Paste any external URL instead if you prefer.
+- **Storage:** `layout:<slug>` in Redis, slugs in the `layouts:index` set. Publishing calls `revalidatePath` for the route and `/`.
 
 ## Environment variables
 

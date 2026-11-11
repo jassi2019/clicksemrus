@@ -9,6 +9,9 @@ import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import RelatedWork from "@/components/RelatedWork";
+import { getPublishedLayout } from "@/lib/builderStore";
+import { faqsFromBlocks } from "@/lib/builder";
+import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
   title: "Digital Marketing Packages & Pricing in Delhi NCR",
@@ -112,6 +115,16 @@ function CellValue({ v, featured }: { v: Cell; featured?: boolean }) {
 }
 
 export default async function Pricing() {
+  const layout = await getPublishedLayout("pricing");
+  if (layout) {
+    const faqs = faqsFromBlocks(layout.blocks);
+    return (
+      <>
+        <JsonLd data={[faqJsonLd(faqs.length ? faqs : FAQS), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Pricing", path: "/pricing" }])]} />
+        <BlockRenderer blocks={layout.blocks} />
+      </>
+    );
+  }
   const c = await getContent("pricing");
   const plans = PLANS.map((p, i) => ({ ...p, name: c.get(`plan${i + 1}Name`) || p.name, price: c.get(`plan${i + 1}Price`) || p.price, desc: c.get(`plan${i + 1}Desc`) || p.desc }));
   return (

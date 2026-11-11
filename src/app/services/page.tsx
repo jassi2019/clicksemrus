@@ -10,6 +10,8 @@ import TiltCard from "@/components/TiltCard";
 import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
 import RelatedWork from "@/components/RelatedWork";
+import { getPublishedLayout } from "@/lib/builderStore";
+import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
   title: "Digital Marketing Services in Delhi NCR | SEO, Ads, Social, Web, E-commerce",
@@ -57,6 +59,15 @@ const CHANNEL_FIRST = [
 ];
 
 export default async function ServicesPage() {
+  const layout = await getPublishedLayout("services");
+  if (layout) {
+    return (
+      <>
+        <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Services", path: "/services" }])} />
+        <BlockRenderer blocks={layout.blocks} />
+      </>
+    );
+  }
   const c = await getContent("services");
   const total = SERVICE_CATEGORIES.reduce((n, c) => n + c.subs.length, 0);
   return (

@@ -11,6 +11,8 @@ import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
 import RelatedWork from "@/components/RelatedWork";
 import InstagramIcon from "@/components/InstagramIcon";
+import { getPublishedLayout } from "@/lib/builderStore";
+import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
   title: `About ${SITE.name} | Digital Marketing Agency in Delhi NCR`,
@@ -40,6 +42,15 @@ const PRINCIPLES = [
 ];
 
 export default async function About() {
+  const layout = await getPublishedLayout("about");
+  if (layout) {
+    return (
+      <>
+        <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "About", path: "/about" }])} />
+        <BlockRenderer blocks={layout.blocks} />
+      </>
+    );
+  }
   const c = await getContent("about");
   const industries = Array.from(new Set(WORK.map((w) => w.industry)));
   return (
