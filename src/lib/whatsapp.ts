@@ -12,7 +12,7 @@ import { db } from "./db";
  */
 export type WaProvider = "cloud" | "callmebot" | "none";
 
-export type WaTemplate = { name: string; params: string[]; lang?: string };
+export type WaTemplate = { name: string; params: string[]; lang?: string; /** Named body parameters ({{param_name}} templates). Takes precedence over `params`. */ namedParams?: Record<string, string> };
 
 export type WaResult = { ok: boolean; provider: WaProvider; reason?: string; id?: string };
 
@@ -74,7 +74,13 @@ async function sendCloud(to: string, text: string, template?: WaTemplate): Promi
         messaging_product: "whatsapp",
         to,
         type: "template",
-        template: { name: template.name, language: { code: template.lang || "en" }, components: template.params.length ? [{ type: "body", parameters: template.params.map((p) => ({ type: "text", text: p })) }] : [] },
+        template: {
+          name: template.name,
+          language: { code: template.lang || "en" },
+          components: template.namedParams
+            ? [{ type: "body", parameters: Object.entries(template.namedParams).map(([k, v]) => ({ type: "text", parameter_name: k, text: v })) }]
+            : template.params.length ? [{ type: "body", parameters: template.params.map((p) => ({ type: "text", text: p })) }] : [],
+        },
       }
     : { messaging_product: "whatsapp", to, type: "text", text: { body: text, preview_url: false } };
   try {
@@ -111,7 +117,15 @@ export async function sendWhatsApp({ to, text, template, kind = "message" }: { t
   const provider = whatsappProvider();
   let result: WaResult;
   if (!dest || dest.length < 10) result = { ok: false, provider, reason: "invalid recipient number" };
-  else if (provider === "cloud") result = await sendCloud(dest, text, template);
+  else if (provider === "cloud") {
+    // Template first (works outside the 24h window once approved); fall back to plain text while it is pending/rejected.
+    result = await sendCloud(dest, text, template);
+    if (!result.ok && template) {
+      const viaText = await sendCloud(dest, text);
+      if (viaText.ok) result = { ...viaText, reason: `template failed (${result.reason}); sent as text` };
+      else result = { ...viaText, reason: `template: ${result.reason} | text: ${viaText.reason}` };
+    }
+  }
   else if (provider === "callmebot") result = await sendCallMeBot(dest, template ? `${text}` : text);
   else result = { ok: false, provider: "none", reason: "not configured" };
   await log({ at: new Date().toISOString(), to: `+${dest}`, kind, provider: result.provider, ok: result.ok, reason: result.reason, preview: (template ? `[template ${template.name}] ` : "") + text.slice(0, 140) });

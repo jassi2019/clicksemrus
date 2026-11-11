@@ -103,7 +103,15 @@ export async function POST(req: NextRequest) {
 
     // (i) Owner alert on WhatsApp
     if (ownerNumber && !ownerNumber.includes("0000000000")) {
-      jobs.push(sendWhatsApp({ to: ownerNumber, text: ownerMessage(lead), kind: "owner-alert" }));
+      const ownerTpl = process.env.WA_OWNER_TEMPLATE;
+      jobs.push(sendWhatsApp({
+        to: ownerNumber,
+        text: ownerMessage(lead),
+        template: ownerTpl && whatsappProvider() === "cloud"
+          ? { name: ownerTpl, params: [], lang: process.env.WA_TEMPLATE_LANG || "en", namedParams: { lead_name: name, lead_phone: phone, lead_service: services.join(", ") || "General enquiry", lead_page: (source || "website").slice(0, 60) } }
+          : undefined,
+        kind: "owner-alert",
+      }));
     }
 
     // (ii) Thank-you to the lead. Template (works any time) when configured on the Cloud API; otherwise plain text,
@@ -111,7 +119,7 @@ export async function POST(req: NextRequest) {
     if (whatsappProvider() === "cloud") {
       const tpl = process.env.WA_THANKYOU_TEMPLATE;
       const text = `Hi ${first}, thanks for contacting ${SITE.name}! A strategist will call you within 2 business hours. Meanwhile reply here with your website and goals.`;
-      jobs.push(sendWhatsApp({ to: phone, text, template: tpl ? { name: tpl, params: [first, SITE.name], lang: process.env.WA_TEMPLATE_LANG || "en" } : undefined, kind: "lead-thankyou" }));
+      jobs.push(sendWhatsApp({ to: phone, text, template: tpl ? { name: tpl, params: [first, SITE.name], lang: process.env.WA_TEMPLATE_LANG || "en", namedParams: { first_name: first } } : undefined, kind: "lead-thankyou" }));
     }
 
     // Optional email notification via Resend
