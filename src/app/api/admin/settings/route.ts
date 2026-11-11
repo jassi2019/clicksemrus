@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     metaPixel: String(b.metaPixel || "").trim().slice(0, 30),
     phone: String(b.phone || "").trim().slice(0, 30),
     whatsapp: String(b.whatsapp || "").replace(/\D/g, "").slice(0, 15),
+    ownerWhatsapp: String(b.ownerWhatsapp || "").replace(/\D/g, "").slice(0, 15),
     email: String(b.email || "").trim().slice(0, 120),
     address: String(b.address || "").trim().slice(0, 200),
     announcement: String(b.announcement || "").trim().slice(0, 160),

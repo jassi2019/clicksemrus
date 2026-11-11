@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { listLeads } from "@/lib/posts";
+import { listWaLog, whatsappStatus } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
 export default async function LeadsAdmin() {
   if (!(await isAdmin())) redirect("/admin/login");
-  const leads = await listLeads();
+  const [leads, waLog] = await Promise.all([listLeads(), listWaLog(20)]);
+  const wa = whatsappStatus();
   const svc = (l: (typeof leads)[number]) => (l.services?.length ? l.services.join(", ") : l.service || "");
   const csv = ["Name,Phone,Email,Company,Website,Services,Budget,Source,Page,Date,Message", ...leads.map((l) => [l.name, l.phone, l.email, l.company, l.website, svc(l), l.budget, l.source, l.page, l.createdAt, (l.message || "").replace(/\n/g, " ")].map((x) => `"${String(x || "").replace(/"/g, '""')}"`).join(","))].join("\n");
   return (
@@ -35,6 +37,33 @@ export default async function LeadsAdmin() {
             {leads.length === 0 && <tr><td colSpan={6} className="text-muted">No leads yet. Share the site and watch this space.</td></tr>}
           </tbody>
         </table>
+      </div>
+
+      <div className="card !transform-none">
+        <div className="p-4 sm:p-5 pb-0 flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <h2 className="font-semibold">WhatsApp notification log</h2>
+            <p className="text-xs text-muted">Last 20 sends. Provider: {wa.label}.</p>
+          </div>
+          <a href="/admin/settings" className="text-sm text-brand-2">WhatsApp settings</a>
+        </div>
+        <div className="overflow-x-auto p-2 sm:p-3">
+          <table className="table min-w-[640px]">
+            <thead><tr><th>When</th><th>Type</th><th>To</th><th>Status</th><th>Message</th></tr></thead>
+            <tbody>
+              {waLog.map((e, i) => (
+                <tr key={`${e.at}-${i}`}>
+                  <td className="text-xs text-muted whitespace-nowrap">{new Date(e.at).toLocaleString("en-IN")}</td>
+                  <td className="text-xs">{e.kind}</td>
+                  <td className="text-xs whitespace-nowrap">{e.to}</td>
+                  <td className="text-xs">{e.ok ? <span className="badge bg-lime text-[#0b0b14]">sent</span> : <span className="badge bg-accent/15 text-accent" title={e.reason}>failed</span>}<span className="block text-muted mt-1">{e.provider}{!e.ok && e.reason ? `: ${e.reason.slice(0, 80)}` : ""}</span></td>
+                  <td className="text-xs text-muted max-w-[320px] truncate" title={e.preview}>{e.preview}</td>
+                </tr>
+              ))}
+              {waLog.length === 0 && <tr><td colSpan={5} className="text-muted">No WhatsApp messages sent yet.</td></tr>}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

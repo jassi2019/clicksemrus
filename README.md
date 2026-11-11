@@ -55,8 +55,10 @@ Marketing website, blog engine and admin panel for **ClickSemrus**, a digital ma
 | Posts | Markdown editor with SEO preview, publish/unpublish, AI draft generation |
 | Trending | Current Google Trends India, one-click article generation, auto-publish toggle |
 | Search & Indexing | GSC keyword opportunities, keyword post generation, Indexing API and IndexNow status |
-| Leads | Lead table with status, CSV export |
-| Settings | Phone, WhatsApp, GA ID, announcement bar, stats note, cron and AI writer toggles |
+| Pages | Edit headlines, intros, stats, plan names/prices, office hours, CTA band and announcement bar without touching code (`src/lib/pageContent.ts`) |
+| Leads | Lead table with status, CSV export, WhatsApp notification log |
+| Visitors | Live activity and recent visitor sessions (first-party `cs_vid` cookie): pages, source, country/city, device, converted leads |
+| Settings | Phone, WhatsApp, owner WhatsApp for alerts, GA ID, announcement bar, stats note, cron and AI writer toggles, WhatsApp test send |
 
 ## Environment variables
 
@@ -85,8 +87,36 @@ Set these in Vercel → Settings → Environment Variables (and in `.env.local` 
 | `INSTAGRAM_FEED_URL` / `INSTAGRAM_ACCESS_TOKEN` | optional | Instagram feed: either a JSON feed URL or a Graph API token |
 | `RESEND_API_KEY` / `LEAD_NOTIFY_EMAIL` / `RESEND_AUDIENCE_ID` | optional | Lead email notifications and newsletter audience |
 | `BREVO_API_KEY` / `BREVO_LIST_ID` | optional | Newsletter list on Brevo (alternative to Resend) |
+| `OWNER_WHATSAPP` | recommended | Owner's WhatsApp number (digits with country code, e.g. `9198xxxxxxxx`) that receives lead alerts. Admin → Settings → "Owner WhatsApp" overrides it; falls back to `NEXT_PUBLIC_WHATSAPP` |
+| `WA_CLOUD_TOKEN` | optional | Meta WhatsApp Cloud API permanent (system user) access token |
+| `WA_PHONE_NUMBER_ID` | optional | Phone number ID of the business number in the Meta app (not the number itself) |
+| `WA_THANKYOU_TEMPLATE` | optional | Name of an approved Cloud API template for the lead thank-you, with two body variables: `{{1}}` first name, `{{2}}` agency name |
+| `CALLMEBOT_APIKEY` | optional | CallMeBot API key (free, owner alerts only) |
+| `CALLMEBOT_PHONE` | optional | The owner's number registered with CallMeBot, digits with country code |
 
 Without a database the site works fully, but leads, analytics and manually written posts reset on each cold start.
+
+## WhatsApp notifications
+
+Every enquiry from the lead form or the Growth Score popup (not the newsletter) triggers, after the lead is saved: an alert to the owner on WhatsApp, a thank-you WhatsApp to the lead, and the existing email (Resend). `src/lib/whatsapp.ts` picks the first configured provider and logs every attempt to `wa:log` (visible under the table on Admin → Leads). Admin → Settings shows which provider is active and has a "Send test WhatsApp to owner" button.
+
+**Option 1: CallMeBot (free, owner alerts only, 5 minutes)**
+
+1. Save the CallMeBot number `+34 644 59 55 95` in your phone and send it the WhatsApp message `I allow callmebot to send me messages`.
+2. Within a minute it replies with your API key.
+3. Set `CALLMEBOT_APIKEY` to that key and `CALLMEBOT_PHONE` to your own number (digits with country code, e.g. `9198xxxxxxxx`), redeploy.
+
+CallMeBot can only message the number that registered, so the lead thank-you is skipped. The lead still gets a "Continue on WhatsApp" button on the thank-you screen, which opens a chat with the business number and a prefilled message.
+
+**Option 2: Meta WhatsApp Cloud API (owner alerts + thank-you to the lead)**
+
+1. In [Meta for Developers](https://developers.facebook.com/) create a Business app, add the WhatsApp product and connect (or verify) the business phone number.
+2. Copy the **Phone number ID** from WhatsApp → API Setup into `WA_PHONE_NUMBER_ID`.
+3. Create a System User in Business Settings with `whatsapp_business_messaging` and `whatsapp_business_management` permissions, generate a **permanent token** and set it as `WA_CLOUD_TOKEN`.
+4. For the thank-you, create and submit a **Utility** template (e.g. `lead_thankyou`, language English) with body: `Hi {{1}}, thanks for contacting {{2}}! A strategist will call you within 2 business hours. Meanwhile reply here with your website and goals.` Once approved, set `WA_THANKYOU_TEMPLATE=lead_thankyou`.
+5. Set `OWNER_WHATSAPP` (or Admin → Settings → Owner WhatsApp) to the number that should receive alerts and redeploy.
+
+Without a template the thank-you is sent as plain text, which the Cloud API only delivers inside a 24-hour customer-service window (the lead must have messaged the business number first). The "Continue on WhatsApp" button on the thank-you screen is how the lead opens that window themselves.
 
 ## Local development
 

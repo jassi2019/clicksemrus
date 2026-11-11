@@ -34,6 +34,7 @@ export default function SettingsForm({ initial }: { initial: Settings }) {
         <h2 className="font-semibold">Contact details</h2>
         <Field s={s} set={set} k="phone" label="Phone (display)" />
         <Field s={s} set={set} k="whatsapp" label="WhatsApp number" hint="Digits only with country code, e.g. 919876543210" />
+        <Field s={s} set={set} k="ownerWhatsapp" label="Owner WhatsApp for lead alerts" hint="Digits with country code. Overrides the OWNER_WHATSAPP env var; falls back to the WhatsApp number above." />
         <Field s={s} set={set} k="email" label="Email" type="email" />
         <Field s={s} set={set} k="address" label="Address" />
         <Field s={s} set={set} k="announcement" label="Top announcement bar" hint="Leave empty to hide. Example: Diwali offer: 20% off on first month." />

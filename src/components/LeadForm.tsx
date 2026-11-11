@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { CheckCircle2, Loader2, ArrowRight, ChevronDown, Plus, Minus } from "lucide-react";
-import { SERVICES } from "@/lib/site";
+import { CheckCircle2, Loader2, ArrowRight, ChevronDown, Plus, Minus, MessageCircle } from "lucide-react";
+import { SERVICES, SITE } from "@/lib/site";
 import { trackEvent, getVid } from "./Tracker";
 
 const SERVICE_OPTIONS = [...SERVICES.map((s) => s.name), "Complete Digital Marketing"];
@@ -23,6 +23,7 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
   const [phone, setPhone] = useState("");
   const [moreServices, setMoreServices] = useState(false);
   const [details, setDetails] = useState(false);
+  const [done, setDone] = useState<{ firstName: string; whatsapp: string }>({ firstName: "", whatsapp: "" });
   const path = usePathname();
   void compact;
 
@@ -59,8 +60,9 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
     };
     try {
       const res = await fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; whatsapp?: string; firstName?: string };
       if (!res.ok || !json.ok) throw new Error(json.error || "Request failed");
+      setDone({ firstName: json.firstName || firstName, whatsapp: json.whatsapp || SITE.whatsapp });
       setState("done");
       trackEvent("lead_submitted");
     } catch (err) {
@@ -69,14 +71,25 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
     }
   }
 
-  if (state === "done")
+  if (state === "done") {
+    const number = done.whatsapp.replace(/\D/g, "");
+    const hasNumber = Boolean(number) && !number.includes("0000000000");
+    const waText = `Hi ${SITE.name}, this is ${done.firstName || "a new enquiry"}. I just sent an enquiry on your website. My website and goals: `;
+    const wa = `https://wa.me/${number}?text=${encodeURIComponent(waText)}`;
     return (
       <div className="card p-8 text-center">
         <CheckCircle2 className="mx-auto text-lime" size={44} />
-        <h3 className="font-display text-2xl font-bold mt-4">Thank you! We will call you within 2 hours.</h3>
-        <p className="text-muted mt-2">Meanwhile, check our latest growth ideas on the blog.</p>
+        <h3 className="font-display text-2xl font-bold mt-4">Thank you{done.firstName ? `, ${done.firstName}` : ""}! We will call you within 2 hours.</h3>
+        <p className="text-muted mt-2">Want a faster reply? Continue on WhatsApp so our strategist can message you right away.</p>
+        {hasNumber && (
+          <a href={wa} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("whatsapp_click")} className="btn btn-primary mt-5 !bg-[#25D366] !shadow-[0_14px_30px_-14px_rgba(37,211,102,.7)]">
+            <MessageCircle size={18} /> Continue on WhatsApp
+          </a>
+        )}
+        <p className="text-xs text-muted mt-4">Meanwhile, check our latest growth ideas on the blog.</p>
       </div>
     );
+  }
 
   const chips = moreServices ? SERVICE_OPTIONS : PRIMARY;
 
