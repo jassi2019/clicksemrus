@@ -12,6 +12,7 @@ export default function Splash() {
   useEffect(() => {
     if (path?.startsWith("/admin")) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return; // no intro on phones: it reads as the hero flashing
     try {
       if (sessionStorage.getItem("cs_splash")) return;
       sessionStorage.setItem("cs_splash", "1");

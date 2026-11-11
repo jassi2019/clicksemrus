@@ -330,3 +330,9 @@ select.input option { background: #fff; color: #0b0b14; }
   .gap-6 { gap: .9rem; }
   main { padding-bottom: 4.5rem; }
 }
+
+/* phones: no scroll-reveal fades (content must never look like it vanishes), no splash */
+@media (max-width: 767px) {
+  .reveal, .reveal-right, .reveal-zoom { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .splash { display: none; }
+}

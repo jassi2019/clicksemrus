@@ -1,3 +1,4 @@
+import { coverFor, usesOriginalCover } from "@/lib/cover";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, Flame, ExternalLink, ArrowRight } from "lucide-react";
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.seoDescription || post.excerpt,
     path: `/blog/${post.slug}`,
     type: "article",
-    image: post.cover,
+    image: coverFor(post, SITE.url),
     keywords: post.tags,
   });
 }
@@ -62,13 +63,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <span className="flex items-center gap-1"><Clock size={14} /> {readingTime(post.content)} min read</span>
           </p>
         </header>
-        {post.cover && (
-          <figure className="mt-8 rounded-2xl overflow-hidden border border-border max-w-4xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={post.cover} alt={post.title} className="w-full max-h-[420px] object-cover" />
-            {post.coverCredit && <figcaption className="text-xs text-muted px-4 py-2">Image: {post.coverCredit}</figcaption>}
-          </figure>
-        )}
+        <figure className="mt-8 rounded-2xl overflow-hidden border border-border max-w-4xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={coverFor(post)} alt={post.title} className="w-full max-h-[420px] object-cover" />
+          {usesOriginalCover(post) && post.coverCredit && <figcaption className="text-xs text-muted px-4 py-2">Image: {post.coverCredit}</figcaption>}
+        </figure>
         <div className="grid lg:grid-cols-[1fr_300px] gap-10 mt-10">
           <div>
             {toc.length > 2 && (

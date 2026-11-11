@@ -8,6 +8,7 @@ import { hasAiWriter, generateJson, aiProviderLabel } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 import { db } from "@/lib/db";
+import { ensureCover, coverProvider } from "@/lib/coverGen";
 
 export const maxDuration = 300;
 
@@ -15,7 +16,7 @@ export const maxDuration = 300;
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
   const [snapshot, log, aiError] = await Promise.all([getGscSnapshot(), indexLog(60), db.get("ai:lastError").catch(() => null)]);
-  return NextResponse.json({ ok: true, snapshot, log, aiError, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter() } });
+  return NextResponse.json({ ok: true, snapshot, log, aiError, config: { google: hasGoogleAuth(), indexnow: Boolean(indexNowKey()), ai: hasAiWriter(), covers: coverProvider() } });
 }
 
 export async function POST(req: NextRequest) {
@@ -42,6 +43,17 @@ export async function POST(req: NextRequest) {
       const r = await submitSitemap();
       return NextResponse.json({ ok: r === "ok", sitemap: r, error: r === "ok" ? undefined : r });
     }
+    if (b.action === "covers") {
+      const posts = await getAllPosts({ includeDrafts: true });
+      let done = 0, skipped = 0;
+      for (const p of posts.slice(0, 40)) {
+        const r = await ensureCover(p, Boolean(b.url === "force"));
+        if (r) done++; else skipped++;
+      }
+      revalidatePath("/blog"); revalidatePath("/");
+      const err = await db.get<{ message: string; slug: string }>("cover:lastError").catch(() => null);
+      return NextResponse.json({ ok: true, done, skipped, provider: coverProvider(), lastError: err });
+    }
     if (b.action === "indexAll") {
       const posts = await getAllPosts();
       const urls = ["/", "/blog", "/sitemap.xml", ...posts.slice(0, 100).map((p) => `/blog/${p.slug}`)];
@@ -58,6 +70,7 @@ export async function POST(req: NextRequest) {
       if (await postExists(slug)) return NextResponse.json({ ok: false, error: `Post already exists: /blog/${slug}` });
       const post = await buildKeywordPost(o);
       await savePost(post);
+      await ensureCover(post);
       revalidatePath("/blog"); revalidatePath(`/blog/${post.slug}`); revalidatePath("/");
       const indexed = await notifyIndex([`/blog/${post.slug}`, "/blog"]);
       return NextResponse.json({ ok: true, slug: post.slug, indexed });

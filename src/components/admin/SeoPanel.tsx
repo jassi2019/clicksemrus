@@ -5,7 +5,7 @@ import { Loader2, RefreshCw, Send, Search, PenLine, CheckCircle2, XCircle } from
 import type { GscSnapshot, Opportunity } from "@/lib/gsc";
 import type { IndexLogEntry } from "@/lib/indexing";
 
-type Config = { google: boolean; indexnow: boolean; ai: boolean };
+type Config = { google: boolean; indexnow: boolean; ai: boolean; covers?: string };
 
 const KIND: Record<Opportunity["kind"], { label: string; cls: string }> = {
   uncovered: { label: "No dedicated page", cls: "bg-sun/15 text-[#92400e]" },
@@ -37,6 +37,7 @@ export default function SeoPanel({ snapshot, log, config }: { snapshot: GscSnaps
         ? j.slug ? `Published /blog/${j.slug} and pinged search engines.`
         : j.indexed ? `Pinged ${j.indexed.length} URL(s): Google ${j.indexed[0]?.google}, IndexNow ${j.indexed[0]?.indexnow}.`
         : j.snapshot ? `Search Console refreshed: ${j.snapshot.opportunities.length} opportunities, ${j.snapshot.totalClicks} clicks / ${j.snapshot.totalImpressions} impressions in 28 days.`
+        : typeof j.done === "number" ? `Covers: ${j.done} generated, ${j.skipped} kept (${j.provider})${j.lastError ? ` · last error: ${j.lastError.message}` : ""}.`
         : j.sitemap ? `Sitemap submitted to Search Console (${j.sitemap}).`
         : j.result ? `${j.result.verdict} · ${j.result.coverage} · last crawl ${j.result.lastCrawl || "n/a"}`
         : "Done."
@@ -60,6 +61,7 @@ export default function SeoPanel({ snapshot, log, config }: { snapshot: GscSnaps
       <div className="flex flex-wrap gap-2">
         <button onClick={() => call({ action: "refresh" }, "refresh")} disabled={!!busy} className="btn btn-primary text-sm">{busy === "refresh" ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />} Refresh Search Console data</button>
         <button onClick={() => call({ action: "sitemap" }, "sitemap")} disabled={!!busy} className="btn btn-ghost text-sm">{busy === "sitemap" ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />} Submit sitemap to Google</button>
+        <button onClick={() => call({ action: "covers" }, "covers")} disabled={!!busy} className="btn btn-ghost text-sm">{busy === "covers" ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />} Regenerate blog covers{config.covers ? ` (${config.covers})` : ""}</button>
         <button onClick={() => call({ action: "indexAll" }, "all")} disabled={!!busy} className="btn btn-ghost text-sm">{busy === "all" ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />} Ping all blog URLs</button>
       </div>
 

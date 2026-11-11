@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Flame, Clock } from "lucide-react";
 import type { Post } from "@/lib/posts";
 import { readingTime } from "@/lib/markdown";
+import { coverFor } from "@/lib/cover";
 
 const GRADIENTS = [
   "from-[#e9e9f3] to-[#c9cce0]", "from-[#dcdbff] to-[#b9b4ff]", "from-[#d9f1ff] to-[#b6e3ff]", "from-[#efeff5] to-[#d2d4e3]",
@@ -12,11 +13,9 @@ export default function BlogCard({ post, i = 0, featured = false }: { post: Post
   return (
     <Link href={`/blog/${post.slug}`} className={`card overflow-hidden group flex flex-col ${featured ? "md:flex-row" : ""}`}>
       <div className={`relative ${featured ? "md:w-1/2 min-h-56" : "h-44"} bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} overflow-hidden`}>
-        {post.cover && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.cover} alt="" className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition duration-500" loading="lazy" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-bg/80 to-transparent" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={coverFor(post)} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg/60 to-transparent" />
         <div className="absolute top-3 left-3 flex gap-2">
           <span className="badge bg-bg/70 backdrop-blur text-fg border border-border">{post.category}</span>
           {post.source === "trend" && (

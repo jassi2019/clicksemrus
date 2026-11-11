@@ -5,6 +5,8 @@ import { postExists, savePost, getSettings } from "@/lib/posts";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { notifyIndex, submitSitemap } from "@/lib/indexing";
+import { ensureCover } from "@/lib/coverGen";
+import { getPost } from "@/lib/posts";
 
 export const maxDuration = 300;
 
@@ -57,6 +59,12 @@ export async function GET(req: NextRequest) {
     } else notes.push("gsc: not configured");
   } catch (e) {
     notes.push(`gsc error: ${(e as Error).message.slice(0, 120)}`);
+  }
+
+  // Covers for everything created this run (AI / stock when keys exist, else branded render)
+  for (const slug of created) {
+    const p = await getPost(slug, true);
+    if (p) await ensureCover(p);
   }
 
   revalidatePath("/");
