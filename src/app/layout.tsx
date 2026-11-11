@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HideOnAdmin from "@/components/HideOnAdmin";
+import NoInspect from "@/components/NoInspect";
 import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <MobileBar phone={settings.phone || SITE.phone} />
         <GrowthPopup />
         <Tracker />
+        <NoInspect />
         {(settings.gaId || GA_FALLBACK) && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.gaId || GA_FALLBACK}`} strategy="lazyOnload" />

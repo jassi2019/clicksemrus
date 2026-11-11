@@ -1,3 +1,4 @@
+import StockImage from "@/components/StockImage";
 import Link from "next/link";
 import { ArrowRight, Check, IndianRupee, Rocket, Unlock, Target, Zap, BarChart3, TrendingUp, Building2, Store, Stethoscope, GraduationCap, ShoppingBag, Briefcase, Sparkles, MessageCircle } from "lucide-react";
 import { SERVICES, serviceUrl, workForService, type ServiceCategory, type SubService } from "@/lib/site";
@@ -14,6 +15,17 @@ import Reveal from "@/components/Reveal";
 import TiltCard from "@/components/TiltCard";
 import Counter from "@/components/Counter";
 import RelatedWork from "@/components/RelatedWork";
+
+/** Relevant photo themes per service category (used when PEXELS_API_KEY is set). */
+const PHOTO_QUERY: Record<string, string> = {
+  "seo": "seo analytics laptop growth chart",
+  "paid-ads": "digital advertising campaign dashboard marketer",
+  "social-media-marketing": "social media content creator smartphone",
+  "web-design-development": "web developer designing website laptop",
+  "ecommerce": "ecommerce online shopping packaging business",
+  "creative-branding": "graphic designer branding studio",
+  "automation-crm": "business owner whatsapp chat smartphone",
+};
 
 type Audience = { icon: React.ComponentType<{ size?: number; className?: string }>; t: string; d: string };
 
@@ -129,6 +141,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
             </ul>
           </div>
           <Reveal variant="zoom" className="relative">
+            <StockImage query={PHOTO_QUERY[category?.slug || ""] || `${s.name} digital marketing team`} className="mb-5 aspect-[16/10]" priority />
             <TiltCard className="p-7 md:p-8 overflow-hidden" max={6}>
               <ServiceArt slug={s.slug} className="!w-32 !h-32 !opacity-15" />
               <p className="text-xs font-bold tracking-widest text-brand uppercase">What changes for you</p>

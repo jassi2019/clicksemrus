@@ -3,7 +3,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { CheckCircle2, Loader2, ArrowRight, ChevronDown, Plus, Minus } from "lucide-react";
 import { SERVICES } from "@/lib/site";
-import { trackEvent } from "./Tracker";
+import { trackEvent, getVid } from "./Tracker";
 
 const SERVICE_OPTIONS = [...SERVICES.map((s) => s.name), "Complete Digital Marketing"];
 /** Chips shown before "+ more" is pressed. */
@@ -55,6 +55,7 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
       source: "form",
       page: source || path,
       path,
+      vid: getVid(),
     };
     try {
       const res = await fetch("/api/lead", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });

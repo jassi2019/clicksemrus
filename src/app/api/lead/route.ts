@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { saveLead, type Lead } from "@/lib/posts";
 import { recordEvent } from "@/lib/analytics";
 import { SITE, SERVICES } from "@/lib/site";
+import { attachLeadToVisitor, isValidVid } from "@/lib/visitors";
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -41,8 +42,11 @@ export async function POST(req: NextRequest) {
     if (!consent) return NextResponse.json({ ok: false, error: "Please agree to be contacted." }, { status: 400 });
     if (website && !/^https?:\/\/|^[a-z0-9-]+(\.[a-z0-9-]+)+/i.test(website)) return NextResponse.json({ ok: false, error: "Website looks invalid." }, { status: 400 });
 
+    const vidRaw = req.cookies.get("cs_vid")?.value || b.vid;
+    const vid = isValidVid(vidRaw) ? vidRaw : undefined;
     const lead: Lead = {
       id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+      vid,
       name,
       firstName,
       lastName,
@@ -61,7 +65,7 @@ export async function POST(req: NextRequest) {
       status: "new",
     };
     await saveLead(lead);
-    await recordEvent("lead");
+    await Promise.all([recordEvent("lead"), vid ? attachLeadToVisitor(vid, name).catch(() => {}) : Promise.resolve()]);
 
     // Optional email notification via Resend
     if (process.env.RESEND_API_KEY && process.env.LEAD_NOTIFY_EMAIL) {

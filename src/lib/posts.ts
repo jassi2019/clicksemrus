@@ -89,6 +89,8 @@ export type Lead = {
   consent?: boolean;
   source?: string;
   page?: string;
+  /** Visitor session id (cs_vid cookie) that converted, when known. */
+  vid?: string;
   createdAt: string;
   status: "new" | "contacted" | "won" | "lost";
 };
@@ -113,6 +115,8 @@ export type Settings = {
   trendGeo?: string;
   showStatsNote?: boolean;
   keywordPostsPerDay?: number;
+  /** Owner's WhatsApp number for lead alerts (digits with country code). Overrides OWNER_WHATSAPP. */
+  ownerWhatsapp?: string;
 };
 
 export async function getSettings(): Promise<Settings> {
