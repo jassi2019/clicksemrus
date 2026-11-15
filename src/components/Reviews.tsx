@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star, Users } from "lucide-react";
 import Image from "next/image";
 import { SITE } from "@/lib/site";
 import type { ReviewData, Review } from "@/lib/reviews";
@@ -17,24 +17,25 @@ function GoogleG({ size = 14 }: { size?: number }) {
 
 function ReviewCard({ r }: { r: Review }) {
   return (
-    <article className="card relative w-[300px] sm:w-[340px] shrink-0 p-5 flex flex-col gap-3 !transform-none">
-      <span className="absolute top-4 right-4 grid place-items-center w-7 h-7 rounded-full bg-surface-2 border border-border"><GoogleG /></span>
-      <div className="flex items-center gap-3 pr-8">
+    <article className="card relative w-[300px] sm:w-[338px] shrink-0 p-5 flex flex-col gap-3 !transform-none hover:!-translate-y-1">
+      <span className="absolute top-4 right-4 grid place-items-center w-8 h-8 rounded-full bg-white border border-border shadow-sm"><GoogleG size={16} /></span>
+      <div className="flex items-center gap-3 pr-9">
         {r.photo ? (
           <Image src={r.photo} alt="" width={40} height={40} className="w-10 h-10 rounded-full object-cover" unoptimized />
         ) : (
           <span className="w-10 h-10 rounded-full bg-brand text-white grid place-items-center font-bold">{r.name.charAt(0).toUpperCase()}</span>
         )}
         <div className="min-w-0">
-          <p className="font-bold text-sm truncate">{r.name}</p>
+          <p className="font-bold text-sm truncate flex items-center gap-1">{r.name}</p>
           <p className="text-xs text-muted truncate">{r.meta}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         <span className="flex text-sun">{[...Array(5)].map((_, i) => <Star key={i} size={13} fill={i < Math.round(r.rating) ? "currentColor" : "none"} />)}</span>
-        {r.relative && <span className="text-xs text-muted">{r.relative}</span>}
+        {r.relative && <span className="text-xs text-muted">· {r.relative}</span>}
+        <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-bold text-[#1a73e8]"><svg width="11" height="11" viewBox="0 0 24 24" fill="#1a73e8"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Verified</span>
       </div>
-      <p className="text-sm leading-relaxed text-fg/85 line-clamp-5">{r.text}</p>
+      <p className="text-sm leading-relaxed text-fg/85 line-clamp-4">{r.text}</p>
     </article>
   );
 }
@@ -54,9 +55,6 @@ function Row({ items, reverse = false }: { items: Review[]; reverse?: boolean })
 }
 
 export default function Reviews({ data }: { data: ReviewData }) {
-  const half = Math.ceil(data.reviews.length / 2);
-  const rowA = data.reviews.slice(0, half);
-  const rowB = data.reviews.slice(half);
   const ratingText = data.rating.toFixed(1);
   return (
     <section className="relative overflow-hidden py-24 bg-bg-2 border-y border-border">
@@ -81,9 +79,14 @@ export default function Reviews({ data }: { data: ReviewData }) {
           </Reveal>
         </div>
       </div>
-      <div className="mt-12 space-y-2 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
-        <Row items={rowA} />
-        <div className="hidden md:block"><Row items={rowB.length ? rowB : rowA} reverse /></div>
+      <div className="mt-12 [mask-image:linear-gradient(90deg,transparent,black_5%,black_95%,transparent)]">
+        <Row items={data.reviews} />
+      </div>
+      <div className="container-x mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted">
+        <span className="inline-flex items-center gap-1.5"><GoogleG size={15} /> Verified Google reviews</span>
+        <span className="inline-flex items-center gap-1.5"><Star size={14} className="text-sun" fill="currentColor" /> {ratingText} average rating</span>
+        <span className="inline-flex items-center gap-1.5"><Users size={14} /> {data.total}+ businesses served</span>
+        {SITE.googleReviewUrl && <a href={SITE.googleReviewUrl} target="_blank" rel="noopener noreferrer" className="font-bold text-brand hover:underline">Read all on Google →</a>}
       </div>
     </section>
   );
