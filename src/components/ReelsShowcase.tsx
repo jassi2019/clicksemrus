@@ -85,7 +85,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                 <button type="button" onClick={() => toggle(r.code)} className="reel__frame" aria-pressed={on} aria-label={on ? "Close" : `Open: ${r.caption || c.client}`}>
                   {on ? (
                     r.video ? (
-                      <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay playsInline controls preload="metadata" />
+                      <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay muted loop playsInline controls preload="metadata" />
                     ) : (
                       <span className="reel__focus">
                         <Image src={r.thumb} alt={r.caption || `${c.client} reel`} fill sizes="(min-width: 1024px) 260px, 60vw" className="object-cover" unoptimized />
@@ -102,10 +102,13 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                       <Image src={r.thumb} alt={r.caption || `${c.client} reel`} fill sizes="(min-width: 1024px) 220px, 46vw" className="object-cover" unoptimized />
                       <span className="reel__shade" />
                       <span className="reel__play"><Play size={18} fill="currentColor" /></span>
-                      <span className="reel__meta">
-                        <span className="inline-flex items-center gap-1"><Heart size={12} fill="currentColor" /> {fmt(r.likes)}</span>
-                        <span className="inline-flex items-center gap-1"><MessageCircle size={12} /> {r.comments}</span>
-                      </span>
+                      {(r.likes > 0 || r.comments > 0) && (
+                        <span className="reel__meta">
+                          <span className="inline-flex items-center gap-1"><Heart size={12} fill="currentColor" /> {fmt(r.likes)}</span>
+                          <span className="inline-flex items-center gap-1"><MessageCircle size={12} /> {r.comments}</span>
+                        </span>
+                      )}
+                      {r.video && <span className="reel__native">Plays here</span>}
                       {top && <span className="reel__top">Most liked</span>}
                       {r.caption && <span className="reel__caption">{r.caption}</span>}
                     </>
@@ -122,7 +125,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
             );
           })}
         </div>
-        <p className="mt-5 text-xs text-muted">Live from Instagram · updates every hour · {isAi ? "ranked by likes" : "latest first"}{c.reels.some((r) => r.video) ? " · plays right here" : ""}.</p>
+        <p className="mt-5 text-xs text-muted">{c.reels.some((r) => r.video) ? "Tap a reel to play it here. " : ""}Live from Instagram · updates every hour · {isAi ? "ranked by likes" : "latest first"}.</p>
       </div>
     </section>
   );

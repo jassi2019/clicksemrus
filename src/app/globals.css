@@ -510,3 +510,14 @@ select.input option { background: #fff; color: #0b0b14; }
 .gs2-reel { position: relative; overflow: hidden; }
 .gs2-reel__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,.05) 50%); }
 .gs2-reel__stats { position: absolute; left: .5rem; right: .5rem; bottom: 2.4rem; display: inline-flex; align-items: center; gap: .25rem; font-size: .6rem; font-weight: 800; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+
+.reel__native { position: absolute; right: .6rem; top: .6rem; font-size: .58rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; padding: .22rem .5rem; border-radius: 999px; background: rgba(255,255,255,.92); color: #0b0b14; }
+
+/* phones: simpler growth board (no phone mock), header CTA lives in the menu */
+@media (max-width: 639px) {
+  .gs2-grid { grid-template-columns: 1fr; }
+  .gs2-phone { display: none; }
+  .gs2-board { padding: .85rem; }
+  .gs2-kpi b { font-size: 1.1rem; }
+  .gs2-chart { min-height: 6.5rem; }
+}

@@ -6,7 +6,7 @@ import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 import InstagramIcon from "./InstagramIcon";
 import Image from "next/image";
 
-export type HeroReel = { thumb: string; likes: number; comments: number; caption?: string };
+export type HeroReel = { thumb: string; video?: string; likes: number; comments: number; caption?: string };
 
 /**
  * Growth-story hero v2. A new business starts at zero; ClickSemrus modules plug in one by one and the
@@ -154,7 +154,7 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
                   {stage === 4 && (
                     <div className="gs2-shot gs2-shot--reel">
                       <div className="gs2-reel">
-                        {reel?.thumb ? <Image src={reel.thumb} alt={reel.caption || "Reel"} fill sizes="170px" className="object-cover" unoptimized /> : null}
+                        {reel?.video ? <video src={reel.video} poster={reel.thumb} muted autoPlay loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" /> : reel?.thumb ? <Image src={reel.thumb} alt={reel.caption || "Reel"} fill sizes="170px" className="object-cover" unoptimized /> : null}
                         <span className="gs2-reel__shade" />
                         <span className="gs2-reel__stats"><InstagramIcon size={12} /> Reel{reel ? <> · <Heart size={11} fill="currentColor" /> {reel.likes >= 1000 ? `${(reel.likes / 1000).toFixed(1)}k` : reel.likes} · 💬 {reel.comments}</> : null}</span>
                       </div>

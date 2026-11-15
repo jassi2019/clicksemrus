@@ -145,7 +145,7 @@ export default function Header() {
             <MegaMenu open={mega} onClose={() => setMega(false)} id={megaId} />
           </div>
         </nav>
-        <Link href="/contact" className="hidden md:inline-flex btn btn-primary text-sm !py-2.5">Get Free Audit <ArrowRight size={16} /></Link>
+        <span className="hidden md:block"><Link href="/contact" className="btn btn-primary text-sm !py-2.5">Get Free Audit <ArrowRight size={16} /></Link></span>
         <button className="md:hidden p-2 rounded-full hover:bg-surface-2" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
         </button>

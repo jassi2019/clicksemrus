@@ -18,6 +18,7 @@ import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import ServiceTicker from "@/components/ServiceTicker";
 import ReelsShowcase from "@/components/ReelsShowcase";
 import { getClientReels } from "@/lib/reels";
+import { LOCAL_REELS } from "@/content/localReels";
 import TiltCard from "@/components/TiltCard";
 import Reviews from "@/components/Reviews";
 import InstagramFeed from "@/components/InstagramFeed";
@@ -94,7 +95,7 @@ export default async function Home() {
       <JsonLd data={[faqJsonLd(FAQS), reviewJsonLd(reviews)]} />
 
       {/* 3D scroll-through hero */}
-      <ScrollSceneLoader hero={hero} reel={[...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0] ? { thumb: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].thumb, likes: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].likes, comments: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].comments, caption: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].caption } : null} />
+      <ScrollSceneLoader hero={hero} reel={{ thumb: LOCAL_REELS[0].thumb, video: LOCAL_REELS[0].video, likes: Math.max(...[...raazReels, ...blamelessReels].map((r) => r.likes), 0), comments: Math.max(...[...raazReels, ...blamelessReels].map((r) => r.comments), 0), caption: "Brand reel" }} />
 
       {/* service ticker */}
       <ServiceTicker />
@@ -102,7 +103,7 @@ export default async function Home() {
       {/* client reels showcase (replaces the stats cards) */}
       <ReelsShowcase
         clients={[
-          { key: "skincare", client: "brands", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for D2C, retail, clinic and service brands. Tap any reel to see it up close.", reels: blamelessReels },
+          { key: "skincare", client: "brands", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for D2C, retail, clinic and service brands. Tap any reel to play it.", reels: [...LOCAL_REELS, ...blamelessReels] },
           { key: "stories", client: "creators", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "AI videos", tagline: "Fully AI-generated videos: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
         ]}
       />
