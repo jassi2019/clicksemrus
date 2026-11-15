@@ -16,7 +16,7 @@ export default async function CTA({ title: titleProp, sub: subProp }: { title?: 
       <Ring className="w-52 h-52 -right-16 -bottom-20 opacity-60" delay={-4} />
       <div className="container-x relative py-20 md:py-28 text-center">
         <span className="eyebrow">Let&apos;s talk</span>
-        <h2 className="font-display text-4xl md:text-6xl font-extrabold max-w-3xl mx-auto leading-[1.02] mt-5">{title}</h2>
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-balance max-w-4xl mx-auto leading-[1.05] mt-5">{title}</h2>
         <p className="text-muted mt-5 max-w-xl mx-auto text-lg">{sub}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-9">
           <Link href="/contact" className="btn btn-sun text-base !px-7 !py-4">Book a free call <ArrowRight size={18} /></Link>
