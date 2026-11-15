@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Globe, Search, Megaphone, Instagram, MessageCircle, Store, TrendingUp, Phone, ShoppingBag, Star, Check } from "lucide-react";
+import { ArrowRight, Globe, Search, Megaphone, MessageCircle, Store, TrendingUp, Phone, ShoppingBag, Star, Check } from "lucide-react";
+import InstagramIcon from "./InstagramIcon";
 import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 
 /**
@@ -14,7 +15,7 @@ const MODULES = [
   { key: "web", label: "Website", icon: Globe, at: 1 },
   { key: "seo", label: "Local SEO", icon: Search, at: 2 },
   { key: "ads", label: "Google & Meta Ads", icon: Megaphone, at: 3 },
-  { key: "social", label: "Instagram", icon: Instagram, at: 4 },
+  { key: "social", label: "Instagram", icon: InstagramIcon, at: 4 },
   { key: "wa", label: "WhatsApp", icon: MessageCircle, at: 5 },
 ] as const;
 
