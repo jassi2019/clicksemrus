@@ -58,3 +58,40 @@ export async function getClientReels(username = process.env.REELS_IG_USERNAME ||
   const cached = await db.get<{ at: number; reels: Reel[] }>(cacheKey).catch(() => null);
   return cached?.reels?.slice(0, limit) ?? [];
 }
+
+/** Videos from our own Instagram account (media_url is available for owned media, so they play natively). */
+export async function getOwnVideos(limit = 8): Promise<Reel[]> {
+  const igUser = process.env.INSTAGRAM_USER_ID;
+  const token = process.env.INSTAGRAM_ACCESS_TOKEN || process.env.WA_CLOUD_TOKEN;
+  const cacheKey = "reels:own";
+  let reels: Reel[] = [];
+  if (igUser && token) {
+    try {
+      const res = await fetch(`https://graph.facebook.com/v21.0/${igUser}/media?fields=id,media_type,media_product_type,media_url,thumbnail_url,permalink,caption,timestamp,like_count,comments_count&limit=50&access_token=${encodeURIComponent(token)}`, { next: { revalidate: REVALIDATE } });
+      if (res.ok) {
+        const j = (await res.json()) as { data?: Media[] };
+        reels = (j.data || [])
+          .filter((m) => m.media_type === "VIDEO" && m.media_url && m.permalink)
+          .map((m) => ({
+            code: m.permalink!.match(/\/(?:reel|p)\/([A-Za-z0-9_-]+)/)?.[1] || m.id,
+            url: m.permalink!,
+            thumb: m.thumbnail_url || m.media_url!,
+            video: m.media_url,
+            caption: (m.caption || "").replace(/\s+/g, " ").trim().slice(0, 140),
+            likes: m.like_count || 0,
+            comments: m.comments_count || 0,
+            timestamp: m.timestamp || "",
+          }))
+          .slice(0, limit);
+      }
+    } catch {
+      reels = [];
+    }
+  }
+  if (reels.length) {
+    db.set(cacheKey, { at: Date.now(), reels }).catch(() => {});
+    return reels;
+  }
+  const cached = await db.get<{ at: number; reels: Reel[] }>(cacheKey).catch(() => null);
+  return cached?.reels?.slice(0, limit) ?? [];
+}

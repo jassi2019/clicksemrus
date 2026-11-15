@@ -68,7 +68,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
           <div className="mt-8 flex gap-2 flex-wrap" role="tablist" aria-label="Clients">
             {list.map((cl, i) => (
               <button key={cl.key} role="tab" aria-selected={i === tab} onClick={() => switchTab(i)} className={`reels__tab ${i === tab ? "is-on" : ""}`}>
-                {/ai/i.test(cl.kind) ? <Wand2 size={14} /> : <Clapperboard size={14} />} {/ai/i.test(cl.kind) ? "AI storytelling" : "Brand reels"} <span className="reels__tab-kind">{cl.kind}</span>
+                {/ai/i.test(cl.kind) ? <Wand2 size={14} /> : <Clapperboard size={14} />} {/ai/i.test(cl.kind) ? "AI storytelling" : /studio/i.test(cl.kind) ? "Our studio" : "Brand reels"} <span className="reels__tab-kind">{cl.kind}</span>
               </button>
             ))}
           </div>
@@ -122,7 +122,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
             );
           })}
         </div>
-        <p className="mt-5 text-xs text-muted">Live from Instagram · updates every hour · {isAi ? "ranked by likes" : "latest first"}.</p>
+        <p className="mt-5 text-xs text-muted">Live from Instagram · updates every hour · {isAi ? "ranked by likes" : "latest first"}{c.reels.some((r) => r.video) ? " · plays right here" : ""}.</p>
       </div>
     </section>
   );

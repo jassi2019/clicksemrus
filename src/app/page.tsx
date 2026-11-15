@@ -17,7 +17,7 @@ import JsonLd from "@/components/JsonLd";
 import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import ServiceTicker from "@/components/ServiceTicker";
 import ReelsShowcase from "@/components/ReelsShowcase";
-import { getClientReels } from "@/lib/reels";
+import { getClientReels, getOwnVideos } from "@/lib/reels";
 import TiltCard from "@/components/TiltCard";
 import Reviews from "@/components/Reviews";
 import InstagramFeed from "@/components/InstagramFeed";
@@ -64,13 +64,14 @@ export default async function Home() {
       </>
     );
   }
-  const [posts, trends, reviews, igPosts, blamelessReels, raazReels, settings, content] = await Promise.all([
+  const [posts, trends, reviews, igPosts, blamelessReels, raazReels, ownVideos, settings, content] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(4),
     getClientReels("liv.blameless", 8, "latest"),
     getClientReels("kahiankahiraaz", 8, "likes"),
+    getOwnVideos(8),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);
@@ -102,6 +103,7 @@ export default async function Home() {
       {/* client reels showcase (replaces the stats cards) */}
       <ReelsShowcase
         clients={[
+          { key: "studio", client: "our studio", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Studio reels", tagline: "Reels from the ClickSemrus studio: hooks, edits and formats we test before we ship them for clients. Tap to play.", reels: ownVideos },
           { key: "skincare", client: "a skincare brand", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for a D2C skincare label. Tap any reel to see it up close.", reels: blamelessReels },
           { key: "stories", client: "a storytelling channel", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "AI videos", tagline: "Fully AI-generated horror and mystery stories: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
         ]}
