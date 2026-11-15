@@ -114,7 +114,7 @@ export default async function Home() {
         <div className="container-x relative">
           <Reveal className="max-w-4xl">
             <span className="eyebrow">What we do</span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Every channel.<br />One goal: <span className="gradient-text">growth.</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Every channel. One goal: <span className="gradient-text">growth.</span></h2>
             <p className="text-muted mt-5 text-lg">Pick one service or let us run the full funnel. Every plan includes tracking, a live dashboard and a dedicated growth manager.</p>
           </Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
@@ -211,7 +211,7 @@ export default async function Home() {
         <div className="container-x relative grid lg:grid-cols-2 gap-14 items-center">
           <Reveal>
             <span className="eyebrow">How we work</span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">From audit to scale in <span className="text-[#8b84ff]">four steps.</span></h2>
+            <h2 className="font-display text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold text-balance mt-5 leading-[1.05]">From audit to scale in <span className="text-[#8b84ff]">four steps.</span></h2>
             <p className="text-muted mt-6 text-lg leading-relaxed">Most agencies send a PDF of impressions. We give you a live dashboard of leads, cost per lead and revenue, plus a weekly call about what we changed and why.</p>
             <Link href="/contact" className="btn btn-primary mt-8">Book a free strategy call <ArrowRight size={18} /></Link>
           </Reveal>
