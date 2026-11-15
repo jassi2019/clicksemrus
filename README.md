@@ -242,3 +242,7 @@ vercel.json                      Cron schedules
 
 ### Admin
 - Page builder (`/admin/builder`), code editor (`/admin/code`, GitHub-backed), text content (`/admin/pages`), visitors (`/admin/visitors`), Search & Indexing (`/admin/seo`), leads with WhatsApp log.
+
+### Blog feature images
+- Every post gets a feature image. Order: **OPENAI_API_KEY** (gpt-image-1 illustration, stored in Redis, served at `/api/cover-img/<slug>`) -> **PEXELS_API_KEY** (relevant stock photo, topic words then a category theme, with credit) -> the branded `/api/cover` render (title + category on a gradient). Covers are generated on publish and by the cron; regenerate all from Admin -> Search & Indexing -> "Regenerate blog covers".
+- Env: `OPENAI_API_KEY` (optional, paid, ~$0.01-0.04/image, from platform.openai.com), `PEXELS_API_KEY` (free, from pexels.com/api).

@@ -33,17 +33,27 @@ async function viaOpenAI(post: Post): Promise<string | null> {
   return `/api/cover-img/${post.slug}`;
 }
 
+const CATEGORY_THEME: Record<string, string> = {
+  "SEO": "seo analytics laptop", "Social Media": "social media content creator", "Paid Ads": "digital advertising dashboard",
+  "Content": "content writing desk", "Branding": "branding design studio", "Web": "web design laptop",
+  "Entertainment Marketing": "cinema entertainment", "Trending": "news trending phone",
+};
+
+async function pexelsSearch(key: string, query: string): Promise<{ url: string; credit: string } | null> {
+  const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&orientation=landscape&per_page=8&size=large`, { headers: { Authorization: key }, signal: AbortSignal.timeout(15000) });
+  if (!res.ok) return null;
+  const j = (await res.json()) as { photos?: { src: { large2x: string; large: string }; photographer: string }[] };
+  const p = j.photos?.[Math.floor(Math.random() * Math.min(4, j.photos.length || 1))];
+  return p ? { url: p.src.large2x || p.src.large, credit: `${p.photographer} / Pexels` } : null;
+}
+
 async function viaPexels(post: Post): Promise<{ url: string; credit: string } | null> {
   const key = process.env.PEXELS_API_KEY;
   if (!key) return null;
-  const words = (post.trendTopic || post.title).replace(/[^a-z0-9 ]/gi, " ").split(/\s+/).filter((w) => w.length > 3).slice(0, 4).join(" ");
-  const query = `${words} ${post.category}`.trim() || "digital marketing";
-  const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&orientation=landscape&per_page=5`, { headers: { Authorization: key }, signal: AbortSignal.timeout(15000) });
-  if (!res.ok) throw new Error(`Pexels ${res.status}`);
-  const j = (await res.json()) as { photos?: { src: { large2x: string; large: string }; photographer: string }[] };
-  const p = j.photos?.[0];
-  if (!p) return null;
-  return { url: p.src.large2x || p.src.large, credit: `${p.photographer} / Pexels` };
+  const words = (post.trendTopic || post.title).replace(/[^a-z0-9 ]/gi, " ").split(/\s+/).filter((w) => w.length > 3).slice(0, 3).join(" ");
+  const theme = CATEGORY_THEME[post.category] || "digital marketing";
+  // Try the topic words first, then fall back to a clean category theme so there is always a relevant photo.
+  return (words && (await pexelsSearch(key, words))) || (await pexelsSearch(key, theme)) || (await pexelsSearch(key, "digital marketing office"));
 }
 
 /** Generate (if possible) and persist a better cover for a post. */
