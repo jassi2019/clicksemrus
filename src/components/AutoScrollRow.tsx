@@ -6,10 +6,10 @@ import { useEffect, useRef } from "react";
  * touches, scrolls or hovers it, and stays a normal grid/flex on larger screens via CSS.
  * Children are server-rendered; this only adds behaviour.
  */
-export default function AutoScrollRow({ children, className = "", speed = 28, mobileOnly = true, pauseWhen = false }: { children: React.ReactNode; className?: string; speed?: number; mobileOnly?: boolean; pauseWhen?: boolean }) {
+export default function AutoScrollRow({ children, className = "", speed = 40, mobileOnly = true, pauseWhen = false }: { children: React.ReactNode; className?: string; speed?: number; mobileOnly?: boolean; pauseWhen?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(pauseWhen);
-  pausedRef.current = pauseWhen;
+  useEffect(() => { pausedRef.current = pauseWhen; }, [pauseWhen]);
 
   useEffect(() => {
     const el = ref.current;
@@ -17,10 +17,10 @@ export default function AutoScrollRow({ children, className = "", speed = 28, mo
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (mobileOnly && !window.matchMedia("(max-width: 767px)").matches) return;
     let dir = 1, raf = 0, last = performance.now(), holdUntil = performance.now() + 1200, userUntil = 0, visible = true;
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.2 });
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.05 });
     io.observe(el);
     const tick = (now: number) => {
-      const dt = Math.min(50, now - last); last = now;
+      const dt = Math.min(200, now - last); last = now;
       const max = el.scrollWidth - el.clientWidth;
       if (visible && max > 8 && now > holdUntil && now > userUntil && !pausedRef.current) {
         el.scrollLeft += (dir * speed * dt) / 1000;

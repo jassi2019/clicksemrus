@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Play, Heart, MessageCircle, X, ExternalLink, Sparkles, Wand2, Clapperboard } from "lucide-react";
+import { Play, Heart, MessageCircle, X, ExternalLink, Sparkles, Wand2, Clapperboard, Volume2, VolumeX } from "lucide-react";
 import type { Reel } from "@/lib/reels";
 import InstagramIcon from "./InstagramIcon";
 import AutoScrollRow from "./AutoScrollRow";
@@ -29,6 +29,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
   const list = clients.filter((c) => c.reels.length);
   const [tab, setTab] = useState(0);
   const [active, setActive] = useState<string | null>(null);
+  const [muted, setMuted] = useState(true);
   const rowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,7 +87,10 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                 <button type="button" onClick={() => toggle(r.code)} className="reel__frame" aria-pressed={on} aria-label={on ? "Close" : `Open: ${r.caption || c.client}`}>
                   {on ? (
                     r.video ? (
-                      <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay muted loop playsInline controls preload="metadata" />
+                      <>
+                        <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay muted={muted} loop playsInline preload="metadata" controls={false} controlsList="nodownload nofullscreen noremoteplayback" disablePictureInPicture onContextMenu={(e) => e.preventDefault()} />
+                        <span role="button" tabIndex={0} aria-label={muted ? "Unmute" : "Mute"} onClick={(e) => { e.stopPropagation(); setMuted((m) => !m); }} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); setMuted((m) => !m); } }} className="reel__mute">{muted ? <VolumeX size={14} /> : <Volume2 size={14} />}</span>
+                      </>
                     ) : (
                       <span className="reel__focus">
                         <Image src={r.thumb} alt={r.caption || `${c.client} reel`} fill sizes="(min-width: 1024px) 260px, 60vw" className="object-cover" unoptimized />
