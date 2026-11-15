@@ -31,7 +31,9 @@ Write a 700-1100 word informative news article about "${t.title}" using this str
 5. "## Why it is in the news" — 2-3 short paragraphs of context.
 6. "## FAQ" — 4-5 real questions people type into Google about "${t.title}" (score? when? where to watch? result? next date? who won?), each answered in 1-2 factual lines.
 Keep it strictly factual and neutral. No marketing, no brand mentions, no CTA.
-Return JSON only with keys: title (max 70 chars, MUST start with the exact phrase "${t.title}" in Title Case, then a colon and the specific factual hook e.g. the score/result/date/verdict), excerpt (max 155 chars, the direct factual answer), seoTitle (max 60, start with the phrase), seoDescription (max 155, factual), content (markdown), category (one of: Sports, Entertainment, Business, Technology, Education, India News, Trending).`;
+
+TITLE RULES (important): the title must be a natural, readable news headline of 45-70 characters that a real news site would actually publish. Do NOT start the title with a truncated code, a slug fragment, or a single abbreviation followed by a colon (e.g. never "Pl: ..." or "U20: ..."). If the trending phrase "${t.title}" is an abbreviation, a code, or otherwise non-descriptive, EXPAND it into a full, natural headline that names the real subject and the factual hook. The exact phrase does not have to appear verbatim if using it would make the headline read unnaturally; a clear human-readable headline is the priority.
+Return JSON only with keys: title (45-70 chars, a natural news headline as described above), excerpt (max 155 chars, the direct factual answer), seoTitle (max 60, readable, no truncated prefix), seoDescription (max 155, factual), content (markdown), category (one of: Sports, Entertainment, Business, Technology, Education, India News, Trending).`;
   return pick(await generateJson<Draft>(SYSTEM_TREND, user));
 }
 

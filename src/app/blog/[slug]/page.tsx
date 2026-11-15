@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, Flame, ExternalLink, ArrowRight } from "lucide-react";
 import { SITE } from "@/lib/site";
-import { pageMeta, breadcrumbJsonLd, articleJsonLd } from "@/lib/seo";
+import { pageMeta, breadcrumbJsonLd, articleJsonLd, faqJsonLd } from "@/lib/seo";
 import { getAllPosts, getPost, related, type Post } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
-import { renderMarkdown, extractHeadings, readingTime, slugify } from "@/lib/markdown";
+import { renderMarkdown, extractHeadings, readingTime, slugify, interlinkPosts, parseFaq } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
@@ -39,14 +39,24 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const { post, all } = await resolve(slug);
   if (!post) notFound();
-  const html = renderMarkdown(post.content);
+  const linkCandidates = all.filter((p) => p.slug !== post.slug).slice(0, 40);
+  const html = renderMarkdown(interlinkPosts(post.content, linkCandidates, 2));
   const toc = extractHeadings(post.content);
   const rel = related(all, post, 3);
+  const moreTrending = all
+    .filter((p) => p.slug !== post.slug && !rel.some((r) => r.slug === p.slug))
+    .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
+    .slice(0, 8);
+  const faqs = parseFaq(post.content);
   const date = new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 
   return (
     <>
-      <JsonLd data={[articleJsonLd(post), breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }])]} />
+      <JsonLd data={[
+        articleJsonLd(post),
+        breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]),
+        ...(faqs.length >= 2 ? [faqJsonLd(faqs)] : []),
+      ]} />
       <article className="container-x pt-12 md:pt-20">
         <nav className="text-xs text-muted" aria-label="Breadcrumb">
           <Link href="/">Home</Link> / <Link href="/blog">Blog</Link> / <Link href={`/blog/category/${slugify(post.category)}`}>{post.category}</Link>
@@ -99,6 +109,20 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               <p className="text-sm text-muted mt-1 mb-4">See exactly how your brand can use ideas like these.</p>
               <LeadForm compact source={`/blog/${post.slug}`} />
             </div>
+            {moreTrending.length > 0 && (
+              <div className="card p-5">
+                <h3 className="font-semibold flex items-center gap-1"><Flame size={15} className="text-accent" /> More trending now</h3>
+                <ul className="mt-3 text-sm space-y-2.5">
+                  {moreTrending.map((p) => (
+                    <li key={p.slug}>
+                      <Link href={`/blog/${p.slug}`} className="text-muted hover:text-brand-2 leading-snug line-clamp-2 flex gap-1">
+                        <span aria-hidden="true" className="text-accent">›</span> {p.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="card p-5">
               <h3 className="font-semibold">Explore services</h3>
               <ul className="mt-3 text-sm space-y-2">

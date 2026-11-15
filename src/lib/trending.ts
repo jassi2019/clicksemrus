@@ -4,6 +4,7 @@ import type { Post } from "./posts";
 import { SITE } from "./site";
 import { writeWithClaude } from "./ai";
 import { hasAiWriter } from "./llm";
+import { withArticleImage } from "./articleImages";
 
 export type Trend = {
   title: string;
@@ -156,6 +157,32 @@ export function classify(t: Trend): { category: string; kind: string } {
 
 const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
+/** Common short words that ARE legitimate as a title's first word, so they are not stripped as a bad prefix. */
+const KNOWN_SHORT = new Set([
+  "the", "a", "an", "is", "it", "to", "in", "on", "of", "no", "we", "up", "so", "my", "us", "by", "or", "if",
+  "ai", "ev", "us", "uk", "un", "rbi", "gst", "ipl", "ipo", "neet", "upsc", "cbse", "icc", "bcci", "sbi", "rrb", "ssc",
+]);
+
+/**
+ * Strip a broken leading slug/abbreviation prefix like "Pl: Poland U20 ..." that the LLM sometimes
+ * produced when told to start with a short trending phrase. Only strips a prefix of <=3 chars that is
+ * NOT a known real word/acronym and is followed by ": ". Also collapses stray whitespace. Safe/idempotent.
+ */
+export function cleanTitle(title: string): string {
+  let t = (title || "").trim();
+  // Repeatedly peel bad "Xx: " prefixes (e.g. "Pl: Ab: Real headline").
+  for (let i = 0; i < 2; i++) {
+    const m = t.match(/^([^\s:]{1,3}):\s+(.+)$/);
+    if (!m) break;
+    const prefix = m[1].toLowerCase().replace(/[^a-z0-9]/g, "");
+    const rest = m[2].trim();
+    // Keep the prefix if it is a known word/acronym, is numeric, or the remainder would be too short.
+    if (!prefix || KNOWN_SHORT.has(prefix) || /^\d+$/.test(prefix) || rest.length < 20) break;
+    t = rest;
+  }
+  return t.replace(/\s+/g, " ").trim();
+}
+
 /** Template-based article that reflects a live trend, with outbound links and marketing angle. */
 export function composeTrendPost(t: Trend, date = new Date()): Post {
   const { category, kind } = classify(t);
@@ -284,7 +311,7 @@ Yes. Timely articles get picked up by Google Discover and News, and the links an
 
   return {
     slug,
-    title: a.title,
+    title: cleanTitle(a.title),
     excerpt: `${topic} is trending in India today. Here is why, plus a practical moment-marketing playbook with ideas brands can use within 24 hours.`,
     content,
     category,
@@ -312,7 +339,9 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
     const context = await fetchContext(t);
     const ai = await writeWithClaude(t, base, context);
     if (!ai.content) throw new Error("empty AI response");
-    return { ...base, ...ai };
+    const merged = { ...base, ...ai };
+    merged.content = await withArticleImage(merged);
+    return { ...merged, title: cleanTitle(merged.title) };
   } catch (e) {
     console.error("trend post AI failed:", (e as Error).message);
     try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "trend", message: (e as Error).message.slice(0, 500) }); } catch {}
@@ -337,7 +366,9 @@ export async function regenerateTrendPost(post: Post): Promise<Post | null> {
     const context = news.length ? await fetchContext(t) : "";
     const ai = await writeWithClaude(t, post, context);
     if (!ai.content) return null;
-    return { ...post, ...ai, updatedAt: new Date().toISOString() };
+    const merged = { ...post, ...ai, updatedAt: new Date().toISOString() };
+    merged.content = await withArticleImage(merged);
+    return { ...merged, title: cleanTitle(merged.title) };
   } catch {
     return null;
   }

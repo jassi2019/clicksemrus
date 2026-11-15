@@ -28,6 +28,11 @@ export default async function Blog({ searchParams }: { searchParams: Promise<{ q
     posts = posts.filter((p) => p.title.toLowerCase().includes(s) || p.excerpt.toLowerCase().includes(s) || p.tags.some((t) => t.includes(s)));
   }
   const [first, ...rest] = posts;
+  const counts = new Map<string, number>();
+  for (const p of posts) counts.set(p.category, (counts.get(p.category) || 0) + 1);
+  const topics = [...BLOG_CATEGORIES]
+    .filter((c) => (counts.get(c) || 0) > 0)
+    .sort((a, b) => (counts.get(b) || 0) - (counts.get(a) || 0));
 
   return (
     <>
@@ -40,10 +45,15 @@ export default async function Blog({ searchParams }: { searchParams: Promise<{ q
           <input name="q" defaultValue={q} placeholder="Search articles" className="input" aria-label="Search articles" />
           <button className="btn btn-ghost">Search</button>
         </form>
-        <div className="flex flex-wrap gap-2 mt-6">
-          {BLOG_CATEGORIES.map((c) => (
-            <Link key={c} href={`/blog/category/${slugify(c)}`} className="px-3 py-1.5 rounded-full text-xs font-semibold border border-border bg-surface hover:bg-surface-2">{c}</Link>
-          ))}
+        <div className="mt-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">Browse by topic</p>
+          <div className="flex flex-wrap gap-2">
+            {(topics.length ? topics : [...BLOG_CATEGORIES]).map((c) => (
+              <Link key={c} href={`/blog/category/${slugify(c)}`} className="px-3 py-1.5 rounded-full text-xs font-semibold border border-border bg-surface hover:bg-surface-2">
+                {c}{counts.get(c) ? <span className="text-muted font-normal"> · {counts.get(c)}</span> : null}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
       <section className="container-x pb-12">

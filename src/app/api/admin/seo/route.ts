@@ -6,7 +6,7 @@ import { notifyIndex, indexLog, inspectUrl, indexNowKey, submitSitemap } from "@
 import { hasGoogleAuth } from "@/lib/google";
 import { hasAiWriter, generateJson, aiProviderLabel } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
-import { regenerateTrendPost } from "@/lib/trending";
+import { regenerateTrendPost, cleanTitle } from "@/lib/trending";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 import { db } from "@/lib/db";
 import { ensureCover, coverProvider } from "@/lib/coverGen";
@@ -68,6 +68,21 @@ export async function POST(req: NextRequest) {
       revalidatePath("/blog"); revalidatePath("/");
       const err = await db.get<{ message: string; slug: string }>("cover:lastError").catch(() => null);
       return NextResponse.json({ ok: true, done, skipped, provider: coverProvider(), lastError: err });
+    }
+    if (b.action === "fixtitles") {
+      const posts = await getAllPosts({ includeDrafts: true });
+      let fixed = 0;
+      for (const p of posts) {
+        const cleaned = cleanTitle(p.title);
+        if (cleaned && cleaned !== p.title) {
+          const seoTitle = p.seoTitle ? cleanTitle(p.seoTitle) : p.seoTitle;
+          await savePost({ ...p, title: cleaned, ...(seoTitle !== p.seoTitle ? { seoTitle } : {}) });
+          revalidatePath(`/blog/${p.slug}`);
+          fixed++;
+        }
+      }
+      if (fixed) { revalidatePath("/blog"); revalidatePath("/"); }
+      return NextResponse.json({ ok: true, fixed, total: posts.length });
     }
     if (b.action === "indexAll") {
       const posts = await getAllPosts();

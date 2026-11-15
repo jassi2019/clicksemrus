@@ -5,6 +5,7 @@ import type { Opportunity } from "./gsc";
 import { SITE } from "./site";
 import { writeKeywordPostWithClaude } from "./ai";
 import { hasAiWriter } from "./llm";
+import { withArticleImage } from "./articleImages";
 
 /**
  * Keyword-targeted articles for Search Console opportunities: queries that already
@@ -111,7 +112,9 @@ export async function buildKeywordPost(o: Opportunity, date = new Date()): Promi
   try {
     const ai = await writeKeywordPostWithClaude(o, base);
     if (!ai.content) throw new Error("empty AI response");
-    return { ...base, ...ai };
+    const merged = { ...base, ...ai };
+    merged.content = await withArticleImage(merged);
+    return merged;
   } catch (e) {
     console.error("keyword post AI failed:", (e as Error).message);
     try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "keyword", message: (e as Error).message.slice(0, 500) }); } catch {}

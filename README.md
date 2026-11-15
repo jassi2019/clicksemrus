@@ -34,9 +34,13 @@ Marketing website, blog engine and admin panel for **ClickSemrus**, a digital ma
 **Blog and growth engine**
 
 - Markdown blog with categories, related posts and auto-interlinking to service pages.
-- **Trending engine:** reads Google Trends India daily and writes a marketing-angle article per trend with outbound source links. Live trends show on the blog even without a database.
+- **Trending engine:** reads Google Trends India daily and writes a pure news/explainer article per trend with outbound source links. Live trends show on the blog even without a database.
 - **Search Console keyword engine:** pulls queries and pages from GSC, scores uncovered opportunities and writes keyword-targeted posts for the best ones.
-- **Indexing:** every new URL is pushed to the Google Indexing API and IndexNow; the sitemap is resubmitted.
+- **Blog-to-blog internal linking (SEO):** every article page shows tag/category-matched *Related reads*, a *More trending now* sidebar of 6–8 newest posts, and safe in-body links to other posts when a distinctive title phrase matches (`interlinkPosts` in `lib/markdown.ts`, max 2, first occurrence only, never touches markdown syntax). The blog index has a *Browse by topic* chip row (with counts) linking to each `/blog/category/<slug>` that has posts. This dense internal link graph helps Google crawl and rank the whole blog.
+- **In-article images (copyright-free):** when a post is built/regenerated, `lib/articleImages.ts` fetches a relevant Pexels landscape photo and inserts one image after the first H2, with a `Photo: <credit> / Pexels (representative image)` caption rendered as a styled `<figure>`/`<figcaption>`. Requires `PEXELS_API_KEY`; with no key it degrades gracefully (no image, no error). The main cover still comes from `coverFor` (OpenAI → Pexels → branded render).
+- **Title cleanup:** the trend writer prompt now asks for a natural 45–70-char headline, and `cleanTitle` (`lib/trending.ts`) strips broken slug/abbreviation prefixes like `"Pl: …"`. Applied on build/regenerate and via the admin `fixtitles` action (`POST /api/admin/seo {"action":"fixtitles"}`) to repair existing posts in bulk.
+- **Rich results:** article pages emit `BlogPosting` (headline, datePublished, dateModified, author, image), `BreadcrumbList`, and `FAQPage` JSON-LD parsed from the `## FAQ` section (only when 2+ Q/A are found) for rich snippets and AI citations. Canonicals are set on every page.
+- **Indexing:** every new URL is pushed to the Google Indexing API and IndexNow; the sitemap is resubmitted. `POST /api/admin/seo {"action":"indexAll"}` pings Google + IndexNow for all posts.
 - Newsletter signup (Resend audience or Brevo list).
 
 **Conversion**
