@@ -1,13 +1,13 @@
-name: Trending content every 3 hours
+name: Trending content
 on:
   schedule:
-    - cron: "15 */3 * * *"
+    - cron: "10 */2 * * *"   # every 2 hours (12 runs/day)
   workflow_dispatch: {}
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate trending articles, keyword posts, covers and index pings
+      - name: Generate trending + keyword articles, covers, index pings
         run: |
-          curl -sS --max-time 290 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          curl -sS --max-time 295 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "https://clicksemrus.vercel.app/api/cron/trending?limit=12&keywords=2" | head -c 2000
