@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Globe, Search, Megaphone, MessageCircle, Check, MapPin, Star, Heart, Phone, ShoppingBag, TrendingUp, Zap } from "lucide-react";
 import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 import InstagramIcon from "./InstagramIcon";
+import AutoScrollRow from "./AutoScrollRow";
 import Image from "next/image";
 
 export type HeroReel = { thumb: string; video?: string; likes: number; comments: number; caption?: string };
@@ -94,11 +95,14 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
             <Link href="/contact" className="btn btn-primary text-base !px-7 !py-4">{hero.primaryCta} <ArrowRight size={18} /></Link>
             <Link href="/case-studies" className="btn btn-ghost text-base !px-7 !py-4">{hero.secondaryCta}</Link>
           </div>
-          <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-muted">
-            {["Zero to launch in 7 days", "Every channel, one team", "Reports in rupees"].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5"><span className="w-5 h-5 rounded-full bg-[#0b0b14] text-white grid place-items-center"><Check size={11} /></span>{t}</li>
-            ))}
-          </ul>
+          <AutoScrollRow className="hero-proofs mt-7" speed={22}>
+            {[["Zero to launch in 7 days", Zap], ["Every channel, one team", Globe], ["Reports in rupees", TrendingUp]].map(([t, Icon]) => {
+              const I = Icon as typeof Zap;
+              return (
+                <span key={t as string} className="hero-proof"><span className="hero-proof__ic"><I size={13} /></span>{t as string}<Check size={12} className="hero-proof__ok" /></span>
+              );
+            })}
+          </AutoScrollRow>
         </div>
 
         {/* scene */}

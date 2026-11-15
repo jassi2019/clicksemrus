@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Play, Heart, MessageCircle, X, ExternalLink, Sparkles, Wand2, Clapperboard } from "lucide-react";
 import type { Reel } from "@/lib/reels";
 import InstagramIcon from "./InstagramIcon";
+import AutoScrollRow from "./AutoScrollRow";
 import { trackEvent } from "./Tracker";
 
 export type ReelClient = {
@@ -65,7 +66,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
         </div>
 
         {list.length > 1 && (
-          <div className="mt-8 flex gap-2 flex-wrap" role="tablist" aria-label="Clients">
+          <div className="reels__tabs mt-8 flex gap-2" role="tablist" aria-label="Clients">
             {list.map((cl, i) => (
               <button key={cl.key} role="tab" aria-selected={i === tab} onClick={() => switchTab(i)} className={`reels__tab ${i === tab ? "is-on" : ""}`}>
                 {/ai/i.test(cl.kind) ? <Wand2 size={14} /> : <Clapperboard size={14} />} {/ai/i.test(cl.kind) ? "AI storytelling" : /studio/i.test(cl.kind) ? "Our studio" : "Brand reels"} <span className="reels__tab-kind">{cl.kind}</span>
@@ -76,7 +77,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
 
         {active && <button type="button" aria-label="Close" onClick={() => setActive(null)} className="reels__scrim" />}
 
-        <div ref={rowRef} className="reels__row mt-8 md:mt-10" role="list" key={c.key}>
+        <div ref={rowRef} key={c.key}><AutoScrollRow className="reels__row mt-8 md:mt-10" speed={26} pauseWhen={Boolean(active)}>
           {c.reels.map((r, i) => {
             const on = active === r.code;
             const top = i === 0 && r.likes >= 500;
@@ -124,7 +125,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
               </article>
             );
           })}
-        </div>
+        </AutoScrollRow></div>
         <p className="mt-5 text-xs text-muted">{c.reels.some((r) => r.video) ? "Tap a reel to play it here. " : ""}Live from Instagram · updates every hour · {isAi ? "ranked by likes" : "latest first"}.</p>
       </div>
     </section>
