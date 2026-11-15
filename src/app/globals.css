@@ -378,3 +378,27 @@ select.input option { background: #fff; color: #0b0b14; }
 .ticker__badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(1.2deg); z-index: 3; display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .95rem; border-radius: 999px; background: linear-gradient(135deg, #fde68a, #f59e0b); color: #0b0b14; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 14px 30px -10px rgba(245,158,11,.8), 0 0 0 6px rgba(11,11,20,.9); }
 @media (max-width: 640px) { .ticker__band { transform: rotate(-1.5deg) scale(1.06); gap: .45rem; padding: .7rem 0; } .ticker-chip { font-size: .72rem; padding: .35rem .8rem .35rem .35rem; } .ticker-chip__icon { width: 1.45rem; height: 1.45rem; } .ticker__badge { display: none; } }
 @media (prefers-reduced-motion: reduce) { .ticker-row, .ticker__shine { animation: none; } .ticker-row { flex-wrap: wrap; width: auto; justify-content: center; } }
+
+/* client reels showcase with spotlight */
+.reels__row { display: flex; gap: .9rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: 1.25rem .25rem 1.5rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.reels__row::-webkit-scrollbar { display: none; }
+.reel { position: relative; flex: 0 0 auto; width: clamp(150px, 44vw, 215px); scroll-snap-align: center; transition: transform .45s cubic-bezier(.2,.8,.2,1), filter .45s, opacity .45s; animation: gp-step .5s cubic-bezier(.2,.8,.2,1) both; }
+.reel__frame { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 1.35rem; overflow: hidden; background: #0b0b14; border: 0; padding: 0; cursor: pointer; text-align: left; color: #fff; box-shadow: 0 24px 50px -28px rgba(10,10,30,.55); transition: box-shadow .45s; }
+.reel__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.1) 45%, rgba(0,0,0,.25) 100%); }
+.reel__play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 3rem; height: 3rem; border-radius: 999px; display: grid; place-items: center; background: rgba(255,255,255,.92); color: #0b0b14; box-shadow: 0 10px 30px -8px rgba(0,0,0,.6); transition: transform .3s; }
+.reel__frame:hover .reel__play { transform: translate(-50%, -50%) scale(1.1); }
+.reel__meta { position: absolute; left: .75rem; top: .75rem; display: flex; gap: .6rem; font-size: .7rem; font-weight: 700; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+.reel__caption { position: absolute; left: .75rem; right: .75rem; bottom: .75rem; font-size: .72rem; line-height: 1.3; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.reel__tag { position: absolute; left: 50%; bottom: -.7rem; transform: translateX(-50%); white-space: nowrap; display: inline-flex; align-items: center; gap: .3rem; font-size: .6rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .6rem; border-radius: 999px; background: #fff; color: #0b0b14; border: 1px solid var(--border); box-shadow: 0 6px 16px -8px rgba(10,10,30,.4); }
+.reel__embed { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+.reel__bar { position: absolute; left: .5rem; right: .5rem; top: .5rem; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .3rem .4rem .3rem .7rem; border-radius: 999px; background: rgba(11,11,20,.75); backdrop-filter: blur(8px); }
+/* spotlight state */
+.reels__scrim { position: absolute; inset: 0; z-index: 1; background: transparent; border: 0; cursor: zoom-out; }
+.reels.has-focus .reel { filter: blur(3px) saturate(.6); opacity: .45; transform: scale(.94); }
+.reels.has-focus .reel.is-active { filter: none; opacity: 1; transform: scale(1.08); z-index: 2; }
+.reels.has-focus .reel.is-active .reel__frame { box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 0 9px rgba(79,70,229,.55), 0 0 90px 10px rgba(79,70,229,.45), 0 40px 80px -30px rgba(10,10,30,.8); }
+.reels.has-focus .reel.is-active::before { content: ""; position: absolute; inset: -40% -60%; background: radial-gradient(closest-side, rgba(245,158,11,.22), transparent 70%); z-index: -1; pointer-events: none; animation: gs-in .6s ease both; }
+.reels__row { position: relative; z-index: 2; }
+@media (min-width: 1024px) { .reel { width: 215px; } .reels__row { justify-content: center; flex-wrap: nowrap; overflow-x: auto; } }
+@media (max-width: 640px) { .reels.has-focus .reel.is-active { transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .reel, .reel__frame, .reel__play { transition: none; animation: none; } .reels.has-focus .reel { filter: none; opacity: .6; transform: none; } }

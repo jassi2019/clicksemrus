@@ -16,13 +16,14 @@ import BlogCard from "@/components/BlogCard";
 import JsonLd from "@/components/JsonLd";
 import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import ServiceTicker from "@/components/ServiceTicker";
+import ReelsShowcase from "@/components/ReelsShowcase";
+import { getClientReels } from "@/lib/reels";
 import TiltCard from "@/components/TiltCard";
-import Counter from "@/components/Counter";
 import Reviews from "@/components/Reviews";
 import InstagramFeed from "@/components/InstagramFeed";
 import { getInstagramFeed } from "@/lib/instagram";
 import WorkGrid from "@/components/WorkGrid";
-import { Sphere, Ring, Pill, Cube } from "@/components/Shapes";
+import { Pill, Cube } from "@/components/Shapes";
 import { getPublishedLayout } from "@/lib/builderStore";
 import { faqsFromBlocks } from "@/lib/builder";
 import BlockRenderer from "@/components/builder/BlockRenderer";
@@ -63,11 +64,12 @@ export default async function Home() {
       </>
     );
   }
-  const [posts, trends, reviews, igPosts, settings, content] = await Promise.all([
+  const [posts, trends, reviews, igPosts, reels, settings, content] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(4),
+    getClientReels("liv.blameless", 8),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);
@@ -96,44 +98,8 @@ export default async function Home() {
       {/* service ticker */}
       <ServiceTicker />
 
-      {/* stats */}
-      <section className="relative overflow-hidden pt-28 pb-16">
-        <Sphere className="w-36 h-36 -left-8 top-8" />
-        <Ring className="w-40 h-40 right-[-30px] top-20" delay={-3} />
-        <div className="container-x relative grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {stats.map((s, i) => (
-            <Reveal key={s.l} delay={i * 90}>
-              <TiltCard className="p-4 sm:p-7">
-                <p className="font-display text-3xl sm:text-5xl font-extrabold"><Counter to={s.v} suffix={s.s} decimals={s.d} /></p>
-                <p className="text-muted mt-2 text-sm font-medium">{s.l}</p>
-              </TiltCard>
-            </Reveal>
-          ))}
-        </div>
-        {settings.showStatsNote && <p className="container-x relative text-xs text-muted mt-6">Numbers from client dashboards, Jan to Oct 2026.</p>}
-      </section>
-
-      {/* trend desk ticker */}
-      {latest.length > 0 && (
-        <div className="border-y border-border bg-[#0b0b14] text-white py-3 overflow-hidden">
-          <div className="container-x flex items-center gap-4">
-            <span className="shrink-0 inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase"><Flame size={14} className="text-sun" /> Trend desk <span className="hidden sm:inline text-white/50 normal-case tracking-normal font-medium">Trend → creative in 24h</span></span>
-            <div className="flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)]">
-              <div className="marquee !gap-10 text-sm" style={{ animationDuration: "40s" }}>
-                {[0, 1].map((k) => (
-                  <div key={k} className="flex gap-10">
-                    {latest.map((p) => (
-                      <Link key={`${k}-${p.slug}`} href={`/blog/${p.slug}`} className="whitespace-nowrap inline-flex items-center gap-2 text-white/80 hover:text-white">
-                        <span className="w-1.5 h-1.5 rounded-full bg-sun" />{p.title}
-                      </Link>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* client reels showcase (replaces the stats cards) */}
+      <ReelsShowcase reels={reels} client="Blameless" handle="liv.blameless" profileUrl="https://www.instagram.com/liv.blameless/" caseStudyHref="/case-studies/blameless" />
 
       {/* services */}
       <section className="relative overflow-hidden py-24">
