@@ -63,13 +63,14 @@ export default function ReelsShowcase({ reels, client, handle, profileUrl, caseS
                     r.video ? (
                       <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay playsInline controls preload="metadata" />
                     ) : (
-                      <iframe
-                        src={`https://www.instagram.com/p/${r.code}/embed/`}
-                        title={r.caption || "Instagram reel"}
-                        className="reel__embed"
-                        allow="autoplay; encrypted-media; picture-in-picture"
-                        loading="eager"
-                      />
+                      <span className="reel__focus">
+                        <Image src={r.thumb} alt={r.caption || `${client} reel`} fill sizes="(min-width: 1024px) 260px, 60vw" className="object-cover" unoptimized />
+                        <span className="reel__shade" />
+                        {r.caption && <span className="reel__focus-caption">{r.caption}</span>}
+                        <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); trackEvent("reel_open"); }} className="reel__watch">
+                          <Play size={16} fill="currentColor" /> Watch on Instagram
+                        </a>
+                      </span>
                     )
                   ) : (
                     <>

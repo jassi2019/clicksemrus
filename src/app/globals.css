@@ -403,3 +403,8 @@ select.input option { background: #fff; color: #0b0b14; }
 @media (min-width: 1024px) { .reel { width: 215px; } }
 @media (max-width: 640px) { .reels.has-focus .reel.is-active { transform: scale(1.04); } }
 @media (prefers-reduced-motion: reduce) { .reel, .reel__frame, .reel__play { transition: none; animation: none; } .reels.has-focus .reel { filter: none; opacity: .6; transform: none; } }
+
+.reel__focus { position: absolute; inset: 0; display: block; }
+.reel__focus-caption { position: absolute; left: .8rem; right: .8rem; bottom: 4.2rem; font-size: .78rem; line-height: 1.35; font-weight: 600; color: #fff; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+.reel__watch { position: absolute; left: .8rem; right: .8rem; bottom: .9rem; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .7rem .9rem; border-radius: 999px; background: linear-gradient(135deg, #fde68a, #f59e0b); color: #0b0b14; font-size: .8rem; font-weight: 900; letter-spacing: .02em; box-shadow: 0 14px 30px -10px rgba(245,158,11,.8); animation: gs-in .4s ease both; }
+.reel__watch:hover { filter: brightness(1.05); transform: translateY(-1px); }
