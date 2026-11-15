@@ -55,12 +55,6 @@ export default async function Footer() {
                 <li><Link className="hover:text-fg" href="/privacy-policy">Privacy Policy</Link></li>
                 <li><Link className="hover:text-fg" href="/terms">Terms</Link></li>
               </ul>
-              <h3 className="font-semibold mb-3 mt-6 text-sm">Industries</h3>
-              <ul className="space-y-1.5 text-xs text-muted">
-                {INDUSTRIES.map((i) => (
-                  <li key={i.slug}><Link className="hover:text-fg" href={`/industries/${i.slug}`}>{i.name}</Link></li>
-                ))}
-              </ul>
             </div>
           </div>
         </div>
@@ -86,12 +80,12 @@ export default async function Footer() {
             )}
           </div>
           <div>
-            <h3 className="font-semibold mb-3 text-sm">Follow &amp; subscribe</h3>
-            <p className="text-xs text-muted mb-3">Growth ideas and trending marketing angles, twice a month. No spam.</p>
-            <NewsletterForm />
-            <div className="flex gap-2 mt-4">
-              <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center w-9 h-9 rounded-full bg-surface-2 hover:bg-white hover:text-[#0b0b14] transition"><Instagram size={16} /></a>
-            </div>
+            <h3 className="font-semibold mb-3 text-sm">Industries we serve</h3>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-muted">
+              {INDUSTRIES.map((i) => (
+                <li key={i.slug}><Link className="hover:text-fg" href={`/industries/${i.slug}`}>{i.name}</Link></li>
+              ))}
+            </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-3 text-sm">Contact</h3>
