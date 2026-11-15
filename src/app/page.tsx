@@ -66,7 +66,7 @@ export default async function Home() {
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
-    getInstagramFeed(8),
+    getInstagramFeed(4),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);

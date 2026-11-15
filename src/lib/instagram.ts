@@ -21,7 +21,7 @@ export type IgPost = {
   timestamp: string;
 };
 
-const REVALIDATE = 3600;
+const REVALIDATE = 600; // 10 minutes: new posts show up quickly
 const CACHE_KEY = "ig:feed";
 export const INSTAGRAM_HANDLE = SITE.instagram.replace(/\/+$/, "").split("/").pop() || "clicksemrus";
 
@@ -82,6 +82,15 @@ function parseProfileMarkdown(md: string): IgPost[] {
   return out;
 }
 
+/** Official Instagram Graph API via the linked Facebook Page (business/creator accounts). */
+async function fromFacebookGraph(igUserId: string, token: string, limit: number) {
+  const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp";
+  const res = await fetch(`https://graph.facebook.com/v21.0/${igUserId}/media?fields=${fields}&limit=${Math.min(limit, 25)}&access_token=${encodeURIComponent(token)}`, { next: { revalidate: REVALIDATE } });
+  if (!res.ok) return [];
+  const j = (await res.json()) as { data?: unknown[] };
+  return normalise(j.data || []).slice(0, limit);
+}
+
 async function fromFeedUrl(url: string, limit: number) {
   const res = await fetch(url, { next: { revalidate: REVALIDATE } });
   if (!res.ok) return [];
@@ -109,9 +118,12 @@ async function fromPublicProfile(limit: number) {
 
 export async function getInstagramFeed(limit = 8): Promise<IgPost[]> {
   let posts: IgPost[] = [];
+  const igUser = process.env.INSTAGRAM_USER_ID;
+  const metaToken = process.env.INSTAGRAM_ACCESS_TOKEN || process.env.WA_CLOUD_TOKEN;
   try {
-    if (process.env.INSTAGRAM_FEED_URL) posts = await fromFeedUrl(process.env.INSTAGRAM_FEED_URL, limit);
-    else if (process.env.INSTAGRAM_ACCESS_TOKEN) posts = await fromGraph(process.env.INSTAGRAM_ACCESS_TOKEN, limit);
+    if (igUser && metaToken) posts = await fromFacebookGraph(igUser, metaToken, limit);
+    if (!posts.length && process.env.INSTAGRAM_FEED_URL) posts = await fromFeedUrl(process.env.INSTAGRAM_FEED_URL, limit);
+    if (!posts.length && process.env.INSTAGRAM_ACCESS_TOKEN) posts = await fromGraph(process.env.INSTAGRAM_ACCESS_TOKEN, limit);
     if (!posts.length) posts = await fromPublicProfile(limit);
   } catch {
     posts = [];

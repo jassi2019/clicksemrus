@@ -31,7 +31,7 @@ export default function InstagramGrid({ posts }: { posts: IgPost[] }) {
 
   return (
     <>
-      <div className="ig-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mt-12">
+      <div className="ig-grid grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mt-10 sm:mt-12">
         {posts.map((p, i) => (
           <Reveal key={p.code} delay={(i % 4) * 90}>
             <button type="button" onClick={() => open(p)} className="ig-tile group relative block w-full aspect-square overflow-hidden rounded-2xl bg-[#0b0b14] text-left" aria-label={`Preview Instagram post${p.caption ? `: ${p.caption.slice(0, 60)}` : ""}`}>
