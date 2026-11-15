@@ -1,32 +1,8 @@
 "use client";
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { useMediaQuery, useReducedMotion } from "@/lib/useMediaQuery";
-import HeroStatic, { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
+import GrowthStoryHero from "./GrowthStoryHero";
+import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 
-const ScrollScene = dynamic(() => import("./ScrollScene"), { ssr: false, loading: () => <HeroStatic /> });
-
-type IdleWindow = Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
-
-/**
- * Renders the three.js hero only on desktop (min-width: 768px), without reduced-motion,
- * and only after the browser is idle. Everyone else gets the static hero.
- */
+/** Homepage hero: the growth-story board (CSS/SVG, no WebGL). Kept under the old name so the page import is unchanged. */
 export default function ScrollSceneLoader({ hero = HERO_DEFAULT }: { hero?: HeroContent }) {
-  const desktop = useMediaQuery("(min-width: 768px)");
-  const reduced = useReducedMotion();
-  const [idle, setIdle] = useState(false);
-
-  useEffect(() => {
-    const w = window as IdleWindow;
-    if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(() => setIdle(true), { timeout: 1500 });
-      return () => w.cancelIdleCallback?.(id);
-    }
-    const t = setTimeout(() => setIdle(true), 300);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (!desktop || reduced || !idle) return <HeroStatic hero={hero} />;
-  return <ScrollScene hero={hero} />;
+  return <GrowthStoryHero hero={hero} />;
 }
