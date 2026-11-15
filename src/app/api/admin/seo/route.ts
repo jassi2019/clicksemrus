@@ -6,6 +6,7 @@ import { notifyIndex, indexLog, inspectUrl, indexNowKey, submitSitemap } from "@
 import { hasGoogleAuth } from "@/lib/google";
 import { hasAiWriter, generateJson, aiProviderLabel } from "@/lib/llm";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
+import { regenerateTrendPost } from "@/lib/trending";
 import { postExists, savePost, getAllPosts } from "@/lib/posts";
 import { db } from "@/lib/db";
 import { ensureCover, coverProvider } from "@/lib/coverGen";
@@ -42,6 +43,20 @@ export async function POST(req: NextRequest) {
     if (b.action === "sitemap") {
       const r = await submitSitemap();
       return NextResponse.json({ ok: r === "ok", sitemap: r, error: r === "ok" ? undefined : r });
+    }
+    if (b.action === "renews") {
+      // Rebuild old trend posts that still contain marketing copy, as pure news.
+      const posts = await getAllPosts({ includeDrafts: true });
+      const stale = posts.filter((p) => p.source === "trend" && (/for brands|moment marketing|\/services|digital marketing agency/i.test(p.content)));
+      let done = 0;
+      const startedAt = Date.now();
+      for (const p of stale) {
+        if (done >= Number(b.url || 6) || Date.now() - startedAt > 220_000) break;
+        const np = await regenerateTrendPost(p);
+        if (np) { await savePost(np); await ensureCover(np, true); done++; }
+      }
+      revalidatePath("/blog"); revalidatePath("/");
+      return NextResponse.json({ ok: true, done, remaining: Math.max(0, stale.length - done), total: stale.length });
     }
     if (b.action === "covers") {
       const posts = await getAllPosts({ includeDrafts: true });

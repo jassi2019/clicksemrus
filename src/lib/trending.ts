@@ -326,3 +326,19 @@ export async function liveTrendPosts(geo = "IN", limit = 6): Promise<Post[]> {
   const date = new Date();
   return trends.slice(0, limit).map((t) => composeTrendPost(t, date));
 }
+
+/** Rebuild an existing stored trend post with the current (news-first) writer, from its stored topic + sources. */
+export async function regenerateTrendPost(post: Post): Promise<Post | null> {
+  if (!hasAiWriter() || post.source !== "trend") return null;
+  const title = post.trendTopic || post.title.split(":")[0].trim();
+  const news = (post.outbound && post.outbound.length ? post.outbound : []).slice(0, 4);
+  const t: Trend = { title, traffic: post.trendTraffic || "", pubDate: post.publishedAt, news };
+  try {
+    const context = news.length ? await fetchContext(t) : "";
+    const ai = await writeWithClaude(t, post, context);
+    if (!ai.content) return null;
+    return { ...post, ...ai, updatedAt: new Date().toISOString() };
+  } catch {
+    return null;
+  }
+}
