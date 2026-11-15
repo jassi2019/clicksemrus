@@ -21,10 +21,10 @@ const REVALIDATE = 3600;
 
 type Media = { id: string; media_type?: string; media_product_type?: string; media_url?: string; thumbnail_url?: string; permalink?: string; caption?: string; timestamp?: string; like_count?: number; comments_count?: number };
 
-export async function getClientReels(username = process.env.REELS_IG_USERNAME || "liv.blameless", limit = 8): Promise<Reel[]> {
+export async function getClientReels(username = process.env.REELS_IG_USERNAME || "liv.blameless", limit = 8, sort: "latest" | "likes" = "latest"): Promise<Reel[]> {
   const igUser = process.env.INSTAGRAM_USER_ID;
   const token = process.env.INSTAGRAM_ACCESS_TOKEN || process.env.WA_CLOUD_TOKEN;
-  const cacheKey = `reels:${username}`;
+  const cacheKey = `reels:${username}:${sort}`;
   let reels: Reel[] = [];
   if (igUser && token) {
     try {
@@ -44,6 +44,7 @@ export async function getClientReels(username = process.env.REELS_IG_USERNAME ||
             comments: m.comments_count || 0,
             timestamp: m.timestamp || "",
           }))
+          .sort((a, b) => (sort === "likes" ? b.likes - a.likes : 0))
           .slice(0, limit);
       }
     } catch {

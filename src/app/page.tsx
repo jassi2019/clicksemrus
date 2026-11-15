@@ -64,12 +64,13 @@ export default async function Home() {
       </>
     );
   }
-  const [posts, trends, reviews, igPosts, reels, settings, content] = await Promise.all([
+  const [posts, trends, reviews, igPosts, blamelessReels, raazReels, settings, content] = await Promise.all([
     getAllPosts(),
     liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(4),
-    getClientReels("liv.blameless", 8),
+    getClientReels("liv.blameless", 8, "latest"),
+    getClientReels("kahiankahiraaz", 8, "likes"),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);
@@ -99,7 +100,12 @@ export default async function Home() {
       <ServiceTicker />
 
       {/* client reels showcase (replaces the stats cards) */}
-      <ReelsShowcase reels={reels} client="Blameless" handle="liv.blameless" profileUrl="https://www.instagram.com/liv.blameless/" caseStudyHref="/case-studies/blameless" />
+      <ReelsShowcase
+        clients={[
+          { key: "blameless", client: "Blameless", handle: "liv.blameless", profileUrl: "https://www.instagram.com/liv.blameless/", caseStudyHref: "/case-studies/blameless", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for a clean-beauty brand. Tap any reel to open it.", reels: blamelessReels },
+          { key: "raaz", client: "Kahi Ankahi Raaz", handle: "kahiankahiraaz", profileUrl: "https://www.instagram.com/kahiankahiraaz/", kind: "AI videos", tagline: "Fully AI-generated horror and mystery stories: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
+        ]}
+      />
 
       {/* services */}
       <section className="relative overflow-hidden py-24">
