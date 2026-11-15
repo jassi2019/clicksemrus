@@ -91,7 +91,7 @@ export default async function LocationPage({ params }: { params: Promise<{ city:
 
       {/* local seo checklist */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">Local SEO checklist</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Six things every {loc.name} business should fix first</h2>
           <p className="text-muted mt-4 text-lg">This is the first page of every local audit we run. Do these yourself or let us handle them inside a <Link href={serviceUrl("local-seo")} className="text-brand font-semibold underline underline-offset-2">Local SEO</Link> plan.</p>
@@ -113,7 +113,7 @@ export default async function LocationPage({ params }: { params: Promise<{ city:
       <section className="section-tint relative overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 dots opacity-50" />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Popular in {loc.name}</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Services {loc.name} businesses ask for most</h2>
             <p className="text-muted mt-4 text-lg">Each one is scoped for your category and area, with tracking and a live dashboard included.</p>

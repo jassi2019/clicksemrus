@@ -62,9 +62,9 @@ export default function Reviews({ data }: { data: ReviewData }) {
     <section className="relative overflow-hidden py-24 bg-bg-2 border-y border-border">
       <div className="container-x">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Google Reviews</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">What Delhi NCR businesses say</h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">What Delhi NCR businesses say</h2>
             <p className="text-muted mt-4 text-lg">Real reviews from founders, doctors and store owners we work with.</p>
           </Reveal>
           <Reveal delay={90} variant="zoom">

@@ -127,7 +127,7 @@ export default async function Contact() {
       <section className="section-tint relative overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 dots opacity-50" />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">What happens next</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Three steps, no pitch deck</h2>
           </Reveal>

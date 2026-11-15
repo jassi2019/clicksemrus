@@ -69,7 +69,7 @@ export default async function Home() {
     liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(4),
-    getClientReels("liv.blameless", 8, "latest"),
+    getClientReels("liv.blameless", 10, "latest", ["DbngL7gChby", "DaVIv4dFIEW", "DW9e9W3EifU", "DW0S8QlAu0I", "DVT3-_sEvAN", "DXa6xa4gS82", "DXD7e6NDnDk"]),
     getClientReels("kahiankahiraaz", 8, "likes"),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
@@ -102,8 +102,8 @@ export default async function Home() {
       {/* client reels showcase (replaces the stats cards) */}
       <ReelsShowcase
         clients={[
-          { key: "skincare", client: "a skincare brand", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for a D2C skincare label. Tap any reel to see it up close.", reels: blamelessReels },
-          { key: "stories", client: "a storytelling channel", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "AI videos", tagline: "Fully AI-generated horror and mystery stories: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
+          { key: "skincare", client: "brands", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for D2C, retail, clinic and service brands. Tap any reel to see it up close.", reels: blamelessReels },
+          { key: "stories", client: "creators", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "AI videos", tagline: "Fully AI-generated videos: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
         ]}
       />
 
@@ -112,9 +112,9 @@ export default async function Home() {
         <Pill className="w-56 h-20 right-[-40px] top-10 rotate-[-25deg]" delay={-4} />
         <Cube className="left-[6%] bottom-10" size={56} />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">What we do</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Every channel.<br />One goal: <span className="gradient-text">growth.</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Every channel.<br />One goal: <span className="gradient-text">growth.</span></h2>
             <p className="text-muted mt-5 text-lg">Pick one service or let us run the full funnel. Every plan includes tracking, a live dashboard and a dedicated growth manager.</p>
           </Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
@@ -142,7 +142,7 @@ export default async function Home() {
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal variant="right">
             <span className="eyebrow">Why ClickSemrus</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">The ClickSemrus <span className="gradient-text">difference</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">The ClickSemrus <span className="gradient-text">difference</span></h2>
             <p className="text-muted mt-5 text-lg">We built the agency we wished we could hire: fast, transparent and judged on revenue.</p>
             <div className="flex flex-wrap gap-3 mt-8">
               <span className="card !transform-none px-5 py-3 inline-flex items-center gap-2 font-bold"><Star size={18} className="text-sun" fill="currentColor" /> {reviews.rating.toFixed(1)} ★ client rating</span>
@@ -169,9 +169,9 @@ export default async function Home() {
       <section className="relative overflow-hidden py-24">
         <div className="container-x">
           <div className="flex items-end justify-between gap-4 flex-wrap">
-            <Reveal className="max-w-2xl">
+            <Reveal className="max-w-4xl">
               <span className="eyebrow">Our work</span>
-              <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Work we&apos;re proud of</h2>
+              <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Work we&apos;re proud of</h2>
             </Reveal>
             <Link href="/case-studies" className="btn btn-ghost">View all work <ArrowRight size={16} /></Link>
           </div>
@@ -184,9 +184,9 @@ export default async function Home() {
       {/* industries */}
       <section className="relative overflow-hidden py-24 bg-bg-2 border-y border-border">
         <div className="container-x">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Industries</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Built for businesses across every sector</h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Built for businesses across every sector</h2>
             <p className="text-muted mt-5 text-lg">Playbooks, benchmarks and creative formats that already work in your category.</p>
           </Reveal>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14">
@@ -211,7 +211,7 @@ export default async function Home() {
         <div className="container-x relative grid lg:grid-cols-2 gap-14 items-center">
           <Reveal>
             <span className="eyebrow">How we work</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">From audit to scale in <span className="text-[#8b84ff]">four steps.</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">From audit to scale in <span className="text-[#8b84ff]">four steps.</span></h2>
             <p className="text-muted mt-6 text-lg leading-relaxed">Most agencies send a PDF of impressions. We give you a live dashboard of leads, cost per lead and revenue, plus a weekly call about what we changed and why.</p>
             <Link href="/contact" className="btn btn-primary mt-8">Book a free strategy call <ArrowRight size={18} /></Link>
           </Reveal>
@@ -242,7 +242,7 @@ export default async function Home() {
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <Reveal>
               <span className="eyebrow"><Flame size={12} /> Trending today in India</span>
-              <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-5">Fresh marketing angles on what India is searching</h2>
+              <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5">Fresh marketing angles on what India is searching</h2>
             </Reveal>
             <Link href="/blog" className="btn btn-ghost">All articles <ArrowRight size={16} /></Link>
           </div>
@@ -258,7 +258,7 @@ export default async function Home() {
         <div className="container-x relative grid lg:grid-cols-2 gap-12 items-start">
           <Reveal>
             <span className="eyebrow">Free growth audit</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">Find out exactly where you are losing customers.</h2>
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Find out exactly where you are losing customers.</h2>
             <p className="text-muted mt-6 text-lg leading-relaxed">Within 48 hours you get a written audit of your website, SEO, social and ads, with a prioritised 90-day plan. Worth Rs 10,000. Free for Delhi NCR businesses this month.</p>
             <ul className="mt-8 grid gap-3">
               {["Website conversion and speed review", "Keyword gaps vs your top 3 competitors", "Ad account waste analysis", "Social content scorecard"].map((x) => (
@@ -274,7 +274,7 @@ export default async function Home() {
       <section className="container-x py-16 max-w-3xl">
         <Reveal className="text-center">
           <span className="eyebrow">FAQs</span>
-          <h2 className="font-display text-4xl md:text-5xl font-extrabold mt-5">Questions we hear every week</h2>
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5">Questions we hear every week</h2>
         </Reveal>
         <div className="mt-10"><FAQ items={FAQS} /></div>
       </section>

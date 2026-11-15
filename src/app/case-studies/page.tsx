@@ -38,7 +38,7 @@ export default function CaseStudies() {
 
       <section className="bg-bg-2 border-y border-border py-20">
         <div className="container-x">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <p className="eyebrow">Results</p>
             <h2 className="font-display text-3xl md:text-5xl font-bold mt-3">Numbers our clients love to share</h2>
             <p className="text-muted mt-4">Representative results from recent engagements across Delhi NCR.</p>

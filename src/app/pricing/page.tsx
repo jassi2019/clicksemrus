@@ -163,7 +163,7 @@ export default async function Pricing() {
 
       {/* comparison table */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">Compare plans</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">What is in each plan, line by line</h2>
           <p className="text-muted mt-4 text-lg">Scroll sideways on a phone. Anything not listed here is quoted as an add-on below, never slipped onto the invoice.</p>
@@ -205,7 +205,7 @@ export default async function Pricing() {
       <section id="addons" className="section-tint relative overflow-hidden py-16 md:py-24 scroll-mt-28">
         <div className="absolute inset-0 dots opacity-50" />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Add-ons</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Bolt on only what you need</h2>
             <p className="text-muted mt-4 text-lg">Indicative starting prices. Final quotes depend on scope and are confirmed in writing before any work starts.</p>

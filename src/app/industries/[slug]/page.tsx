@@ -104,7 +104,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
       {/* pain points we solve */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">Pain points we solve</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">The problems {lower} businesses bring us</h2>
           <p className="text-muted mt-4 text-lg">Each one has a specific fix. No generic &quot;digital presence&quot; packages.</p>
@@ -159,7 +159,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
       {/* 90-day plan */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">90-day plan</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">What the first quarter looks like</h2>
           <p className="text-muted mt-4 text-lg">The same rhythm on every {lower} account, so you know what happens next before you sign.</p>

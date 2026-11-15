@@ -25,7 +25,7 @@ export default function RelatedWork({
     <section id={id} className={`relative overflow-hidden py-16 md:py-24 scroll-mt-24 ${tint ? "section-tint" : ""}`}>
       <div className="container-x">
         <div className="flex items-end justify-between gap-4 flex-wrap">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Our work</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">{title}</h2>
             {sub && <p className="text-muted mt-4 text-lg">{sub}</p>}

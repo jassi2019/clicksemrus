@@ -26,9 +26,9 @@ export default function InstagramFeed({ posts }: { posts: IgPost[] }) {
       <div className="absolute inset-0 dots opacity-70" />
       <div className="container-x relative">
         <div className="flex items-end justify-between gap-6 flex-wrap">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow"><InstagramIcon size={12} /> Instagram</span>
-            <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">
+            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">
               Live from <span className="gradient-text">@{INSTAGRAM_HANDLE}</span>
             </h2>
             <p className="text-muted mt-5 text-lg">Trend breakdowns, client wins and creative teardowns. New reels every week.</p>

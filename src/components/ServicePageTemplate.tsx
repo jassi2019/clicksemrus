@@ -174,7 +174,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
 
       {/* included */}
       <section id="included" className="container-x py-16 md:py-24 scroll-mt-28">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">What is included</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Everything in our {lower} plans</h2>
           <p className="text-muted mt-4 text-lg">Six deliverables, one owner, one dashboard. Nothing here is an add-on you discover on the invoice.</p>
@@ -195,7 +195,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
       <section id="process" className="section-tint relative overflow-hidden py-16 md:py-24 scroll-mt-28">
         <div className="absolute inset-0 dots opacity-50" />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">How we do it</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">From audit to scale in four steps</h2>
             <p className="text-muted mt-4 text-lg">The same operating rhythm on every {lower} account, so you always know what happens next.</p>
@@ -222,7 +222,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
 
       {/* who this is for */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">Who this is for</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Built for businesses like yours</h2>
           <p className="text-muted mt-4 text-lg">We say no when {lower} is not the right first step. These are the situations where it is.</p>

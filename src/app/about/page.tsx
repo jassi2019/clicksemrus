@@ -89,7 +89,7 @@ export default async function About() {
       <section className="section-tint relative overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 dots opacity-50" />
         <div className="container-x relative">
-          <Reveal className="max-w-2xl">
+          <Reveal className="max-w-4xl">
             <span className="eyebrow">Values</span>
             <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">Four rules we do not break</h2>
           </Reveal>
@@ -109,7 +109,7 @@ export default async function About() {
 
       {/* how we work with you */}
       <section className="container-x py-16 md:py-24">
-        <Reveal className="max-w-2xl">
+        <Reveal className="max-w-4xl">
           <span className="eyebrow">How we work with you</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">What working with us actually feels like</h2>
           <p className="text-muted mt-4 text-lg">The same rhythm on every account, from a single-channel Starter plan to a full-funnel retainer.</p>
