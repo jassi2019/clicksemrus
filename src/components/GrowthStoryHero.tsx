@@ -143,7 +143,19 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
                   )}
                   {stage === 2 && (
                     <div className="gs2-shot gs2-shot--maps">
-                      <div className="gs2-map"><span className="gs2-pin"><MapPin size={16} /></span><span className="gs2-ring" /></div>
+                      <div className="gs2-map">
+                        <svg viewBox="0 0 160 150" className="gs2-map__svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                          <rect width="160" height="150" fill="#0e1726" />
+                          <path d="M-10 40 H170 M-10 95 H170 M30 -10 V160 M105 -10 V160" stroke="#243247" strokeWidth="7" />
+                          <path d="M-10 65 H170 M70 -10 V160 M-10 20 L60 120" stroke="#1b2636" strokeWidth="4" />
+                          <path d="M30 40 L105 40 L105 95" stroke="#3b5bdb" strokeWidth="3.5" strokeLinecap="round" opacity=".9" className="gs2-map__route" />
+                          <rect x="8" y="46" width="16" height="12" rx="2" fill="#16202e" /><rect x="112" y="12" width="20" height="18" rx="2" fill="#16202e" /><rect x="112" y="100" width="22" height="20" rx="2" fill="#16202e" /><rect x="36" y="100" width="20" height="16" rx="2" fill="#16202e" />
+                          <circle cx="78" cy="55" r="4" fill="#4ade80" opacity=".6"><animate attributeName="r" values="4;10;4" dur="2s" repeatCount="indefinite" /><animate attributeName="opacity" values=".6;0;.6" dur="2s" repeatCount="indefinite" /></circle>
+                        </svg>
+                        <span className="gs2-pin"><MapPin size={18} fill="#ef4444" stroke="#fff" strokeWidth={1.5} /></span>
+                        <span className="gs2-ring" />
+                        <span className="gs2-map__you">You</span>
+                      </div>
                       <div className="gs2-listing"><p className="font-bold text-[12px]">Your Business</p><p className="text-[10px] text-white/60 flex items-center gap-1"><Star size={10} fill="#fbbf24" stroke="#fbbf24" /> 4.9 · 120 reviews · Open now</p></div>
                       <span className="gs2-badge-float">{s.rank} on Maps</span>
                     </div>

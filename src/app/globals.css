@@ -455,8 +455,12 @@ select.input option { background: #fff; color: #0b0b14; }
 .gs2-cards span { aspect-ratio: 1; border-radius: .5rem; background: rgba(255,255,255,.1); }
 .gs2-badge-float { position: absolute; left: 50%; bottom: .7rem; transform: translateX(-50%); white-space: nowrap; display: inline-flex; align-items: center; gap: .3rem; font-size: .58rem; font-weight: 900; padding: .3rem .6rem; border-radius: 999px; background: linear-gradient(135deg, #fde68a, #f59e0b); color: #0b0b14; box-shadow: 0 10px 22px -10px rgba(245,158,11,.9); animation: gs2-pop .5s .35s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes gs2-pop { from { opacity: 0; transform: translate(-50%, 8px) scale(.9); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
-.gs2-map { position: relative; flex: 1; border-radius: .7rem; background: radial-gradient(circle at 30% 30%, #223 0, #121226 60%), repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 14px), repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 14px); overflow: hidden; }
-.gs2-pin { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -100%); color: #ef4444; animation: gs2-bounce 1.4s ease-in-out infinite; }
+.gs2-map { position: relative; flex: 1; border-radius: .7rem; overflow: hidden; background: #0e1726; }
+.gs2-map__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gs2-map__route { stroke-dasharray: 220; stroke-dashoffset: 220; animation: gs2-route 2.2s ease-out .3s forwards; }
+@keyframes gs2-route { to { stroke-dashoffset: 0; } }
+.gs2-map__you { position: absolute; left: 50%; top: calc(45% + .9rem); transform: translateX(-50%); font-size: .5rem; font-weight: 800; color: #fff; background: rgba(239,68,68,.9); padding: .1rem .35rem; border-radius: .3rem; white-space: nowrap; }
+.gs2-pin { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -100%); color: #ef4444; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); animation: gs2-bounce 1.4s ease-in-out infinite; }
 .gs2-ring { position: absolute; left: 50%; top: 45%; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 2px solid rgba(239,68,68,.6); transform: translate(-50%, -50%); animation: gs2-ring 1.6s ease-out infinite; }
 @keyframes gs2-ring { 0% { transform: translate(-50%, -50%) scale(.4); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; } }
 @keyframes gs2-bounce { 0%, 100% { transform: translate(-50%, -100%); } 50% { transform: translate(-50%, -130%); } }
