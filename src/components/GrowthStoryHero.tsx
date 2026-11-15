@@ -185,9 +185,9 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroCo
                 </ul>
 
                 <div className="gs2-kpi-row">
-                  <div className="gs2-kpi"><span>Leads / mo</span><b>{fmt(leads)}</b></div>
+                  <div className="gs2-kpi"><span>Leads</span><b>{fmt(leads)}</b></div>
                   <div className="gs2-kpi"><span>Followers</span><b>{fmt(followers)}</b></div>
-                  <div className="gs2-kpi"><span>Maps rank</span><b>{s.rank}</b></div>
+                  <div className="gs2-kpi"><span>Maps</span><b>{s.rank}</b></div>
                 </div>
 
                 <div className="gs2-chart">

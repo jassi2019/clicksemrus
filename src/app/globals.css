@@ -436,7 +436,7 @@ select.input option { background: #fff; color: #0b0b14; }
 .gs2-tick.is-now { color: #fff; }
 @media (max-width: 480px) { .gs2-tick span { display: none; } .gs2-tick.is-now span { display: inline; } }
 /* grid */
-.gs2-grid { display: grid; grid-template-columns: 128px 1fr; gap: .9rem; align-items: stretch; }
+.gs2-grid { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: .75rem; align-items: stretch; }
 @media (min-width: 640px) { .gs2-grid { grid-template-columns: 170px 1fr; gap: 1.1rem; } }
 /* phone */
 .gs2-phone { position: relative; border-radius: 1.4rem; padding: .4rem; background: #000; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 30px 50px -30px rgba(0,0,0,.9); transform: translateZ(30px); }
@@ -483,16 +483,16 @@ select.input option { background: #fff; color: #0b0b14; }
 .gs2-mod.is-on .gs2-mod__ic { background: var(--c); color: #0b0b14; }
 .gs2-mod__ok { color: #a3ff6b; }
 .gs2-kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .45rem; }
-.gs2-kpi { padding: .5rem .6rem; border-radius: .8rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
-.gs2-kpi span { display: block; font-size: .55rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-.gs2-kpi b { display: block; font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.gs2-kpi { min-width: 0; padding: .45rem .5rem; border-radius: .8rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
+.gs2-kpi span { display: block; font-size: .52rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gs2-kpi b { display: block; font-family: var(--font-display); font-size: .95rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 @media (min-width: 640px) { .gs2-kpi b { font-size: 1.35rem; } .gs2-mod { font-size: .72rem; } }
-.gs2-chart { position: relative; flex: 1; min-height: 6.5rem; border-radius: .9rem; overflow: hidden; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+.gs2-chart { position: relative; flex: 1; min-height: 7.5rem; border-radius: .9rem; overflow: hidden; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
 .gs2-chart svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .gs2-chart__line { transition: stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1); filter: drop-shadow(0 0 8px rgba(139,132,255,.75)); }
 .gs2-chart__fill { transition: clip-path 1.4s cubic-bezier(.2,.8,.2,1); }
 .gs2-chart__label { position: absolute; left: .6rem; top: .5rem; font-size: .55rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); display: inline-flex; align-items: center; gap: .3rem; }
-.gs2-chart__value { position: absolute; right: .6rem; top: .35rem; font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.gs2-chart__value { position: absolute; right: .6rem; bottom: .3rem; text-shadow: 0 2px 12px rgba(0,0,0,.6); font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
 @media (min-width: 640px) { .gs2-chart__value { font-size: 1.7rem; } }
 /* confetti */
 .gs2-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
