@@ -10,7 +10,7 @@ import { generateJson } from "./llm";
 
 type Draft = Partial<Pick<Post, "title" | "excerpt" | "seoTitle" | "seoDescription" | "content" | "category">>;
 
-const SYSTEM_TREND = `You are a fast, accurate news-explainer writer for ${SITE.name}, a digital marketing agency in ${SITE.city}, India. People are searching this topic on Google right now; write the page that best answers that search. Use only facts present in the provided sources; if a fact (score, date, result, cast, price) is not in the sources, say it is not confirmed yet instead of guessing. Clear Indian English, short paragraphs, markdown with ## and ### headings, bullet lists and one table where useful. Link to the sources inline as markdown links. No top-level H1. Respond with a single JSON object only.`;
+const SYSTEM_TREND = `You are a news and explainer journalist writing for an Indian audience. People are searching this topic on Google right now; write the single best, most informative page that answers their search. This is a straight news/explainer article, NOT a marketing article: do NOT turn it into advice for brands, do NOT mention marketing, agencies, moment marketing, SEO, or any business/CTA, and do NOT promote any company. Use ONLY facts present in the provided sources; if a specific fact (score, date, result, cast, price, number) is not in the sources, say it is not confirmed yet rather than inventing it. Follow the structure of top publishers: a direct-answer opening, a short "Key points" list, clear ## and ### sections, short 1-3 sentence paragraphs, bullet lists and a table where useful, and an FAQ. Cite sources inline as markdown links. Clear, neutral Indian English. No top-level H1. Respond with a single JSON object only.`;
 
 const SYSTEM_KEYWORD = `You are the senior SEO content writer at ${SITE.name}, a digital marketing agency in ${SITE.city}, India. Write helpful, specific, search-intent-matching articles in clear Indian English for business owners. Use markdown with ## and ### headings, short paragraphs, bullet lists and a comparison table where useful. Give realistic Indian price ranges in rupees when the query is about cost. Mention the agency's services naturally and link to /services and /contact once each. End with a 3-question FAQ. No top-level H1. Never invent statistics or client names. Respond with a single JSON object only.`;
 
@@ -23,14 +23,15 @@ export async function writeWithClaude(t: Trend, _base: Post, context = ""): Prom
 Headlines:
 ${sources}
 ${context ? `\nSource article text (use these facts):\n${context.slice(0, 7000)}\n` : ""}
-Write a 900-1300 word article that satisfies the search intent for "${t.title}":
-1. First 60 words: the direct answer (what happened / result / who / when).
-2. "## What happened" with the key facts, numbers, names and timeline from the sources (cite them).
-3. A section matching the intent: for a match -> score, key moments, player stats, what's next; for a show/film -> episode or release details, cast, where to watch; for an exam/result -> dates, links, steps; for business/finance -> numbers, reasons, impact; for a general event -> background, reactions, what's next.
-4. "## Why it is trending" (2-3 short paragraphs).
-5. "## FAQs" with 4 questions people actually type into Google about "${t.title}" (when, where to watch, result, next date, etc.), each answered in 1-2 lines.
-6. A final short "## For brands: the marketing angle" paragraph (max 90 words) that mentions moment marketing and links to /services.
-Return JSON only with keys: title (max 65 chars, MUST start with the exact phrase "${t.title}" in Title Case, then a colon and the specific hook e.g. score, result, date or verdict), excerpt (max 155 chars, specific), seoTitle (max 60, start with the phrase), seoDescription (max 155), content (markdown), category (one of: Trending, Entertainment Marketing, SEO, Social Media, Paid Ads, Content, Branding, Web).`;
+Write a 700-1100 word informative news article about "${t.title}" using this structure:
+1. Direct-answer opening (first 50-60 words): state plainly what happened / the result / who / when / where.
+2. "## Key points" — a 3-5 bullet TL;DR of the most important facts (scores, dates, names, numbers).
+3. "## What happened" — the full story: facts, numbers, names and timeline from the sources, cited as markdown links.
+4. An intent-matched section with its own ## heading: a cricket/football match -> final score, key moments, standout performers, what is next; a film/show/celebrity -> release or episode details, cast, where to watch, reactions; an exam/result/admit card -> dates, official link, how to check steps; business/finance/stock -> the numbers, the reason, the impact; a general event -> background, who is involved, reactions, what happens next.
+5. "## Why it is in the news" — 2-3 short paragraphs of context.
+6. "## FAQ" — 4-5 real questions people type into Google about "${t.title}" (score? when? where to watch? result? next date? who won?), each answered in 1-2 factual lines.
+Keep it strictly factual and neutral. No marketing, no brand mentions, no CTA.
+Return JSON only with keys: title (max 70 chars, MUST start with the exact phrase "${t.title}" in Title Case, then a colon and the specific factual hook e.g. the score/result/date/verdict), excerpt (max 155 chars, the direct factual answer), seoTitle (max 60, start with the phrase), seoDescription (max 155, factual), content (markdown), category (one of: Sports, Entertainment, Business, Technology, Education, India News, Trending).`;
   return pick(await generateJson<Draft>(SYSTEM_TREND, user));
 }
 

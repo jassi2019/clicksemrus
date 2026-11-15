@@ -182,7 +182,7 @@ export const NAV = [
   { href: "/contact", label: "Contact" },
 ];
 
-export const BLOG_CATEGORIES = ["Trending", "SEO", "Social Media", "Paid Ads", "Content", "Branding", "Entertainment Marketing", "Web"] as const;
+export const BLOG_CATEGORIES = ["Trending", "Sports", "Entertainment", "Business", "Technology", "Education", "India News", "SEO", "Social Media", "Paid Ads", "Content", "Branding", "Web"] as const;
 
 /* ---------------------------------------------------------------- industries */
 export type Industry = {
