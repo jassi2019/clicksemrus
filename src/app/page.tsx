@@ -102,8 +102,8 @@ export default async function Home() {
       {/* client reels showcase (replaces the stats cards) */}
       <ReelsShowcase
         clients={[
-          { key: "blameless", client: "Blameless", handle: "liv.blameless", profileUrl: "https://www.instagram.com/liv.blameless/", caseStudyHref: "/case-studies/blameless", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for a clean-beauty brand. Tap any reel to open it.", reels: blamelessReels },
-          { key: "raaz", client: "Kahi Ankahi Raaz", handle: "kahiankahiraaz", profileUrl: "https://www.instagram.com/kahiankahiraaz/", kind: "AI videos", tagline: "Fully AI-generated horror and mystery stories: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
+          { key: "skincare", client: "a skincare brand", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "Reels", tagline: "Scripted, shot, edited and posted by ClickSemrus for a D2C skincare label. Tap any reel to see it up close.", reels: blamelessReels },
+          { key: "stories", client: "a storytelling channel", handle: "clicksemrus", profileUrl: SITE.instagram, caseStudyHref: "/case-studies", kind: "AI videos", tagline: "Fully AI-generated horror and mystery stories: script, voice, visuals and edit by ClickSemrus. Ranked by likes, the top one crossed 1,000.", reels: raazReels },
         ]}
       />
 

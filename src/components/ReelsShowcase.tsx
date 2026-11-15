@@ -46,7 +46,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
   const switchTab = (i: number) => { setTab(i); setActive(null); rowRef.current?.scrollTo({ left: 0 }); };
 
   return (
-    <section className={`reels relative overflow-hidden py-16 md:py-24 ${active ? "has-focus" : ""}`} aria-label="Content we produce for clients">
+    <section className={`reels relative overflow-hidden py-16 md:py-24 ${active ? "has-focus" : ""}`} aria-label="Content we produce">
       <div className="absolute inset-0 dots opacity-60" aria-hidden="true" />
       <div className={`blob w-[28rem] h-[28rem] -right-40 -top-32 opacity-25 ${isAi ? "bg-[#7c3aed]" : "bg-[#db2777]"}`} aria-hidden="true" />
       <div className="container-x relative">
@@ -54,13 +54,13 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
           <div className="max-w-2xl">
             <span className="eyebrow"><Sparkles size={12} /> Content we produce</span>
             <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">
-              {isAi ? "AI videos" : "Reels"} we made for <span className="gradient-text">{c.client}</span>
+              {isAi ? "AI videos" : "Reels"} we create for <span className="gradient-text">{c.client}</span>
             </h2>
             <p className="text-muted mt-5 text-lg">{c.tagline}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <a href={c.profileUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost"><InstagramIcon size={16} /> @{c.handle}</a>
-            {c.caseStudyHref && <a href={c.caseStudyHref} className="btn btn-primary">Case study</a>}
+            <a href={c.profileUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("instagram_open")} className="btn btn-ghost"><InstagramIcon size={16} /> @{c.handle}</a>
+            {c.caseStudyHref && <a href={c.caseStudyHref} className="btn btn-primary">See our work</a>}
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
           <div className="mt-8 flex gap-2 flex-wrap" role="tablist" aria-label="Clients">
             {list.map((cl, i) => (
               <button key={cl.key} role="tab" aria-selected={i === tab} onClick={() => switchTab(i)} className={`reels__tab ${i === tab ? "is-on" : ""}`}>
-                {/ai/i.test(cl.kind) ? <Wand2 size={14} /> : <Clapperboard size={14} />} {cl.client} <span className="reels__tab-kind">{cl.kind}</span>
+                {/ai/i.test(cl.kind) ? <Wand2 size={14} /> : <Clapperboard size={14} />} {/ai/i.test(cl.kind) ? "AI storytelling" : "Brand reels"} <span className="reels__tab-kind">{cl.kind}</span>
               </button>
             ))}
           </div>
@@ -92,8 +92,8 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                         <span className="reel__shade" />
                         <span className="reel__meta reel__meta--big"><span className="inline-flex items-center gap-1"><Heart size={13} fill="currentColor" /> {fmt(r.likes)}</span><span className="inline-flex items-center gap-1"><MessageCircle size={13} /> {r.comments}</span></span>
                         {r.caption && <span className="reel__focus-caption">{r.caption}</span>}
-                        <a href={r.url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); trackEvent("reel_open"); }} className="reel__watch">
-                          <Play size={16} fill="currentColor" /> Watch on Instagram
+                        <a href={c.profileUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); trackEvent("reel_open"); }} className="reel__watch">
+                          <InstagramIcon size={15} /> More on our Instagram
                         </a>
                       </span>
                     )
@@ -113,11 +113,11 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                 </button>
                 {on && (
                   <div className="reel__bar">
-                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold text-white/90 hover:text-white">Open on Instagram <ExternalLink size={12} /></a>
+                    <a href={c.profileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold text-white/90 hover:text-white">@{c.handle} <ExternalLink size={12} /></a>
                     <button type="button" onClick={() => setActive(null)} className="grid place-items-center w-8 h-8 rounded-full bg-white/15 text-white hover:bg-white/25" aria-label="Close"><X size={14} /></button>
                   </div>
                 )}
-                <span className="reel__tag">{isAi ? <Wand2 size={10} /> : <InstagramIcon size={10} />} {c.kind} · {c.client}</span>
+                <span className="reel__tag">{isAi ? <Wand2 size={10} /> : <InstagramIcon size={10} />} {c.kind} · by ClickSemrus</span>
               </article>
             );
           })}
