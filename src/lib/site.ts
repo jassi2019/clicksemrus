@@ -178,7 +178,6 @@ export const NAV = [
   { href: "/case-studies", label: "Results" },
   { href: "/industries", label: "Industries" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

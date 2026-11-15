@@ -48,6 +48,7 @@ export default async function Footer() {
                 {NAV.map((n) => (
                   <li key={n.href}><Link className="hover:text-fg" href={n.href}>{n.label}</Link></li>
                 ))}
+                <li><Link className="hover:text-fg" href="/blog">Blog</Link></li>
                 <li><Link className="hover:text-fg" href="/blog/category/trending">Trending Today</Link></li>
                 <li><Link className="hover:text-fg" href="/privacy-policy">Privacy Policy</Link></li>
                 <li><Link className="hover:text-fg" href="/terms">Terms</Link></li>
