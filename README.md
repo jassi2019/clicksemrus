@@ -219,3 +219,26 @@ public/
   work/                          Portfolio covers and shots/ (full-page screenshots)
 vercel.json                      Cron schedules
 ```
+
+## Update log (November 2026)
+
+### Trending content engine v2
+- Sources: Google Trends India daily RSS **ranked by search traffic** plus Google News India top stories (general, sports, entertainment, business, technology). Publisher-name "trends" (e.g. a newspaper's name) are skipped.
+- Each article is written from the **actual source articles** (first ~2.6k characters of up to 3 sources are fetched and passed to the model) as an intent-matched explainer: direct answer, what happened, intent section (score / cast / dates / numbers), why it is trending, 4 FAQs, and a short marketing angle. Titles start with the exact trending phrase.
+- One article per topic (stable slug = topic), up to 12 per run, each run capped at ~200s of writing so it stays inside the function budget.
+- Runs: Vercel cron daily (`vercel.json`) **and** `.github/workflows/trending.yml` every 3 hours (GitHub Actions calls `/api/cron/trending?limit=12&keywords=2` with the `CRON_SECRET` repository secret). Trigger manually with `gh workflow run trending.yml`.
+- Every run also: writes keyword articles from Search Console opportunities, generates covers, pings Google Indexing API + IndexNow, and re-submits the sitemap.
+
+### Homepage
+- **Hero v2**: perspective "growth board" that tilts with the cursor, auto-loops Day 0 → Month 3 (click a stage to hold it for 7s), phone preview per stage (website, Maps ranking, ad, real top reel with its likes, WhatsApp chat), count-up KPIs, glowing chart, confetti at Month 3. Pure CSS/SVG, no WebGL.
+- **Service ticker**: tilted two-row icon chip marquee.
+- **Reels showcase** (replaces the stats cards): tabs for brand reels and AI videos pulled live via Instagram business discovery (`getClientReels` in `src/lib/reels.ts`, pinned post codes first), spotlight on tap (others blur), all links go to the ClickSemrus Instagram. Native playback needs `media_url`, which Instagram only returns for accounts connected to the Meta business; otherwise the spotlight shows the thumbnail with an "Our Instagram" button.
+- Instagram feed: official Graph API via the linked Facebook Page (`INSTAGRAM_USER_ID` + Meta token), 10-minute refresh, 4 latest posts.
+- Blog cards: equal heights, branded 1200x630 covers from `/api/cover`.
+- Scroll performance: static blobs, earlier/faster reveal, no 3D tilt cards on phones, no splash on phones.
+
+### WhatsApp
+- Meta Cloud API with a permanent system-user token; owner alert + lead thank-you on every enquiry; named-parameter templates `clicksemrus_lead_alert` / `clicksemrus_thank_you` (text fallback while pending). Test from Admin → Settings.
+
+### Admin
+- Page builder (`/admin/builder`), code editor (`/admin/code`, GitHub-backed), text content (`/admin/pages`), visitors (`/admin/visitors`), Search & Indexing (`/admin/seo`), leads with WhatsApp log.
