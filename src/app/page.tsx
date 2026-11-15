@@ -142,7 +142,7 @@ export default async function Home() {
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal variant="right">
             <span className="eyebrow">Why ClickSemrus</span>
-            <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">The ClickSemrus <span className="gradient-text">difference</span></h2>
+            <h2 className="font-display text-3xl md:text-4xl font-extrabold text-balance mt-5 leading-[1.05]">The ClickSemrus <span className="gradient-text">difference</span></h2>
             <p className="text-muted mt-5 text-lg">We built the agency we wished we could hire: fast, transparent and judged on revenue.</p>
             <div className="flex flex-wrap gap-3 mt-8">
               <span className="card !transform-none px-5 py-3 inline-flex items-center gap-2 font-bold"><Star size={18} className="text-sun" fill="currentColor" /> {reviews.rating.toFixed(1)} ★ client rating</span>
