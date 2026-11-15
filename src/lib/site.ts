@@ -5,7 +5,7 @@ export const SITE = {
   description:
     "ClickSemrus is a results-driven digital marketing agency in Delhi NCR offering SEO, social media marketing, Google & Meta ads, content, web design and branding that turns clicks into customers.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://clicksemrus.vercel.app",
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@clicksemrus.com",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "marttech343@gmail.com",
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || "+91 00000 00000",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "910000000000",
   city: "Delhi NCR",
