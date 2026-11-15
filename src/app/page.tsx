@@ -15,6 +15,7 @@ import CTA from "@/components/CTA";
 import BlogCard from "@/components/BlogCard";
 import JsonLd from "@/components/JsonLd";
 import ScrollSceneLoader from "@/components/ScrollSceneLoader";
+import ServiceTicker from "@/components/ServiceTicker";
 import TiltCard from "@/components/TiltCard";
 import Counter from "@/components/Counter";
 import Reviews from "@/components/Reviews";
@@ -92,18 +93,8 @@ export default async function Home() {
       {/* 3D scroll-through hero */}
       <ScrollSceneLoader hero={hero} />
 
-      {/* marquee */}
-      <div className="border-y border-border bg-bg-2 py-4 overflow-hidden">
-        <div className="marquee text-sm font-semibold text-muted uppercase tracking-[.25em]">
-          {[...Array(2)].map((_, k) => (
-            <div key={k} className="flex gap-12">
-              {["SEO", "Social Media", "Google Ads", "Meta Ads", "Content", "Web Design", "Influencers", "WhatsApp Marketing", "Branding", "Moment Marketing"].map((t) => (
-                <span key={t} className="flex items-center gap-4"><span className="w-1.5 h-1.5 rounded-full bg-brand" />{t}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* service ticker */}
+      <ServiceTicker />
 
       {/* stats */}
       <section className="relative overflow-hidden pt-28 pb-16">
