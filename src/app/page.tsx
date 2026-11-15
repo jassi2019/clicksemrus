@@ -284,7 +284,7 @@ export default async function Home() {
             <Link href="/blog" className="btn btn-ghost">All articles <ArrowRight size={16} /></Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6 mt-12">
-            {latest.map((p, i) => <Reveal key={p.slug} delay={i * 90}><BlogCard post={p} i={i} /></Reveal>)}
+            {latest.map((p, i) => <Reveal key={p.slug} delay={i * 90} className="h-full"><BlogCard post={p} i={i} /></Reveal>)}
           </div>
         </div>
       </section>
