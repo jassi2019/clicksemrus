@@ -54,7 +54,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
           <div className="max-w-2xl">
             <span className="eyebrow"><Sparkles size={12} /> Content we produce</span>
             <h2 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">
-              {isAi ? "AI videos" : "Reels"} we create for <span className="gradient-text">{c.client}</span>
+              {/studio/i.test(c.kind) ? <>Reels from <span className="gradient-text">our studio</span></> : <>{isAi ? "AI videos" : "Reels"} we create for <span className="gradient-text">{c.client}</span></>}
             </h2>
             <p className="text-muted mt-5 text-lg">{c.tagline}</p>
           </div>
