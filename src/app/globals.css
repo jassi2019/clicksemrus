@@ -399,6 +399,7 @@ select.input option { background: #fff; color: #0b0b14; }
 .reels.has-focus .reel.is-active .reel__frame { box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 0 9px rgba(79,70,229,.55), 0 0 90px 10px rgba(79,70,229,.45), 0 40px 80px -30px rgba(10,10,30,.8); }
 .reels.has-focus .reel.is-active::before { content: ""; position: absolute; inset: -40% -60%; background: radial-gradient(closest-side, rgba(245,158,11,.22), transparent 70%); z-index: -1; pointer-events: none; animation: gs-in .6s ease both; }
 .reels__row { position: relative; z-index: 2; }
-@media (min-width: 1024px) { .reel { width: 215px; } .reels__row { justify-content: center; flex-wrap: nowrap; overflow-x: auto; } }
+.reels__row > .reel:first-child { margin-left: auto; } .reels__row > .reel:last-child { margin-right: auto; }
+@media (min-width: 1024px) { .reel { width: 215px; } }
 @media (max-width: 640px) { .reels.has-focus .reel.is-active { transform: scale(1.04); } }
 @media (prefers-reduced-motion: reduce) { .reel, .reel__frame, .reel__play { transition: none; animation: none; } .reels.has-focus .reel { filter: none; opacity: .6; transform: none; } }

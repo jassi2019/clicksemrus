@@ -60,13 +60,17 @@ export default function ReelsShowcase({ reels, client, handle, profileUrl, caseS
               <article key={r.code} data-code={r.code} role="listitem" className={`reel ${on ? "is-active" : ""}`} style={{ animationDelay: `${i * 60}ms` }}>
                 <button type="button" onClick={() => toggle(r.code)} className="reel__frame" aria-pressed={on} aria-label={on ? "Close reel" : `Play reel: ${r.caption || client}`}>
                   {on ? (
-                    <iframe
-                      src={`https://www.instagram.com/reel/${r.code}/embed/`}
-                      title={r.caption || "Instagram reel"}
-                      className="reel__embed"
-                      allow="autoplay; encrypted-media; picture-in-picture"
-                      loading="eager"
-                    />
+                    r.video ? (
+                      <video src={r.video} poster={r.thumb} className="reel__embed object-cover" autoPlay playsInline controls preload="metadata" />
+                    ) : (
+                      <iframe
+                        src={`https://www.instagram.com/p/${r.code}/embed/`}
+                        title={r.caption || "Instagram reel"}
+                        className="reel__embed"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        loading="eager"
+                      />
+                    )
                   ) : (
                     <>
                       <Image src={r.thumb} alt={r.caption || `${client} reel`} fill sizes="(min-width: 1024px) 220px, 46vw" className="object-cover" unoptimized />
