@@ -59,10 +59,83 @@ export async function fetchTrends(geo = "IN"): Promise<Trend[]> {
           news,
         } as Trend;
       })
-      .filter((t) => t.title && /^[\x20-\x7E]+$/.test(t.title) && t.news.length > 0);
+      .filter((t) => t.title && /^[\x20-\x7E]+$/.test(t.title) && t.news.length > 0 && !isPublisherName(t.title))
+      .sort((a, b) => trafficNum(b.traffic) - trafficNum(a.traffic));
   } catch {
     return [];
   }
+}
+
+/** "1000+" -> 1000. */
+export const trafficNum = (s: string) => Number((s || "0").replace(/[^0-9]/g, "")) || 0;
+
+/** Trends that are just a news site's name ("vijayavani", "fx empire", "investing.com") never rank for us. */
+const PUBLISHERS = /^(vijayavani|manorama|manorama online|fx empire|investing\.com|today|news|ndtv|aaj tak|zee news|abp|times of india|the hindu|hindustan times|dainik bhaskar|jagran|amar ujala|eenadu|sakshi|mathrubhumi|lokmat|prabhat khabar|news18|republic|india today|tv9|google|youtube|facebook|instagram|whatsapp)$/i;
+export const isPublisherName = (t: string) => PUBLISHERS.test(t.trim());
+
+const GNEWS_FEEDS = [
+  "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en",
+  "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-IN&gl=IN&ceid=IN:en",
+  "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=en-IN&gl=IN&ceid=IN:en",
+  "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-IN&gl=IN&ceid=IN:en",
+  "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-IN&gl=IN&ceid=IN:en",
+];
+
+/** Google News India top stories as trend-like topics (headline becomes the topic, source link becomes the news item). */
+export async function fetchNewsTopics(limit = 12): Promise<Trend[]> {
+  const out: Trend[] = [];
+  const seen = new Set<string>();
+  for (const feed of GNEWS_FEEDS) {
+    try {
+      const res = await fetch(feed, { headers: { "user-agent": "Mozilla/5.0 (compatible; ClickSemrusBot/1.0)" }, next: { revalidate: 1800 } });
+      if (!res.ok) continue;
+      const xml = await res.text();
+      for (const it of xml.split("<item>").slice(1, 9)) {
+        const rawTitle = tag(it, "title");
+        const source = tag(it, "source") || rawTitle.split(" - ").pop() || "Google News";
+        const title = rawTitle.replace(/\s+-\s+[^-]+$/, "").trim();
+        const url = tag(it, "link");
+        const key = title.toLowerCase().slice(0, 60);
+        if (!title || !url || seen.has(key) || !/^[\x20-\x7E]+$/.test(title)) continue;
+        seen.add(key);
+        out.push({ title, traffic: "news", pubDate: tag(it, "pubDate"), news: [{ title: rawTitle, url, source }] });
+        if (out.length >= limit) return out;
+      }
+    } catch {
+      /* next feed */
+    }
+  }
+  return out;
+}
+
+/** Daily trends (by traffic) followed by Google News top stories, de-duplicated. */
+export async function fetchAllTopics(geo = "IN", newsLimit = 10): Promise<Trend[]> {
+  const [trends, news] = await Promise.all([fetchTrends(geo), fetchNewsTopics(newsLimit)]);
+  const seen = new Set(trends.map((t) => t.title.toLowerCase()));
+  return [...trends, ...news.filter((n) => !seen.has(n.title.toLowerCase()))];
+}
+
+/** Plain text of the first few source articles, so the writer has real facts instead of headlines only. */
+export async function fetchContext(t: Trend, maxArticles = 3, maxChars = 2600): Promise<string> {
+  const parts: string[] = [];
+  for (const n of t.news.slice(0, maxArticles)) {
+    try {
+      const res = await fetch(n.url, { headers: { "user-agent": "Mozilla/5.0 (compatible; ClickSemrusBot/1.0)" }, redirect: "follow", signal: AbortSignal.timeout(6000) });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const text = html
+        .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<nav[\s\S]*?<\/nav>|<footer[\s\S]*?<\/footer>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;|&#160;/g, " ")
+        .replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (text.length > 400) parts.push(`SOURCE: ${n.source} (${n.url})\n${text.slice(0, maxChars)}`);
+    } catch {
+      /* skip source */
+    }
+  }
+  return parts.join("\n\n");
 }
 
 export function classify(t: Trend): { category: string; kind: string } {
@@ -88,7 +161,7 @@ export function composeTrendPost(t: Trend, date = new Date()): Post {
   const { category, kind } = classify(t);
   const topic = titleCase(t.title.trim());
   const day = date.toISOString().slice(0, 10);
-  const slug = slugify(`${t.title}-trending-${day}`);
+  const slug = slugify(t.title).slice(0, 80);
   const sources = t.news.slice(0, 4);
   const headlines = sources.map((n) => `- [${n.title}](${n.url}) via ${n.source}`).join("\n");
 
@@ -236,7 +309,8 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
   const base = composeTrendPost(t, date);
   if (!hasAiWriter()) return base;
   try {
-    const ai = await writeWithClaude(t, base);
+    const context = await fetchContext(t);
+    const ai = await writeWithClaude(t, base, context);
     if (!ai.content) throw new Error("empty AI response");
     return { ...base, ...ai };
   } catch (e) {

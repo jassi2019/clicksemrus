@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { fetchTrends, buildTrendPost } from "@/lib/trending";
+import { fetchAllTopics, buildTrendPost } from "@/lib/trending";
 import { postExists, savePost, getSettings } from "@/lib/posts";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
@@ -28,9 +28,11 @@ export async function GET(req: NextRequest) {
 
   // 1. Trend posts
   if (settings.autoPublishTrends !== false) {
-    const trends = await fetchTrends(settings.trendGeo || "IN");
-    const limit = Number(req.nextUrl.searchParams.get("limit") || 3);
-    for (const t of trends.slice(0, limit)) {
+    const trends = await fetchAllTopics(settings.trendGeo || "IN", 10);
+    const limit = Number(req.nextUrl.searchParams.get("limit") || 12);
+    const startedAt = Date.now();
+    for (const t of trends) {
+      if (created.length >= limit || Date.now() - startedAt > 200_000) break; // stay inside the function budget
       const post = await buildTrendPost(t);
       if (await postExists(post.slug)) continue;
       await savePost(post);

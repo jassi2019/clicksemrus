@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Globe, Search, Megaphone, MessageCircle, Check, MapPin, Star, Heart, Phone, ShoppingBag, TrendingUp, Zap } from "lucide-react";
 import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 import InstagramIcon from "./InstagramIcon";
+import Image from "next/image";
+
+export type HeroReel = { thumb: string; likes: number; comments: number; caption?: string };
 
 /**
  * Growth-story hero v2. A new business starts at zero; ClickSemrus modules plug in one by one and the
@@ -45,7 +48,7 @@ function useCountUp(target: number, ms = 900) {
   return v;
 }
 
-export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroContent }) {
+export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: HeroContent; reel?: HeroReel | null }) {
   const [stage, setStage] = useState(0);
   const [paused, setPaused] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -54,10 +57,14 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroCo
   useEffect(() => {
     reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced.current) { setStage(STAGES.length - 1); return; }
-    let i = 0;
-    const id = setInterval(() => { if (paused) return; i = (i + 1) % (STAGES.length + 1); setStage(Math.min(i, STAGES.length - 1)); }, STEP_MS);
+    const id = setInterval(() => {
+      if (paused) return;
+      setStage((cur) => (cur + 1) % STAGES.length);
+    }, STEP_MS);
     return () => clearInterval(id);
   }, [paused]);
+  // a manual click holds the chosen stage for a few seconds, then the loop resumes
+  const hold = (i: number) => { setStage(i); setPaused(true); window.clearTimeout((hold as unknown as { t?: number }).t); (hold as unknown as { t?: number }).t = window.setTimeout(() => setPaused(false), 7000); };
 
   const s = STAGES[stage];
   const progress = stage / (STAGES.length - 1);
@@ -95,7 +102,7 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroCo
         </div>
 
         {/* scene */}
-        <div className="gs2-scene" onMouseMove={onMove} onMouseEnter={() => setPaused(true)} onMouseLeave={() => { setPaused(false); setTilt({ x: 0, y: 0 }); }}>
+        <div className="gs2-scene" onMouseMove={onMove} onMouseLeave={() => setTilt({ x: 0, y: 0 })}>
           <div className={`gs2-board stage-${stage}`} style={{ transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` }} aria-label="How a new business grows with ClickSemrus">
             <div className="gs2-glow" aria-hidden="true" />
 
@@ -103,7 +110,7 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroCo
             <div className="gs2-timeline" role="list" aria-label="Timeline">
               <span className="gs2-timeline__fill" style={{ width: `${progress * 100}%` }} />
               {STAGES.map((st, i) => (
-                <button key={st.label} type="button" onClick={() => setStage(i)} className={`gs2-tick ${i <= stage ? "is-on" : ""} ${i === stage ? "is-now" : ""}`} aria-current={i === stage} aria-label={st.label}>
+                <button key={st.label} type="button" onClick={() => hold(i)} className={`gs2-tick ${i <= stage ? "is-on" : ""} ${i === stage ? "is-now" : ""}`} aria-current={i === stage} aria-label={st.label}>
                   <i /><span>{st.label}</span>
                 </button>
               ))}
@@ -146,11 +153,15 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT }: { hero?: HeroCo
                   )}
                   {stage === 4 && (
                     <div className="gs2-shot gs2-shot--reel">
-                      <div className="gs2-reel"><InstagramIcon size={18} /><p className="font-display font-bold text-[13px] mt-2">Reel · 48k views</p></div>
+                      <div className="gs2-reel">
+                        {reel?.thumb ? <Image src={reel.thumb} alt={reel.caption || "Reel"} fill sizes="170px" className="object-cover" unoptimized /> : null}
+                        <span className="gs2-reel__shade" />
+                        <span className="gs2-reel__stats"><InstagramIcon size={12} /> Reel{reel ? <> · <Heart size={11} fill="currentColor" /> {reel.likes >= 1000 ? `${(reel.likes / 1000).toFixed(1)}k` : reel.likes} · 💬 {reel.comments}</> : null}</span>
+                      </div>
                       <span className="gs2-heart" style={{ left: "70%" }}><Heart size={14} fill="#f472b6" stroke="#f472b6" /></span>
                       <span className="gs2-heart" style={{ left: "78%", animationDelay: ".6s" }}><Heart size={11} fill="#f472b6" stroke="#f472b6" /></span>
                       <span className="gs2-heart" style={{ left: "62%", animationDelay: "1.1s" }}><Heart size={12} fill="#f472b6" stroke="#f472b6" /></span>
-                      <span className="gs2-badge-float">+2.4k followers</span>
+                      <span className="gs2-badge-float">{reel && reel.likes >= 500 ? `${(reel.likes / 1000).toFixed(1)}k likes on one reel` : "+2.4k followers"}</span>
                     </div>
                   )}
                   {stage === 5 && (

@@ -94,7 +94,7 @@ export default async function Home() {
       <JsonLd data={[faqJsonLd(FAQS), reviewJsonLd(reviews)]} />
 
       {/* 3D scroll-through hero */}
-      <ScrollSceneLoader hero={hero} />
+      <ScrollSceneLoader hero={hero} reel={[...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0] ? { thumb: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].thumb, likes: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].likes, comments: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].comments, caption: [...raazReels, ...blamelessReels].sort((a, b) => b.likes - a.likes)[0].caption } : null} />
 
       {/* service ticker */}
       <ServiceTicker />

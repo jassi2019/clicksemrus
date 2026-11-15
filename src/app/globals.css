@@ -505,3 +505,8 @@ select.input option { background: #fff; color: #0b0b14; }
 .reveal { transition-duration: .45s; transform: translateY(14px) scale(1); }
 .reveal-right { transform: translateX(-14px); } .reveal-zoom { transform: scale(.97); }
 @media (max-width: 1023px) { .blob { filter: blur(48px); } .card-3d { transform: none !important; } }
+
+.gs2-shot--maps .gs2-listing { margin-bottom: 1.9rem; }
+.gs2-reel { position: relative; overflow: hidden; }
+.gs2-reel__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,.05) 50%); }
+.gs2-reel__stats { position: absolute; left: .5rem; right: .5rem; bottom: 2.4rem; display: inline-flex; align-items: center; gap: .25rem; font-size: .6rem; font-weight: 800; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); }

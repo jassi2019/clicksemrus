@@ -10,21 +10,27 @@ import { generateJson } from "./llm";
 
 type Draft = Partial<Pick<Post, "title" | "excerpt" | "seoTitle" | "seoDescription" | "content" | "category">>;
 
-const SYSTEM_TREND = `You are the senior content writer at ${SITE.name}, a digital marketing agency in ${SITE.city}, India. Write SEO blog posts in clear Indian English for business owners and marketers. Use markdown with ## headings. Never fabricate facts about the news; only use the provided sources. Mention the agency's services naturally (SEO, social media marketing, Meta Ads, Google Ads, content marketing, web design) without being spammy. Include a short FAQ section at the end. Do not include a top-level H1. Respond with a single JSON object only.`;
+const SYSTEM_TREND = `You are a fast, accurate news-explainer writer for ${SITE.name}, a digital marketing agency in ${SITE.city}, India. People are searching this topic on Google right now; write the page that best answers that search. Use only facts present in the provided sources; if a fact (score, date, result, cast, price) is not in the sources, say it is not confirmed yet instead of guessing. Clear Indian English, short paragraphs, markdown with ## and ### headings, bullet lists and one table where useful. Link to the sources inline as markdown links. No top-level H1. Respond with a single JSON object only.`;
 
 const SYSTEM_KEYWORD = `You are the senior SEO content writer at ${SITE.name}, a digital marketing agency in ${SITE.city}, India. Write helpful, specific, search-intent-matching articles in clear Indian English for business owners. Use markdown with ## and ### headings, short paragraphs, bullet lists and a comparison table where useful. Give realistic Indian price ranges in rupees when the query is about cost. Mention the agency's services naturally and link to /services and /contact once each. End with a 3-question FAQ. No top-level H1. Never invent statistics or client names. Respond with a single JSON object only.`;
 
 const pick = (d: Draft | null): Partial<Post> =>
   d ? { title: d.title, excerpt: d.excerpt, seoTitle: d.seoTitle, seoDescription: d.seoDescription, content: d.content, ...(d.category ? { category: d.category } : {}) } : {};
 
-export async function writeWithClaude(t: Trend, _base: Post): Promise<Partial<Post>> {
+export async function writeWithClaude(t: Trend, _base: Post, context = ""): Promise<Partial<Post>> {
   const sources = t.news.slice(0, 4).map((n) => `- ${n.title} (${n.source}) ${n.url}`).join("\n");
-  const user = `Topic trending on Google India today: "${t.title}" (${t.traffic} searches).
-Sources:
+  const user = `Search topic trending in India right now: "${t.title}"${t.traffic && t.traffic !== "news" ? ` (${t.traffic} searches today)` : ""}.
+Headlines:
 ${sources}
-
-Write a 900-1200 word blog post that (1) explains why it is trending using the sources with markdown links to them, (2) gives 5 concrete moment-marketing ideas brands can act on within 24 hours, (3) includes rules for brand-safe trend-jacking, (4) ends with a FAQ of 3 questions and a call to action to contact ${SITE.name}.
-Return JSON only with keys: title (max 65 chars), excerpt (max 160 chars), seoTitle (max 60), seoDescription (max 155), content (markdown).`;
+${context ? `\nSource article text (use these facts):\n${context.slice(0, 7000)}\n` : ""}
+Write a 900-1300 word article that satisfies the search intent for "${t.title}":
+1. First 60 words: the direct answer (what happened / result / who / when).
+2. "## What happened" with the key facts, numbers, names and timeline from the sources (cite them).
+3. A section matching the intent: for a match -> score, key moments, player stats, what's next; for a show/film -> episode or release details, cast, where to watch; for an exam/result -> dates, links, steps; for business/finance -> numbers, reasons, impact; for a general event -> background, reactions, what's next.
+4. "## Why it is trending" (2-3 short paragraphs).
+5. "## FAQs" with 4 questions people actually type into Google about "${t.title}" (when, where to watch, result, next date, etc.), each answered in 1-2 lines.
+6. A final short "## For brands: the marketing angle" paragraph (max 90 words) that mentions moment marketing and links to /services.
+Return JSON only with keys: title (max 65 chars, MUST start with the exact phrase "${t.title}" in Title Case, then a colon and the specific hook e.g. score, result, date or verdict), excerpt (max 155 chars, specific), seoTitle (max 60, start with the phrase), seoDescription (max 155), content (markdown), category (one of: Trending, Entertainment Marketing, SEO, Social Media, Paid Ads, Content, Branding, Web).`;
   return pick(await generateJson<Draft>(SYSTEM_TREND, user));
 }
 
