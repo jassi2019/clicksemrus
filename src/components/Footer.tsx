@@ -5,8 +5,10 @@ import { SITE, SERVICE_CATEGORIES, NAV, LOCATIONS, INDUSTRIES } from "@/lib/site
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
 import { getContent } from "@/lib/pageContent";
+import { getAllPosts } from "@/lib/posts";
 
 export default async function Footer() {
+  const recentPosts = (await getAllPosts().catch(() => [])).slice(0, 4);
   const c = await getContent("global");
   const hasPhone = !SITE.phone.includes("00000");
   return (
@@ -63,7 +65,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border grid gap-6 md:grid-cols-2">
+        <div className="mt-12 pt-8 border-t border-border grid gap-8 md:grid-cols-3">
           <div>
             <h3 className="font-semibold mb-3 text-sm">Locations</h3>
             <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted">
@@ -71,6 +73,25 @@ export default async function Footer() {
                 <li key={l.slug}><Link className="hover:text-fg inline-flex items-center gap-1" href={`/locations/${l.slug}`}><MapPin size={11} /> {l.name}</Link></li>
               ))}
             </ul>
+            {recentPosts.length > 0 && (
+              <>
+                <h3 className="font-semibold mb-3 mt-6 text-sm">Latest from the blog</h3>
+                <ul className="space-y-2 text-xs text-muted">
+                  {recentPosts.map((post) => (
+                    <li key={post.slug}><Link className="hover:text-fg line-clamp-1" href={`/blog/${post.slug}`}>{post.title}</Link></li>
+                  ))}
+                  <li><Link className="hover:text-fg font-semibold text-[#8b84ff]" href="/blog">All articles →</Link></li>
+                </ul>
+              </>
+            )}
+          </div>
+          <div>
+            <h3 className="font-semibold mb-3 text-sm">Follow &amp; subscribe</h3>
+            <p className="text-xs text-muted mb-3">Growth ideas and trending marketing angles, twice a month. No spam.</p>
+            <NewsletterForm />
+            <div className="flex gap-2 mt-4">
+              <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center w-9 h-9 rounded-full bg-surface-2 hover:bg-white hover:text-[#0b0b14] transition"><Instagram size={16} /></a>
+            </div>
           </div>
           <div>
             <h3 className="font-semibold mb-3 text-sm">Contact</h3>
