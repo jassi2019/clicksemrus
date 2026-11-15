@@ -93,7 +93,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
                         <span className="reel__meta reel__meta--big"><span className="inline-flex items-center gap-1"><Heart size={13} fill="currentColor" /> {fmt(r.likes)}</span><span className="inline-flex items-center gap-1"><MessageCircle size={13} /> {r.comments}</span></span>
                         {r.caption && <span className="reel__focus-caption">{r.caption}</span>}
                         <a href={c.profileUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); trackEvent("reel_open"); }} className="reel__watch">
-                          <InstagramIcon size={15} /> More on our Instagram
+                          <InstagramIcon size={14} /> Our Instagram
                         </a>
                       </span>
                     )
