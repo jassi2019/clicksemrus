@@ -46,8 +46,8 @@
   --font-display: var(--font-display);
 }
 
-html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 ::selection { background: var(--brand); color: white; }
 
 .font-display { font-family: var(--font-display); letter-spacing: -0.03em; }

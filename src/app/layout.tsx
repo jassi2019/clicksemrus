@@ -52,8 +52,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const [settings, global] = await Promise.all([getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)), getContent("global")]);
   const announcement = global.get("announcement") || settings.announcement;
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col has-mobile-bar">
+    <html lang="en" className={`${inter.variable} ${display.variable} antialiased`}>
+      <body className="min-h-screen flex flex-col has-mobile-bar">
         <JsonLd data={[orgJsonLd(), websiteJsonLd()]} />
         <Script id="gtm" strategy="lazyOnload">{`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}</Script>
         <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} title="gtm" /></noscript>
