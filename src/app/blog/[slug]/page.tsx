@@ -5,6 +5,7 @@ import { Clock, Flame, ExternalLink, ArrowRight } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, articleJsonLd, faqJsonLd } from "@/lib/seo";
 import { getAllPosts, getPost, related, type Post } from "@/lib/posts";
+import { authorFor } from "@/lib/authors";
 import { liveTrendPosts } from "@/lib/trending";
 import { renderMarkdown, extractHeadings, readingTime, slugify, interlinkPosts, parseFaq } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     type: "article",
     image: coverFor(post, SITE.url),
     keywords: post.tags,
+    markdownPath: `/blog/${post.slug}/md`,
   });
 }
 
@@ -48,12 +50,13 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
     .slice(0, 8);
   const faqs = parseFaq(post.content);
+  const author = authorFor(post);
   const date = new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 
   return (
     <>
       <JsonLd data={[
-        articleJsonLd(post),
+        articleJsonLd(post, author),
         breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]),
         ...(faqs.length >= 2 ? [faqJsonLd(faqs)] : []),
       ]} />
@@ -69,7 +72,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <h1 className="font-display text-3xl md:text-5xl font-bold mt-4 leading-tight">{post.title}</h1>
           <p className="text-muted text-lg mt-4">{post.excerpt}</p>
           <p className="text-sm text-muted mt-4 flex items-center gap-4 flex-wrap">
-            <span>By {post.author}</span><span>{date}</span>
+            <span>By <Link href={`/authors/${author.slug}`} className="font-semibold text-fg hover:text-brand-2">{author.name}</Link></span><span>{date}</span>
             <span className="flex items-center gap-1"><Clock size={14} /> {readingTime(post.content)} min read</span>
           </p>
         </header>

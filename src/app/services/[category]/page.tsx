@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, IndianRupee, Rocket, Unlock } from "lucide-react";
-import { SERVICES, SERVICE_CATEGORIES, SITE, findCategory, findSubService, workForService } from "@/lib/site";
+import { SERVICES, SERVICE_CATEGORIES, SITE, INDUSTRY_FACTS, findCategory, findSubService, workForService } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
+import FactStrip from "@/components/FactStrip";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServiceArt from "@/components/ServiceArt";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
@@ -42,6 +43,17 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   });
 }
 
+/** One-sentence "What is X?" direct answers per service family, for AI extraction (item #3b). */
+const DIRECT_ANSWER: Record<string, string> = {
+  seo: "SEO (search engine optimisation) is the practice of improving a website and its Google Business Profile so it ranks higher in Google's organic and local results for the searches your customers actually make.",
+  "paid-ads": "Paid ads (performance marketing) are campaigns on Google, Meta, YouTube and LinkedIn where you pay to reach high-intent audiences and are measured on cost per lead and return on ad spend.",
+  "social-media-marketing": "Social media marketing is the planning, creation and publishing of content on Instagram, LinkedIn, YouTube and Facebook to build an audience and turn attention into enquiries and sales.",
+  "web-design-development": "Web design and development is the building of fast, conversion-focused websites and landing pages that load quickly, rank on Google and turn visitors into leads.",
+  ecommerce: "E-commerce marketing is the mix of store development, catalogue ads, SEO and retention flows that grows an online store's orders and repeat revenue profitably.",
+  "branding-creative": "Branding and creative is the work of building a brand identity and the ad and social creative that makes a business recognisable and persuasive across every channel.",
+  "automation-crm": "Marketing automation and CRM is the setup of WhatsApp, email, chatbots and a sales pipeline that captures every lead and follows up automatically so none go cold.",
+};
+
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
   const c = findCategory(category);
@@ -70,7 +82,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             <nav className="text-xs text-muted mb-5" aria-label="Breadcrumb"><Link href="/" className="hover:text-fg">Home</Link> / <Link href="/services" className="hover:text-fg">Services</Link> / <span className="text-fg">{c.name}</span></nav>
             <span className="eyebrow"><ServiceIcon name={c.icon} size={12} /> {c.name} · Delhi NCR</span>
             <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.headline}</h1>
-            <p className="text-muted text-lg mt-6 leading-relaxed">{c.description}</p>
+            {DIRECT_ANSWER[c.slug] && <p className="text-fg text-lg mt-5 leading-relaxed font-medium">{DIRECT_ANSWER[c.slug]}</p>}
+            <p className="text-muted text-lg mt-4 leading-relaxed">{c.description}</p>
             <ul className="mt-6 grid sm:grid-cols-2 gap-2.5">
               {benefits.map((b) => <li key={b} className="flex gap-2 text-sm font-medium"><Check size={18} className="text-lime shrink-0" /> {b}</li>)}
             </ul>
@@ -92,6 +105,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           </div>
         </div>
       </section>
+
+      {/* by the numbers — quotable facts for AI citation (SEO cornerstone) */}
+      {c.slug === "seo" && (
+        <FactStrip items={INDUSTRY_FACTS.seo} title="SEO timelines — by the numbers" note="Typical ranges for Delhi NCR businesses. Competitive categories such as dental or real estate sit at the longer end." />
+      )}
 
       {/* sub-services */}
       <section className="container-x py-16 md:py-20">

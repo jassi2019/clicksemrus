@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE, SERVICE_CATEGORIES, type Location } from "./site";
 import type { Post } from "./posts";
+import type { Author } from "./authors";
 
 export function pageMeta(opts: {
   title: string;
@@ -10,6 +11,8 @@ export function pageMeta(opts: {
   type?: "website" | "article";
   keywords?: string[];
   noindex?: boolean;
+  /** Clean markdown version of this page, exposed to AI crawlers via <link rel="alternate" type="text/markdown">. */
+  markdownPath?: string;
 }): Metadata {
   const url = `${SITE.url}${opts.path}`;
   const image = opts.image || `${SITE.url}/opengraph-image`;
@@ -17,7 +20,10 @@ export function pageMeta(opts: {
     title: opts.title,
     description: opts.description,
     keywords: opts.keywords,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(opts.markdownPath ? { types: { "text/markdown": `${SITE.url}${opts.markdownPath}` } } : {}),
+    },
     robots: opts.noindex ? { index: false, follow: false } : { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     openGraph: {
       title: opts.title,
@@ -125,7 +131,7 @@ export const localBusinessJsonLd = (loc: Location) => ({
   },
 });
 
-export const articleJsonLd = (p: Post) => ({
+export const articleJsonLd = (p: Post, author?: Author) => ({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: p.title,
@@ -133,10 +139,34 @@ export const articleJsonLd = (p: Post) => ({
   image: p.cover ? [p.cover] : [`${SITE.url}/opengraph-image`],
   datePublished: p.publishedAt,
   dateModified: p.updatedAt,
-  author: { "@type": "Organization", name: p.author, url: SITE.url },
+  author: author
+    ? { "@type": "Person", name: author.name, url: `${SITE.url}/authors/${author.slug}`, jobTitle: author.role, knowsAbout: author.expertise }
+    : { "@type": "Organization", name: p.author, url: SITE.url },
   publisher: { "@id": `${SITE.url}/#organization` },
   mainEntityOfPage: `${SITE.url}/blog/${p.slug}`,
   keywords: p.tags.join(", "),
   articleSection: p.category,
   ...(p.outbound?.length ? { citation: p.outbound.map((o) => o.url) } : {}),
+});
+
+export const personJsonLd = (a: Author) => ({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": `${SITE.url}/authors/${a.slug}#person`,
+  name: a.name,
+  url: `${SITE.url}/authors/${a.slug}`,
+  jobTitle: a.role,
+  description: a.bio,
+  knowsAbout: a.expertise,
+  worksFor: { "@id": `${SITE.url}/#organization` },
+  ...(a.link ? { sameAs: [a.link] } : {}),
+});
+
+export const profilePageJsonLd = (a: Author) => ({
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: `${SITE.url}/authors/${a.slug}`,
+  name: `${a.name} — ${a.role}`,
+  mainEntity: { "@id": `${SITE.url}/authors/${a.slug}#person` },
+  about: { "@id": `${SITE.url}/#organization` },
 });

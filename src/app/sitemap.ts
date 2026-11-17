@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE, BLOG_CATEGORIES, INDUSTRIES, WORK, SERVICE_CATEGORIES, ALL_SUB_SERVICES, LOCATIONS } from "@/lib/site";
+import { AUTHORS } from "@/lib/authors";
 import { getAllPosts } from "@/lib/posts";
 import { liveTrendPosts } from "@/lib/trending";
 import { slugify } from "@/lib/markdown";
@@ -25,6 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE.url}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/blog`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     ...BLOG_CATEGORIES.map((c) => ({ url: `${SITE.url}/blog/category/${slugify(c)}`, lastModified: now, changeFrequency: "daily" as const, priority: 0.6 })),
+    ...AUTHORS.map((a) => ({ url: `${SITE.url}/authors/${a.slug}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.5 })),
     ...posts.map((p) => ({ url: `${SITE.url}/blog/${p.slug}`, lastModified: new Date(p.updatedAt), changeFrequency: "weekly" as const, priority: p.source === "trend" ? 0.8 : 0.7 })),
     { url: `${SITE.url}/privacy-policy`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE.url}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },

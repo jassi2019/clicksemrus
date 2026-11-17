@@ -37,6 +37,10 @@ ${L("About", "/about")}
 ${L("Pricing", "/pricing")}
 ${L("Contact", "/contact")}
 ${L("Blog", "/blog")}
+
+## For AI engines
+- Full article text: ${SITE.url}/llms-full.txt
+- Every article is also available as clean markdown at ${SITE.url}/blog/<slug>/md
 `;
 
   return new Response(body, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=3600" } });

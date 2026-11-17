@@ -43,6 +43,15 @@ Marketing website, blog engine and admin panel for **ClickSemrus**, a digital ma
 - **Indexing:** every new URL is pushed to the Google Indexing API and IndexNow; the sitemap is resubmitted. `POST /api/admin/seo {"action":"indexAll"}` pings Google + IndexNow for all posts.
 - Newsletter signup (Resend audience or Brevo list).
 
+**GEO / AEO (AI answer-engine optimisation)**
+
+- **Author bylines → real bio pages (E-E-A-T):** three editorial personas live in `src/lib/authors.ts` (name, role, credible India-focused bio, expertise tags, link) and are assigned to each post deterministically by category/slug-hash (`authorFor`, not stored on the Post). Bio pages at `/authors/<slug>` list that desk's articles and emit `Person` + `ProfilePage` JSON-LD (`personJsonLd`/`profilePageJsonLd` in `lib/seo.ts`); the article byline links to the author, and `articleJsonLd` now carries the `Person` author. Avatars are initials-based (`AuthorAvatar`), no photos or fabricated credentials. Author pages are in the sitemap.
+- **Clean markdown versions for AI ingestion:** every article is served as plain markdown at `/blog/<slug>/md` (`text/markdown` — H1 title, meta line, author, canonical, raw body + sources). The article `<head>` advertises it via `<link rel="alternate" type="text/markdown">` (the `markdownPath` option on `pageMeta`). `/llms-full.txt` mirrors `/llms.txt` but embeds the full markdown body of the ~20 latest posts; `/llms.txt` links to both.
+- **Cornerstone "by the numbers" fact strips (AI-citation lift):** honest, quotable industry-norm one-liners (`INDUSTRY_FACTS` in `lib/site.ts`, rendered by `FactStrip` as a semantic `<dl>`) on the homepage, `/services` and the SEO service hub. No fabricated ClickSemrus metrics — all framed as expectations/norms.
+- **One-sentence direct answers:** each service family hub (`DIRECT_ANSWER` map) and each industry page opens with a single "What is X?" sentence for AI extraction.
+- **Topical clusters on `/blog`:** the index now groups posts into *Latest news & insights* plus per-category clusters (Sports, Entertainment, Business, Technology, SEO, Social Media, …), each with a "See all <category>" link, on top of the existing *Browse by topic* chip row — a denser internal link graph. Blog index metadata targets "Digital marketing blog & trending news India".
+- **Best / top / vs / how-to keyword pages:** a curated list of ~10 evergreen comparison/guide topics lives in `KEYWORD_TOPICS` (`lib/site.ts`); generate each as a real article with `POST /api/admin/seo {"action":"write","query":"<topic>"}` (one at a time; needs `GROQ_API_KEY`/AI writer).
+
 **Conversion**
 
 - Compact lead form (`LeadForm`) posting to `/api/lead`: name, phone with fixed +91 prefix, email, service chips, optional details, consent, honeypot. Leads are stored in Redis and optionally emailed via Resend.
@@ -210,8 +219,9 @@ src/
                                  GrowthPopup, WhatsAppButton, InstagramFeed, Reviews, Reveal,
                                  TiltCard, Counter, ServiceArt, ServiceIcon, admin/*
   lib/
-    site.ts                      SITE, SERVICES, SERVICE_CATEGORIES, INDUSTRIES, LOCATIONS, WORK + helpers
-    seo.ts                       Metadata and JSON-LD builders
+    site.ts                      SITE, SERVICES, SERVICE_CATEGORIES, INDUSTRIES, LOCATIONS, WORK, INDUSTRY_FACTS, KEYWORD_TOPICS + helpers
+    authors.ts                   Editorial personas (E-E-A-T) + deterministic author assignment
+    seo.ts                       Metadata and JSON-LD builders (incl. Person/ProfilePage)
     posts.ts db.ts               Posts, leads, settings on Redis
     trending.ts keywordPost.ts   Trend and keyword article writers
     gsc.ts indexing.ts google.ts Search Console, Indexing API, IndexNow, Google auth

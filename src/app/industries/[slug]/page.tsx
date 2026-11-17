@@ -76,7 +76,8 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
             <nav className="text-xs text-muted mb-5" aria-label="Breadcrumb"><Link href="/" className="hover:text-fg">Home</Link> / <Link href="/industries" className="hover:text-fg">Industries</Link> / <span className="text-fg">{ind.name}</span></nav>
             <span className="eyebrow">{ind.name}</span>
             <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{ind.headline}</h1>
-            <p className="text-muted text-lg mt-6 leading-relaxed">{ind.description}</p>
+            <p className="text-fg text-lg mt-5 leading-relaxed font-medium">Digital marketing for {lower} is the mix of local SEO, paid ads, social content and lead automation tailored to how {lower} customers in Delhi NCR search, compare and buy.</p>
+            <p className="text-muted text-lg mt-4 leading-relaxed">{ind.description}</p>
             <div className="flex gap-3 mt-8 flex-wrap">
               <a href="#quote" className="btn btn-primary">Get a free {lower} audit <ArrowRight size={18} /></a>
               <Link href="/case-studies" className="btn btn-ghost">See our work</Link>

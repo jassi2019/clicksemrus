@@ -173,6 +173,31 @@ export const SERVICES: Service[] = [
   },
 ];
 
+/**
+ * Honest, industry-norm one-liners for the cornerstone "by the numbers" fact strips (GEO item #7).
+ * These are quotable expectations and norms, NOT fabricated ClickSemrus metrics (no client counts/revenue).
+ */
+export const INDUSTRY_FACTS = {
+  home: [
+    { stat: "Week 1", fact: "A paid search campaign can bring its first leads within the first week of going live, because it reaches people already searching for the service." },
+    { stat: "8–12 weeks", fact: "Local SEO in Delhi NCR typically shows measurable ranking movement in 8 to 12 weeks, and keeps compounding after that." },
+    { stat: "~80%", fact: "On Meta ads, creative is widely considered the biggest lever on performance, so testing hooks and formats matters more than audience tweaks." },
+    { stat: "97%", fact: "The large majority of first-time visitors leave without converting, which is why retargeting and follow-up decide most of the ROI." },
+  ],
+  services: [
+    { stat: "Week 1", fact: "Google and Meta ad campaigns can start generating leads within the first week once conversion tracking is set up correctly." },
+    { stat: "8–12 weeks", fact: "SEO is a compounding channel: most businesses see measurable organic movement in 8 to 12 weeks, not overnight." },
+    { stat: "Rs 30,000+", fact: "For meaningful ad data, most Delhi NCR businesses need at least about Rs 30,000 per month in media spend per platform." },
+    { stat: "5–15%", fact: "A well-built landing page for well-targeted paid traffic commonly converts in the 5 to 15 percent range for service businesses." },
+  ],
+  seo: [
+    { stat: "4–8 weeks", fact: "Local SEO and Google Business Profile ranking usually start moving in 4 to 8 weeks for Delhi NCR businesses." },
+    { stat: "8–12 weeks", fact: "Broader organic SEO typically shows measurable growth in 8 to 12 weeks and strongest gains in 4 to 6 months." },
+    { stat: "Maps 3-pack", fact: "Most 'near me' searches are decided inside the Google Maps 3-pack, so local ranking often matters more than the classic blue links." },
+    { stat: "Compounds", fact: "Unlike ads, SEO keeps paying back after the work is done, which is what makes its long-term cost per lead the lowest of any channel." },
+  ],
+} as const;
+
 export const NAV = [
   { href: "/services", label: "Services" },
   { href: "/case-studies", label: "Results" },
@@ -183,6 +208,24 @@ export const NAV = [
 ];
 
 export const BLOG_CATEGORIES = ["Trending", "Sports", "Entertainment", "Business", "Technology", "Education", "India News", "SEO", "Social Media", "Paid Ads", "Content", "Branding", "Web"] as const;
+
+/**
+ * Curated high-value comparison/guide topics (best / top / vs / how-to / cost) for the
+ * buildKeywordPost pipeline. These are the strongest evergreen money-keyword click drivers (item #9).
+ * Generate via POST /api/admin/seo {"action":"write","query":"<topic>"} one at a time.
+ */
+export const KEYWORD_TOPICS: string[] = [
+  "SEO vs Google Ads which is better for Delhi NCR businesses",
+  "Best digital marketing agency in Delhi NCR how to choose",
+  "How much does digital marketing cost in India",
+  "Instagram vs Facebook ads for Indian D2C brands",
+  "How much do Google Ads cost in India",
+  "Best social media marketing strategy for small businesses in India",
+  "Local SEO vs national SEO for Delhi NCR businesses",
+  "How to rank on Google Maps in Delhi NCR",
+  "WhatsApp marketing vs email marketing for Indian businesses",
+  "Shopify vs WooCommerce for Indian e-commerce brands",
+];
 
 /* ---------------------------------------------------------------- industries */
 export type Industry = {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Zap, Target, BarChart3, TrendingUp, Flame, Star, Award } from "lucide-react";
-import { SITE, SERVICES, INDUSTRIES, WORK, HOME_FAQS, serviceUrl } from "@/lib/site";
+import { SITE, SERVICES, INDUSTRIES, WORK, HOME_FAQS, INDUSTRY_FACTS, serviceUrl } from "@/lib/site";
 import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
 import { getAllPosts, getSettings } from "@/lib/posts";
 import { getContent, parseStat, splitPair } from "@/lib/pageContent";
@@ -13,6 +13,7 @@ import LeadForm from "@/components/LeadForm";
 import FAQ from "@/components/FAQ";
 import CTA from "@/components/CTA";
 import BlogCard from "@/components/BlogCard";
+import FactStrip from "@/components/FactStrip";
 import JsonLd from "@/components/JsonLd";
 import ScrollSceneLoader from "@/components/ScrollSceneLoader";
 import ServiceTicker from "@/components/ServiceTicker";
@@ -162,6 +163,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* by the numbers — quotable facts for AI citation */}
+      <FactStrip items={INDUSTRY_FACTS.home} title="What to expect — by the numbers" note="Industry norms for Delhi NCR businesses, not guarantees. Your results depend on budget, category and competition." />
 
       {/* work */}
       <section className="relative overflow-hidden py-24">

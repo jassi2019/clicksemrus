@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Zap, TrendingUp, Heart, Check } from "lucide-react";
-import { SERVICE_CATEGORIES, SITE, WORK, serviceUrl } from "@/lib/site";
+import { SERVICE_CATEGORIES, SITE, WORK, INDUSTRY_FACTS, serviceUrl } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import { getContent } from "@/lib/pageContent";
+import FactStrip from "@/components/FactStrip";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServiceArt from "@/components/ServiceArt";
 import Reveal from "@/components/Reveal";
@@ -82,7 +83,8 @@ export default async function ServicesPage() {
           <Reveal className="max-w-3xl">
             <span className="eyebrow">Services</span>
             <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.get("headline")} <span className="gradient-text">{c.get("headlineAccent")}</span></h1>
-            <p className="text-muted mt-6 text-lg leading-relaxed">{c.get("intro").replace("{total}", String(total))}</p>
+            <p className="text-fg text-lg mt-5 leading-relaxed font-medium">Digital marketing services are the paid and organic channels — SEO, Google and Meta ads, social media, content, web development and automation — a business uses to get found online and turn attention into customers.</p>
+            <p className="text-muted mt-4 text-lg leading-relaxed">{c.get("intro").replace("{total}", String(total))}</p>
             <div className="flex gap-3 mt-8 flex-wrap">
               <Link href="/contact" className="btn btn-primary">Get a free audit <ArrowRight size={18} /></Link>
               <Link href="/pricing" className="btn btn-ghost">See pricing</Link>
@@ -90,6 +92,9 @@ export default async function ServicesPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* by the numbers — quotable facts for AI citation */}
+      <FactStrip items={INDUSTRY_FACTS.services} title="What to expect — by the numbers" note="Industry norms for Delhi NCR businesses, framed as expectations rather than guarantees." />
 
       {/* category cards */}
       <section className="container-x py-16 md:py-20">
