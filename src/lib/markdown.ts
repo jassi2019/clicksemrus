@@ -128,17 +128,27 @@ export function stripMd(md: string) {
  * Returns [] when no FAQ section or fewer than one pair is found.
  */
 export function parseFaq(md: string): { q: string; a: string }[] {
-  const m = md.match(/^##\s+FAQs?\b[^\n]*\n([\s\S]*?)(?=\n##\s|$)/im);
+  const m = md.match(/(?:^|\n)##\s+FAQs?\b[^\n]*\n([\s\S]*?)(?=\n##\s|$(?![\s\S]))/i);
   if (!m) return [];
-  const section = m[1];
+  const lines = m[1].split("\n");
   const out: { q: string; a: string }[] = [];
-  // Match a bold or ### heading question, then the text until the next question/heading.
-  const re = /(?:^|\n)\s*(?:###\s+|\*\*)\s*([^\n*]+?\??)\s*(?:\*\*)?\s*\n+([\s\S]*?)(?=\n\s*(?:###\s+|\*\*)|$)/g;
-  let r: RegExpExecArray | null;
-  while ((r = re.exec(section))) {
-    const q = stripMd(r[1]).trim();
-    const a = stripMd(r[2]).trim();
-    if (q.length > 4 && a.length > 4 && /[?]/.test(q)) out.push({ q, a });
+  // A question is a line that is a bold (**…**) or ### heading and ends with "?".
+  const isQ = (l: string) => /^\s*(?:###\s+.+|\*\*.+\*\*)\s*$/.test(l) && /\?\s*$/.test(stripMd(l));
+  let i = 0;
+  while (i < lines.length) {
+    if (isQ(lines[i])) {
+      const q = stripMd(lines[i]).trim();
+      const ans: string[] = [];
+      i++;
+      while (i < lines.length && !isQ(lines[i])) {
+        if (lines[i].trim()) ans.push(lines[i].trim());
+        i++;
+      }
+      const a = stripMd(ans.join(" ")).trim();
+      if (q.length > 4 && a.length > 4) out.push({ q, a });
+    } else {
+      i++;
+    }
   }
   return out;
 }
