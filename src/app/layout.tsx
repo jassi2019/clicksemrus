@@ -22,6 +22,16 @@ const display = Space_Grotesk({ variable: "--font-display", subsets: ["latin"], 
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-icon.png" }],
+    shortcut: ["/favicon.ico"],
+  },
   title: { default: `${SITE.name} | ${SITE.tagline}`, template: `%s | ${SITE.name}` },
   description: SITE.description,
   applicationName: SITE.name,
