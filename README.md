@@ -250,6 +250,7 @@ vercel.json                      Cron schedules
 - Instagram feed: official Graph API via the linked Facebook Page (`INSTAGRAM_USER_ID` + Meta token), 10-minute refresh, 4 latest posts.
 - Blog cards: equal heights, branded 1200x630 covers from `/api/cover`.
 - Scroll performance: static blobs, earlier/faster reveal, no 3D tilt cards on phones, no splash on phones.
+- **Window scroll (important):** `<html>` is the scrolling element — do **not** put `h-full`/fixed height on `<html>`, and keep `overflow-x: hidden` on `html`, never on `body`. If `<html>` is height-capped while `<body>` grows, the body silently becomes a nested scroll container: `window.scrollY` stays ~0, the page clamps early, and `<Link>` clicks + scroll-driven reveal/header feel "dead". `<body>` uses `min-h-screen` only.
 
 ### WhatsApp
 - Meta Cloud API with a permanent system-user token; owner alert + lead thank-you on every enquiry; named-parameter templates `clicksemrus_lead_alert` / `clicksemrus_thank_you` (text fallback while pending). Test from Admin → Settings.
