@@ -1,7 +1,7 @@
 name: Trending content
 on:
   schedule:
-    - cron: "10 */2 * * *"   # every 2 hours (12 runs/day)
+    - cron: "10 3 * * *"   # daily 08:40 IST: 3 keyword articles + 1 top trend every other day (gap enforced in the route)
   workflow_dispatch: {}
 jobs:
   run:
@@ -10,4 +10,4 @@ jobs:
       - name: Generate trending + keyword articles, covers, index pings
         run: |
           curl -sS --max-time 295 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://clicksemrus.vercel.app/api/cron/trending?limit=12&keywords=2" | head -c 2000
+            "https://clicksemrus.vercel.app/api/cron/trending?limit=1&keywords=3" | head -c 2000

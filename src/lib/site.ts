@@ -227,6 +227,50 @@ export const KEYWORD_TOPICS: string[] = [
   "Shopify vs WooCommerce for Indian e-commerce brands",
 ];
 
+/**
+ * Planned pan-India digital-marketing queries the daily cron works through (3/day) when Search
+ * Console has no marketing-intent opportunity of its own. Ordered by priority; each becomes
+ * /blog/<slug> once and is then skipped (postExists). Add to the end, never reorder published ones.
+ */
+export const KEYWORD_QUEUE: string[] = [
+  "How to choose a digital marketing agency in India",
+  "Digital marketing agency pricing in India",
+  "SEO cost in India for small businesses",
+  "How long does SEO take to show results",
+  "Google Ads vs Meta Ads for lead generation in India",
+  "What is performance marketing",
+  "How to get leads for a small business in India",
+  "Social media marketing packages in India what you get",
+  "Instagram marketing cost in India",
+  "How to run Instagram ads for a small business in India",
+  "Best digital marketing strategy for startups in India",
+  "How to do SEO for a new website in India",
+  "Google Business Profile optimisation checklist",
+  "Cost per lead benchmarks in India by industry",
+  "How to reduce Google Ads cost per click in India",
+  "How to measure digital marketing ROI",
+  "Influencer marketing cost in India",
+  "WhatsApp Business API cost in India",
+  "Performance marketing vs digital marketing",
+  "SEO vs SEM what is the difference",
+  "Organic vs paid social media for Indian brands",
+  "Retargeting ads explained for Indian businesses",
+  "Landing page best practices for lead generation",
+  "Marketing funnel for small businesses explained",
+  "How to audit a website for SEO",
+  "Technical SEO checklist for 2026",
+  "Content marketing strategy for B2B companies in India",
+  "Email marketing for Indian e-commerce brands",
+  "Digital marketing for doctors and clinics in India",
+  "Digital marketing for real estate in India",
+  "Digital marketing for coaching institutes in India",
+  "Digital marketing for restaurants in India",
+  "Digital marketing for D2C brands in India",
+  "AI in digital marketing for small businesses in India",
+  "How to rank on ChatGPT and AI search for Indian businesses",
+  "Digital marketing for manufacturers and B2B exporters in India",
+];
+
 /* ---------------------------------------------------------------- industries */
 export type Industry = {
   slug: string;

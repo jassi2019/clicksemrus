@@ -7,13 +7,23 @@ import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { notifyIndex, submitSitemap } from "@/lib/indexing";
 import { ensureCover } from "@/lib/coverGen";
 import { getPost } from "@/lib/posts";
+import { db } from "@/lib/db";
+import { KEYWORD_QUEUE } from "@/lib/site";
+import type { Opportunity } from "@/lib/gsc";
 
 export const maxDuration = 300;
 
+/** Only the single top trend, and only if the last trend post is at least this old (every other day). */
+const TREND_GAP_MS = 40 * 3600_000;
+const TREND_LAST_KEY = "trend:lastAt";
+/** Search Console queries worth an article: digital-marketing intent only, not news/entertainment queries. */
+const MARKETING_QUERY = /\b(seo|google ads|ppc|meta ads|facebook ads|instagram|social media|digital marketing|content marketing|email marketing|whatsapp marketing|influencer|branding|website|landing page|ecommerce|e-commerce|shopify|lead generation|cpc|roas|backlink|google business|gmb|local seo|marketing agency|marketing cost|marketing strategy)\b/i;
+
 /**
- * Daily growth cron (see vercel.json). In one run:
- *  1. Google Trends India -> trend posts
- *  2. Search Console -> refresh keyword opportunities -> keyword posts for the best uncovered queries
+ * Daily growth cron (see vercel.json / .github/workflows/trending.yml). In one run:
+ *  1. Google Trends India -> the single most-searched topic, every other day (`limit`, default 1)
+ *  2. Keyword articles (`keywords`, default 3): Search Console opportunities with digital-marketing
+ *     intent first, then the pan-India KEYWORD_QUEUE in site.ts. This is the ranking engine.
  *  3. Ping Google Indexing API + IndexNow for everything created, plus /blog and the sitemap
  * Protected by CRON_SECRET (Vercel sends it automatically).
  */
@@ -25,43 +35,63 @@ export async function GET(req: NextRequest) {
   const settings = await getSettings();
   const created: string[] = [];
   const notes: string[] = [];
+  const startedAt = Date.now();
+  const inBudget = () => Date.now() - startedAt < 200_000; // stay inside the function budget
 
-  // 1. Trend posts
+  // 1. Trend post: one per run, skipped while the previous one is fresher than TREND_GAP_MS
   if (settings.autoPublishTrends !== false) {
-    const trends = await fetchAllTopics(settings.trendGeo || "IN", 10);
-    const limit = Number(req.nextUrl.searchParams.get("limit") || 12);
-    const startedAt = Date.now();
-    for (const t of trends) {
-      if (created.length >= limit || Date.now() - startedAt > 200_000) break; // stay inside the function budget
-      const post = await buildTrendPost(t);
-      if (await postExists(post.slug)) continue;
-      await savePost(post);
-      created.push(post.slug);
+    const limit = Number(req.nextUrl.searchParams.get("limit") || 1);
+    const lastAt = Number((await db.get<number>(TREND_LAST_KEY).catch(() => 0)) || 0);
+    if (Date.now() - lastAt < TREND_GAP_MS) {
+      notes.push(`trend skipped: last one ${Math.round((Date.now() - lastAt) / 3600_000)}h ago`);
+    } else {
+      const trends = await fetchAllTopics(settings.trendGeo || "IN", 10); // traffic-ranked, top first
+      let made = 0;
+      for (const t of trends) {
+        if (made >= limit || !inBudget()) break;
+        const post = await buildTrendPost(t);
+        if (await postExists(post.slug)) continue;
+        await savePost(post);
+        created.push(post.slug);
+        made++;
+      }
+      if (made) await db.set(TREND_LAST_KEY, Date.now());
+      notes.push(`trends seen: ${trends.length}, written: ${made}`);
     }
-    notes.push(`trends seen: ${trends.length}`);
   } else notes.push("trend auto-publish disabled");
 
-  // 2. Search Console opportunities -> keyword posts
+  // 2. Keyword articles: GSC marketing queries first, then the planned queue
+  const kwLimit = Number(req.nextUrl.searchParams.get("keywords") || settings.keywordPostsPerDay || 3);
+  let written = 0;
+  const writeKeyword = async (o: Opportunity) => {
+    const slug = keywordSlug(o.query);
+    if (await postExists(slug)) return false;
+    const post = await buildKeywordPost(o);
+    await savePost(post);
+    created.push(post.slug);
+    written++;
+    return true;
+  };
   try {
     const snap = (await refreshGsc()) || (await getGscSnapshot());
     if (snap) {
-      const kwLimit = Number(req.nextUrl.searchParams.get("keywords") || settings.keywordPostsPerDay || 2);
-      let written = 0;
       for (const o of snap.opportunities) {
-        if (written >= kwLimit) break;
+        if (written >= kwLimit || !inBudget()) break;
+        if (!MARKETING_QUERY.test(o.query)) continue; // news/entertainment queries are not what we rank for
         if (o.kind === "striking" && o.position < 8) continue; // already near page one; leave the existing page alone
-        const slug = keywordSlug(o.query);
-        if (await postExists(slug)) continue;
-        const post = await buildKeywordPost(o);
-        await savePost(post);
-        created.push(post.slug);
-        written++;
+        await writeKeyword(o);
       }
-      notes.push(`gsc opportunities: ${snap.opportunities.length}, keyword posts: ${written}`);
+      notes.push(`gsc opportunities: ${snap.opportunities.length}, keyword posts from gsc: ${written}`);
     } else notes.push("gsc: not configured");
   } catch (e) {
     notes.push(`gsc error: ${(e as Error).message.slice(0, 120)}`);
   }
+  const fromGsc = written;
+  for (const q of KEYWORD_QUEUE) {
+    if (written >= kwLimit || !inBudget()) break;
+    await writeKeyword({ query: q, page: "", clicks: 0, impressions: 0, ctr: 0, position: 0, recentImpressions: 0, kind: "uncovered", score: 0 });
+  }
+  notes.push(`keyword posts from queue: ${written - fromGsc}`);
 
   // Covers for everything created this run (AI / stock when keys exist, else branded render)
   for (const slug of created) {
