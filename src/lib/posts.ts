@@ -1,6 +1,17 @@
+import { unstable_cache, revalidateTag } from "next/cache";
 import { db } from "./db";
 import { slugify } from "./markdown";
 import { SEED_POSTS } from "@/content/seed-posts";
+
+/**
+ * Posts live in Upstash Redis. Reading them on every request (smembers + one get
+ * per slug) burns thousands of Redis calls under crawler/visitor load and blew
+ * the free-tier monthly limit, which 500'd the whole blog. These reads are wrapped
+ * in Next's data cache (POSTS_TAG, 1-hour revalidate) so Redis is touched at most
+ * once per hour per server instance; writes bust the tag so edits show immediately.
+ */
+export const POSTS_TAG = "posts";
+const POSTS_TTL = 3600; // seconds
 
 export type Post = {
   slug: string;
@@ -26,22 +37,34 @@ export type Post = {
 const INDEX = "posts:index"; // set of slugs
 const key = (slug: string) => `post:${slug}`;
 
-export async function listDbPosts(): Promise<Post[]> {
+async function listDbPostsRaw(): Promise<Post[]> {
   const slugs = await db.smembers(INDEX);
   const posts = await Promise.all(slugs.map((s) => db.get<Post>(key(s))));
   return posts.filter(Boolean) as Post[];
 }
 
+/** Cached list of all DB posts (see POSTS_TAG note above). Shared by blog, home, sitemap, RSS. */
+export const listDbPosts = unstable_cache(listDbPostsRaw, ["db-posts"], { revalidate: POSTS_TTL, tags: [POSTS_TAG] });
+
 export async function getAllPosts(opts: { includeDrafts?: boolean } = {}): Promise<Post[]> {
-  const dbPosts = await listDbPosts();
+  // If Redis is down or over quota, keep /blog, home, sitemap and llms.txt serving (with the
+  // seed posts) instead of 500ing. The error is not cached: listDbPosts throws past unstable_cache.
+  let dbPosts: Post[] = [];
+  try { dbPosts = await listDbPosts(); } catch (e) { console.error("posts: Redis read failed, serving seeds only:", (e as Error).message.slice(0, 200)); }
   const dbSlugs = new Set(dbPosts.map((p) => p.slug));
   const seeds = SEED_POSTS.filter((p) => !dbSlugs.has(p.slug));
   const all = [...dbPosts, ...seeds].filter((p) => opts.includeDrafts || p.status === "published");
   return all.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
 }
 
+const getDbPostCached = unstable_cache(
+  (slug: string) => db.get<Post>(key(slug)),
+  ["db-post"],
+  { revalidate: POSTS_TTL, tags: [POSTS_TAG] }
+);
+
 export async function getPost(slug: string, includeDrafts = false): Promise<Post | null> {
-  const p = (await db.get<Post>(key(slug))) || SEED_POSTS.find((s) => s.slug === slug) || null;
+  const p = (await getDbPostCached(slug)) || SEED_POSTS.find((s) => s.slug === slug) || null;
   if (!p) return null;
   if (!includeDrafts && p.status !== "published") return null;
   return p;
@@ -52,16 +75,23 @@ export async function savePost(p: Post) {
   p.updatedAt = new Date().toISOString();
   await db.set(key(p.slug), p);
   await db.sadd(INDEX, p.slug);
+  bustPosts();
   return p;
 }
 
 export async function deletePost(slug: string) {
   await db.del(key(slug));
   await db.srem(INDEX, slug);
+  bustPosts();
+}
+
+/** Drop the cached post reads after a write. No-op outside a request scope (e.g. during a render). */
+function bustPosts() {
+  try { revalidateTag(POSTS_TAG, "max"); } catch {}
 }
 
 export async function postExists(slug: string) {
-  return Boolean(await db.get(key(slug))) || SEED_POSTS.some((s) => s.slug === slug);
+  return Boolean(await getDbPostCached(slug)) || SEED_POSTS.some((s) => s.slug === slug);
 }
 
 export function related(all: Post[], current: Post, n = 3) {
