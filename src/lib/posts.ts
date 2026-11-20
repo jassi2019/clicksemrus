@@ -64,7 +64,17 @@ const getDbPostCached = unstable_cache(
 );
 
 export async function getPost(slug: string, includeDrafts = false): Promise<Post | null> {
-  const p = (await getDbPostCached(slug)) || SEED_POSTS.find((s) => s.slug === slug) || null;
+  const seed = SEED_POSTS.find((s) => s.slug === slug) || null;
+  let dbPost: Post | null = null;
+  try {
+    dbPost = await getDbPostCached(slug);
+  } catch (e) {
+    // Redis down/over quota: seed posts still render (keeps the Vercel prerender from
+    // aborting the build); a DB-only slug rethrows so the page 500s instead of 404ing.
+    if (!seed) throw e;
+    console.error("posts: Redis read failed, serving seed:", slug, (e as Error).message.slice(0, 120));
+  }
+  const p = dbPost || seed;
   if (!p) return null;
   if (!includeDrafts && p.status !== "published") return null;
   return p;
