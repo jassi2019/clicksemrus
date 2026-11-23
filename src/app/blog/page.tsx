@@ -3,7 +3,6 @@ import { Flame } from "lucide-react";
 import { SITE, BLOG_CATEGORIES } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import { getAllPosts } from "@/lib/posts";
-import { liveTrendPosts } from "@/lib/trending";
 import { slugify } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import CTA from "@/components/CTA";
@@ -20,9 +19,9 @@ export const metadata = pageMeta({
 
 export default async function Blog({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
-  const [stored, live] = await Promise.all([getAllPosts(), liveTrendPosts("IN", 6)]);
+  const stored = await getAllPosts();
   const storedSlugs = new Set(stored.map((p) => p.slug));
-  let posts = [...live.filter((p) => !storedSlugs.has(p.slug)), ...stored];
+  let posts = [...stored];
   if (q) {
     const s = q.toLowerCase();
     posts = posts.filter((p) => p.title.toLowerCase().includes(s) || p.excerpt.toLowerCase().includes(s) || p.tags.some((t) => t.includes(s)));

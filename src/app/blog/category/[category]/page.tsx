@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { BLOG_CATEGORIES, SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
 import { getAllPosts } from "@/lib/posts";
-import { liveTrendPosts } from "@/lib/trending";
 import { slugify } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import CTA from "@/components/CTA";
@@ -26,8 +25,8 @@ export default async function Category({ params }: { params: Promise<{ category:
   const { category } = await params;
   const name = BLOG_CATEGORIES.find((c) => slugify(c) === category);
   if (!name) notFound();
-  const [stored, live] = await Promise.all([getAllPosts(), liveTrendPosts("IN", 6)]);
-  const posts = [...live.filter((l) => !stored.some((s) => s.slug === l.slug)), ...stored].filter((p) => p.category === name);
+  const stored = await getAllPosts();
+  const posts = stored.filter((p) => p.category === name);
   return (
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Blog", path: "/blog" }, { name, path: `/blog/category/${category}` }])} />

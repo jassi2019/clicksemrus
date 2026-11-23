@@ -22,13 +22,20 @@ export async function POST(req: NextRequest) {
   const pick = b.title ? trends.filter((t) => t.title === b.title) : trends.slice(0, Number(b.limit || 3));
   const created: string[] = [];
   const skipped: string[] = [];
+  const failed: string[] = [];
   for (const t of pick) {
-    const post = await buildTrendPost(t);
+    let post: Awaited<ReturnType<typeof buildTrendPost>>;
+    try {
+      post = await buildTrendPost(t);
+    } catch (e) {
+      failed.push(`${t.title}: ${(e as Error).message.slice(0, 80)}`);
+      continue;
+    }
     if (!b.force && (await postExists(post.slug))) { skipped.push(post.slug); continue; }
     await savePost(post);
     created.push(post.slug);
   }
   revalidatePath("/");
   revalidatePath("/blog");
-  return NextResponse.json({ ok: true, created, skipped, ai: hasAiWriter() });
+  return NextResponse.json({ ok: true, created, skipped, failed, ai: hasAiWriter() });
 }

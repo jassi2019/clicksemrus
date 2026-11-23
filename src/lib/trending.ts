@@ -353,21 +353,31 @@ Yes. Timely articles get picked up by Google Discover and News, and the links an
 }
 
 /** Build a post for a trend, using Claude when an API key is present, else the template. */
+/**
+ * Write a trend post with the AI news writer. Trend posts are news only, so when a writer is
+ * configured and it fails (Gemini 503 etc.) this THROWS after one retry instead of publishing
+ * the template; callers skip the topic for now. The template is used only when no AI key is set.
+ */
 export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post> {
   const base = composeTrendPost(t, date);
   if (!hasAiWriter()) return base;
-  try {
-    const context = await fetchContext(t);
-    const ai = await writeWithClaude(t, base, context);
-    if (!ai.content) throw new Error("empty AI response");
-    const merged = { ...base, ...ai };
-    merged.content = await withArticleImage(merged);
-    return { ...merged, title: cleanTitle(merged.title) };
-  } catch (e) {
-    console.error("trend post AI failed:", (e as Error).message);
-    try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "trend", message: (e as Error).message.slice(0, 500) }); } catch {}
-    return base;
+  const context = await fetchContext(t);
+  let lastErr: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt) await new Promise((r) => setTimeout(r, 8000));
+    try {
+      const ai = await writeWithClaude(t, base, context);
+      if (!ai.content) throw new Error("empty AI response");
+      const merged = { ...base, ...ai };
+      merged.content = await withArticleImage(merged);
+      return { ...merged, title: cleanTitle(merged.title) };
+    } catch (e) {
+      lastErr = e as Error;
+      console.error(`trend post AI failed (attempt ${attempt + 1}):`, lastErr.message);
+    }
   }
+  try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "trend", message: (lastErr?.message || "unknown").slice(0, 500) }); } catch {}
+  throw new Error(`AI writer failed for "${t.title}": ${(lastErr?.message || "unknown").slice(0, 160)}`);
 }
 
 /** Live trend posts (no database needed). Deterministic slugs per day so URLs are stable within a day. */

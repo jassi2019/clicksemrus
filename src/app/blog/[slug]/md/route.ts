@@ -1,6 +1,5 @@
 import { SITE } from "@/lib/site";
 import { getPost, getAllPosts } from "@/lib/posts";
-import { liveTrendPosts } from "@/lib/trending";
 import { authorFor } from "@/lib/authors";
 
 export const revalidate = 1800;
@@ -11,11 +10,7 @@ export const revalidate = 1800;
  */
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let post = await getPost(slug);
-  if (!post) {
-    const live = await liveTrendPosts("IN", 6).catch(() => []);
-    post = live.find((p) => p.slug === slug) || null;
-  }
+  const post = await getPost(slug);
   if (!post) return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
 
   const author = authorFor(post);

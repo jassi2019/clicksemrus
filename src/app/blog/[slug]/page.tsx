@@ -6,7 +6,6 @@ import { SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, articleJsonLd, faqJsonLd } from "@/lib/seo";
 import { getAllPosts, getPost, related, type Post } from "@/lib/posts";
 import { authorFor } from "@/lib/authors";
-import { liveTrendPosts } from "@/lib/trending";
 import { renderMarkdown, extractHeadings, readingTime, slugify, interlinkPosts, parseFaq } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import LeadForm from "@/components/LeadForm";
@@ -16,9 +15,8 @@ import CTA from "@/components/CTA";
 export const revalidate = 1800;
 
 async function resolve(slug: string): Promise<{ post: Post | null; all: Post[] }> {
-  const [stored, live] = await Promise.all([getAllPosts(), liveTrendPosts("IN", 6)]);
-  const all = [...live.filter((l) => !stored.some((s) => s.slug === l.slug)), ...stored];
-  const post = (await getPost(slug)) || live.find((p) => p.slug === slug) || null;
+  const all = await getAllPosts();
+  const post = await getPost(slug);
   return { post, all };
 }
 

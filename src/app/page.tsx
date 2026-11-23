@@ -4,7 +4,6 @@ import { SITE, SERVICES, INDUSTRIES, WORK, HOME_FAQS, INDUSTRY_FACTS, serviceUrl
 import { pageMeta, faqJsonLd, reviewJsonLd } from "@/lib/seo";
 import { getAllPosts, getSettings } from "@/lib/posts";
 import { getContent, parseStat, splitPair } from "@/lib/pageContent";
-import { liveTrendPosts } from "@/lib/trending";
 import { getReviews } from "@/lib/reviews";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServiceArt from "@/components/ServiceArt";
@@ -66,15 +65,14 @@ export default async function Home() {
       </>
     );
   }
-  const [posts, trends, reviews, igPosts, settings, content] = await Promise.all([
+  const [posts, reviews, igPosts, settings, content] = await Promise.all([
     getAllPosts(),
-    liveTrendPosts("IN", 3),
     getReviews(),
     getInstagramFeed(4),
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);
-  const latest = [...trends, ...posts].slice(0, 3);
+  const latest = posts.slice(0, 3); // published articles only; never the unwritten trend template
   const hero = {
     eyebrow: content.get("heroEyebrow"),
     headline: content.get("heroHeadline"),

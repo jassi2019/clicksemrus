@@ -2,15 +2,13 @@ import type { MetadataRoute } from "next";
 import { SITE, BLOG_CATEGORIES, INDUSTRIES, WORK, SERVICE_CATEGORIES, ALL_SUB_SERVICES, LOCATIONS } from "@/lib/site";
 import { AUTHORS } from "@/lib/authors";
 import { getAllPosts } from "@/lib/posts";
-import { liveTrendPosts } from "@/lib/trending";
 import { slugify } from "@/lib/markdown";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const [stored, live] = await Promise.all([getAllPosts(), liveTrendPosts("IN", 6)]);
-  const posts = [...live.filter((l) => !stored.some((s) => s.slug === l.slug)), ...stored];
+  const posts = await getAllPosts();
   return [
     { url: SITE.url, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${SITE.url}/services`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },

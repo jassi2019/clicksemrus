@@ -114,10 +114,18 @@ async function viaGroq<T>(system: string, user: string): Promise<T> {
 }
 
 /** Generate a JSON object from a system + user prompt with whichever provider is configured. */
+/** Tries every configured provider in order (Claude -> Gemini -> Groq); a 503/429 on one falls through to the next. */
 export async function generateJson<T>(system: string, user: string): Promise<T | null> {
-  const p = aiProvider();
-  if (p === "claude") return viaClaude<T>(system, user);
-  if (p === "gemini") return viaGemini<T>(system, user);
-  if (p === "groq") return viaGroq<T>(system, user);
-  return null;
+  const chain: Array<[LlmProvider, () => Promise<T | null>]> = [
+    ["claude", () => viaClaude<T>(system, user)],
+    ["gemini", () => viaGemini<T>(system, user)],
+    ["groq", () => viaGroq<T>(system, user)],
+  ];
+  const configured = chain.filter(([p]) => (p === "claude" && process.env.ANTHROPIC_API_KEY) || (p === "gemini" && process.env.GEMINI_API_KEY) || (p === "groq" && process.env.GROQ_API_KEY));
+  if (!configured.length) return null;
+  let lastErr: Error | null = null;
+  for (const [p, run] of configured) {
+    try { return await run(); } catch (e) { lastErr = e as Error; console.error(`llm ${p} failed:`, lastErr.message.slice(0, 160)); }
+  }
+  throw lastErr || new Error("no AI provider succeeded");
 }

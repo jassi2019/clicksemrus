@@ -39,7 +39,12 @@ export async function GET(req: NextRequest) {
   if (topic) {
     const t = await fetchTopicTrend(topic);
     if (!t) return NextResponse.json({ ok: false, error: `no news found for "${topic}"` }, { status: 404 });
-    const post = await buildTrendPost(t);
+    let post: Awaited<ReturnType<typeof buildTrendPost>>;
+    try {
+      post = await buildTrendPost(t);
+    } catch (e) {
+      return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 503 });
+    }
     const existed = await postExists(post.slug);
     await savePost(post);
     await ensureCover(post, true);
@@ -65,7 +70,13 @@ export async function GET(req: NextRequest) {
       let made = 0;
       for (const t of trends) {
         if (made >= limit || !inBudget()) break;
-        const post = await buildTrendPost(t);
+        let post: Awaited<ReturnType<typeof buildTrendPost>>;
+        try {
+          post = await buildTrendPost(t);
+        } catch (e) {
+          notes.push(`trend "${t.title}" skipped: ${(e as Error).message.slice(0, 80)}`);
+          continue;
+        }
         if (await postExists(post.slug)) continue;
         await savePost(post);
         created.push(post.slug);
