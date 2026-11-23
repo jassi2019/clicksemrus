@@ -10,6 +10,7 @@ import { getPost } from "@/lib/posts";
 import { db } from "@/lib/db";
 import { KEYWORD_QUEUE } from "@/lib/site";
 import type { Opportunity } from "@/lib/gsc";
+import { hasOldRedis, mergeOldRedis } from "@/lib/mergeOld";
 
 export const maxDuration = 300;
 
@@ -108,6 +109,16 @@ export async function GET(req: NextRequest) {
 
   const sitemap = await submitSitemap().catch((e: Error) => `error: ${e.message.slice(0, 80)}`);
   notes.push(`sitemap submit: ${sitemap}`);
+
+  // 4. Bring back the previous database's data once its quota resets (idempotent; skipped while it errors)
+  if (hasOldRedis() && inBudget()) {
+    const m = await mergeOldRedis({ maxKeys: 400, budgetMs: 60_000 }).catch((e: Error) => ({ status: "error" as const, error: e.message.slice(0, 120) }));
+    notes.push(`old redis merge: ${JSON.stringify(m).slice(0, 300)}`);
+    if ("copied" in m && m.copied) {
+      const merged = (m.sample || []).filter((k) => k.startsWith("post:")).map((k) => `/blog/${k.slice(5)}`);
+      if (merged.length) await notifyIndex([...merged, "/blog", "/sitemap.xml"]).catch(() => []);
+    }
+  }
 
   return NextResponse.json({ ok: true, created, notes, indexed });
 }
