@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { fetchAllTopics, buildTrendPost } from "@/lib/trending";
+import { fetchAllTopics, buildTrendPost, fetchTopicTrend } from "@/lib/trending";
 import { postExists, savePost, getSettings } from "@/lib/posts";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
@@ -33,6 +33,21 @@ export async function GET(req: NextRequest) {
   if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+  // Manual publish: ?topic=<query> writes one trend post about that topic right now (outside the
+  // every-other-day gap; replaces an existing post with the same slug) and returns.
+  const topic = (req.nextUrl.searchParams.get("topic") || "").trim().slice(0, 80);
+  if (topic) {
+    const t = await fetchTopicTrend(topic);
+    if (!t) return NextResponse.json({ ok: false, error: `no news found for "${topic}"` }, { status: 404 });
+    const post = await buildTrendPost(t);
+    const existed = await postExists(post.slug);
+    await savePost(post);
+    await ensureCover(post, true);
+    revalidatePath("/"); revalidatePath("/blog"); revalidatePath(`/blog/${post.slug}`); revalidatePath("/sitemap.xml");
+    const indexed = await notifyIndex([`/blog/${post.slug}`, "/blog", "/sitemap.xml"]);
+    return NextResponse.json({ ok: true, created: [post.slug], title: post.title, notes: [existed ? "replaced existing post" : "manual topic post"], indexed });
+  }
+
   const settings = await getSettings();
   const created: string[] = [];
   const notes: string[] = [];

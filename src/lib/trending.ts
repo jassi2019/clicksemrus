@@ -109,6 +109,27 @@ export async function fetchNewsTopics(limit = 12): Promise<Trend[]> {
   return out;
 }
 
+/** A Trend for one requested topic, sourced from a Google News search (manual publish via the cron's `topic` param). */
+export async function fetchTopicTrend(query: string): Promise<Trend | null> {
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-IN&gl=IN&ceid=IN:en`;
+  try {
+    const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (compatible; ClickSemrusBot/1.0)" }, cache: "no-store" });
+    if (!res.ok) return null;
+    const xml = await res.text();
+    const news: Trend["news"] = [];
+    for (const it of xml.split("<item>").slice(1, 7)) {
+      const rawTitle = tag(it, "title");
+      const link = tag(it, "link");
+      if (!rawTitle || !link) continue;
+      news.push({ title: rawTitle, url: link, source: tag(it, "source") || rawTitle.split(" - ").pop() || "Google News" });
+    }
+    if (!news.length) return null;
+    return { title: query, traffic: "news", pubDate: tag(news.length ? xml : "", "pubDate") || new Date().toUTCString(), news };
+  } catch {
+    return null;
+  }
+}
+
 /** Daily trends (by traffic) followed by Google News top stories, de-duplicated. */
 export async function fetchAllTopics(geo = "IN", newsLimit = 10): Promise<Trend[]> {
   const [trends, news] = await Promise.all([fetchTrends(geo), fetchNewsTopics(newsLimit)]);

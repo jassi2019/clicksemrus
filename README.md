@@ -242,6 +242,7 @@ vercel.json                      Cron schedules
 - One article per topic (stable slug = topic), up to 12 per run, each run capped at ~200s of writing so it stays inside the function budget.
 - Runs: Vercel cron daily (`vercel.json`) **and** `.github/workflows/trending.yml` daily (GitHub Actions calls `/api/cron/trending?limit=1&keywords=3` with the `CRON_SECRET` repository secret). Trigger manually with `gh workflow run trending.yml`.
 - **Publishing cadence (Nov 2026):** the ranking engine is the keyword articles, not news. Each run writes **3 digital-marketing articles** (Search Console queries with marketing intent first, then the pan-India `KEYWORD_QUEUE` in `lib/site.ts`, in order, each once) and **1 trend post only every other day** (the single most-searched topic; `trend:lastAt` in Redis enforces a 40-hour gap, so the two crons cannot double-post). Add new queue topics at the end.
+- **Publish a trend post on demand:** `gh workflow run trending.yml -R jassi2019/clicksemrus -f topic="GTA 6"` — the route's `?topic=` param pulls sources from a Google News search for that query, writes one news article now (ignores the every-other-day gap, replaces a same-slug post), generates the cover and pings the index.
 - Every run also: writes keyword articles from Search Console opportunities, generates covers, pings Google Indexing API + IndexNow, and re-submits the sitemap.
 
 ### Homepage

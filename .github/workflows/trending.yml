@@ -2,12 +2,19 @@ name: Trending content
 on:
   schedule:
     - cron: "10 3 * * *"   # daily 08:40 IST: 3 keyword articles + 1 top trend every other day (gap enforced in the route)
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: "Publish one trend post about this topic right now (optional, e.g. GTA 6)"
+        required: false
+        default: ""
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate trending + keyword articles, covers, index pings
+      - name: Generate keyword + trend articles, covers, index pings
         run: |
-          curl -sS --max-time 295 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://clicksemrus.vercel.app/api/cron/trending?limit=1&keywords=3" | head -c 2000
+          curl -sS -G --max-time 295 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://clicksemrus.vercel.app/api/cron/trending" \
+            --data-urlencode "limit=1" --data-urlencode "keywords=3" \
+            --data-urlencode "topic=${{ github.event.inputs.topic || '' }}" | head -c 2000
