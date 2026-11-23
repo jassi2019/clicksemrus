@@ -33,6 +33,14 @@ export async function GET(req: NextRequest) {
   if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+  // Manual re-index: ?pages=1 pings the Indexing API + IndexNow for the core money pages (after title/content changes).
+  if (req.nextUrl.searchParams.get("pages") === "1") {
+    const core = ["/", "/services", "/services/seo", "/services/paid-ads", "/services/social-media-marketing", "/services/web-development", "/services/ecommerce", "/services/creative-branding", "/services/automation-crm", "/pricing", "/industries", "/about", "/contact", "/case-studies", "/blog", "/sitemap.xml"];
+    const indexed = await notifyIndex(core);
+    await submitSitemap().catch(() => "error");
+    return NextResponse.json({ ok: true, reindexed: indexed.length, indexed });
+  }
+
   // Manual publish: ?topic=<query> writes one trend post about that topic right now (outside the
   // every-other-day gap; replaces an existing post with the same slug) and returns.
   const topic = (req.nextUrl.searchParams.get("topic") || "").trim().slice(0, 80);
