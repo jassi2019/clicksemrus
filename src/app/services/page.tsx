@@ -15,8 +15,8 @@ import { getPublishedLayout } from "@/lib/builderStore";
 import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
-  title: "Digital Marketing Services in Delhi NCR | SEO, Ads, Social, Web, E-commerce",
-  description: `Explore ${SITE.name} services: SEO and search, paid ads, social media and content, web development, e-commerce, creative and branding, automation and CRM for businesses in Delhi NCR.`,
+  title: "Digital Marketing Services in India | SEO, Ads, Social, Web, E-commerce",
+  description: `Explore ${SITE.name} services: SEO and search, paid ads, social media and content, web development, e-commerce, creative and branding, automation and CRM for businesses across India.`,
   path: "/services",
   keywords: ["digital marketing services delhi", "seo services delhi ncr", "social media marketing services", "ppc services gurugram", "web development noida"],
 });
@@ -94,7 +94,7 @@ export default async function ServicesPage() {
       </section>
 
       {/* by the numbers — quotable facts for AI citation */}
-      <FactStrip items={INDUSTRY_FACTS.services} title="What to expect — by the numbers" note="Industry norms for Delhi NCR businesses, framed as expectations rather than guarantees." />
+      <FactStrip items={INDUSTRY_FACTS.services} title="What to expect — by the numbers" note="Industry norms for Indian businesses, framed as expectations rather than guarantees." />
 
       {/* category cards */}
       <section className="container-x py-16 md:py-20">

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const ind = INDUSTRIES.find((x) => x.slug === slug);
   if (!ind) return {};
   return pageMeta({
-    title: `${ind.name} Digital Marketing in Delhi NCR | ${SITE.name}`,
+    title: `${ind.name} Digital Marketing in India | ${SITE.name}`,
     description: `${ind.headline}. ${ind.description}`.slice(0, 158),
     path: `/industries/${ind.slug}`,
     keywords: ind.keywords,
@@ -185,7 +185,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
         items={work}
         limit={3}
         tint
-        title={exact ? `${ind.name} work you can open right now` : "Work across Delhi NCR brands"}
+        title={exact ? `${ind.name} work you can open right now` : "Work across Indian brands"}
         sub={exact ? `Live sites and campaigns for ${lower} clients. Hover to scroll, tap for a full preview.` : `We are onboarding our first ${lower} case study. Meanwhile, here is how we work for other Delhi NCR brands.`}
       />
 

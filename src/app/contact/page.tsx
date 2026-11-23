@@ -11,8 +11,8 @@ import { getPublishedLayout } from "@/lib/builderStore";
 import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
-  title: `Contact ${SITE.name} | Free Digital Marketing Audit in Delhi NCR`,
-  description: `Get a free digital marketing audit and growth plan. Call, WhatsApp or email ${SITE.name}, Delhi NCR. We reply within 2 business hours.`,
+  title: `Contact ${SITE.name} | Free Digital Marketing Audit in India`,
+  description: `Get a free digital marketing audit and growth plan. Call, WhatsApp or email ${SITE.name} (Delhi NCR based, serving all of India). We reply within 2 business hours.`,
   path: "/contact",
 });
 

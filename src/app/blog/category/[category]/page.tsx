@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category } = await params;
   const name = BLOG_CATEGORIES.find((c) => slugify(c) === category);
   if (!name) return {};
-  return pageMeta({ title: `${name} Articles | ${SITE.name} Blog`, description: `${name} insights, guides and trending marketing ideas from ${SITE.name}, Delhi NCR.`, path: `/blog/category/${category}` });
+  return pageMeta({ title: `${name} Articles | ${SITE.name} Blog`, description: `${name} insights, guides and trending marketing ideas from ${SITE.name}, India.`, path: `/blog/category/${category}` });
 }
 
 export default async function Category({ params }: { params: Promise<{ category: string }> }) {

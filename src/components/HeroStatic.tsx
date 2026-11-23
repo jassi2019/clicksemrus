@@ -11,7 +11,7 @@ export type HeroContent = {
 };
 
 export const HERO_DEFAULT: HeroContent = {
-  eyebrow: "Digital Marketing Agency · Delhi NCR",
+  eyebrow: "Digital Marketing Agency · India",
   headline: "Make your brand",
   headlineAccent: "impossible to ignore.",
   sub: "SEO, social, ads, content and websites, built around one number: revenue. Reports in rupees, not likes.",

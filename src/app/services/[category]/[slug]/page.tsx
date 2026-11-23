@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const hit = findSubService(slug, category);
   if (!hit) return {};
   return pageMeta({
-    title: `${hit.service.name} in Delhi NCR | ${SITE.name}`,
+    title: `${hit.service.name} in India | ${SITE.name}`,
     description: `${hit.service.headline}. ${hit.service.description}`.slice(0, 158),
     path: `/services/${hit.category.slug}/${hit.service.slug}`,
     keywords: hit.service.keywords,

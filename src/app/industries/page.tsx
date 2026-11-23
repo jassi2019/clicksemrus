@@ -7,8 +7,8 @@ import CTA from "@/components/CTA";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata = pageMeta({
-  title: "Industries We Serve | Digital Marketing by Sector in Delhi NCR",
-  description: `${SITE.name} builds sector-specific marketing for retail, restaurants, healthcare, education, real estate and fashion brands across Delhi NCR.`,
+  title: "Industries We Serve | Digital Marketing by Sector in India",
+  description: `${SITE.name} builds sector-specific marketing for retail, restaurants, healthcare, education, real estate and fashion brands across India.`,
   path: "/industries",
   keywords: ["industry specific digital marketing delhi", "marketing agency for clinics", "marketing agency for real estate delhi ncr"],
 });

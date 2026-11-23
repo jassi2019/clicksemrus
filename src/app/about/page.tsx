@@ -15,8 +15,8 @@ import { getPublishedLayout } from "@/lib/builderStore";
 import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
-  title: `About ${SITE.name} | Digital Marketing Agency in Delhi NCR`,
-  description: `${SITE.name} is a Delhi NCR digital marketing agency built by performance marketers. Learn our story, values and how we work with brands across India.`,
+  title: `About ${SITE.name} | Digital Marketing Agency in India`,
+  description: `${SITE.name} is a Delhi NCR based digital marketing agency serving brands across India, built by performance marketers. Learn our story, values and how we work with brands across India.`,
   path: "/about",
 });
 

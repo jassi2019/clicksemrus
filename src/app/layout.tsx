@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   title: { default: `${SITE.name} | ${SITE.tagline}`, template: `%s | ${SITE.name}` },
   description: SITE.description,
   applicationName: SITE.name,
-  keywords: ["digital marketing agency delhi", "digital marketing agency delhi ncr", "seo agency delhi", "social media marketing agency delhi", "google ads agency gurugram", "meta ads agency noida", "clicksemrus"],
+  keywords: ["digital marketing agency in india", "digital marketing company india", "seo services india", "social media marketing agency india", "google ads agency india", "meta ads agency india", "performance marketing agency india", "digital marketing agency delhi ncr", "clicksemrus"],
   authors: [{ name: SITE.name, url: SITE.url }],
   creator: SITE.name,
   openGraph: { type: "website", locale: SITE.locale, url: SITE.url, siteName: SITE.name, title: `${SITE.name} | ${SITE.tagline}`, description: SITE.description },

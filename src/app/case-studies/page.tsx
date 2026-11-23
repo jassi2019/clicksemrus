@@ -8,8 +8,8 @@ import JsonLd from "@/components/JsonLd";
 import WorkGrid from "@/components/WorkGrid";
 
 export const metadata = pageMeta({
-  title: "Our Work & Results | Digital Marketing Agency Delhi NCR",
-  description: `See how ${SITE.name} grows brands in Delhi NCR: websites, ad creatives and reels with real outcomes across SEO, Meta Ads, Google Ads and social media.`,
+  title: "Our Work & Results | Digital Marketing Agency India",
+  description: `See how ${SITE.name} grows brands across India: websites, ad creatives and reels with real outcomes across SEO, Meta Ads, Google Ads and social media.`,
   path: "/case-studies",
   keywords: ["digital marketing case studies delhi", "marketing agency portfolio", "website design portfolio delhi ncr"],
 });

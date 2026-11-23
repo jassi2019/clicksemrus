@@ -14,8 +14,8 @@ import { faqsFromBlocks } from "@/lib/builder";
 import BlockRenderer from "@/components/builder/BlockRenderer";
 
 export const metadata = pageMeta({
-  title: "Digital Marketing Packages & Pricing in Delhi NCR",
-  description: `Transparent digital marketing pricing from ${SITE.name}: SEO, social media, Google Ads and Meta Ads packages for startups, growing businesses and enterprises in Delhi NCR.`,
+  title: "Digital Marketing Packages & Pricing in India",
+  description: `Transparent digital marketing pricing from ${SITE.name}: SEO, social media, Google Ads and Meta Ads packages for startups, growing businesses and enterprises across India.`,
   path: "/pricing",
   keywords: ["digital marketing packages delhi", "seo packages india", "social media marketing pricing", "ppc management fees"],
 });

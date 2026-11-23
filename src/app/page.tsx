@@ -32,7 +32,7 @@ import BlockRenderer from "@/components/builder/BlockRenderer";
 export const revalidate = 3600;
 
 export const metadata = pageMeta({
-  title: `${SITE.name} | Digital Marketing Agency in Delhi NCR That Delivers ROI`,
+  title: `${SITE.name} | Digital Marketing Agency in India That Delivers ROI`,
   description: SITE.description,
   path: "",
   keywords: ["digital marketing agency delhi", "best digital marketing agency delhi ncr", "seo company delhi", "social media marketing gurugram", "performance marketing agency noida"],
@@ -163,7 +163,7 @@ export default async function Home() {
       </section>
 
       {/* by the numbers — quotable facts for AI citation */}
-      <FactStrip items={INDUSTRY_FACTS.home} title="What to expect — by the numbers" note="Industry norms for Delhi NCR businesses, not guarantees. Your results depend on budget, category and competition." />
+      <FactStrip items={INDUSTRY_FACTS.home} title="What to expect — by the numbers" note="Industry norms for Indian businesses, not guarantees. Your results depend on budget, category and competition." />
 
       {/* work */}
       <section className="relative overflow-hidden py-24">

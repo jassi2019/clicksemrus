@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const c = findCategory(category);
   if (c) {
     return pageMeta({
-      title: `${c.name} Services in Delhi NCR | ${SITE.name}`,
+      title: `${c.name} Services in India | ${SITE.name}`,
       description: `${c.headline}. ${c.description}`.slice(0, 158),
       path: `/services/${c.slug}`,
       keywords: c.keywords,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const hit = findSubService(category);
   if (!hit) return {};
   return pageMeta({
-    title: `${hit.service.name} in Delhi NCR | ${SITE.name}`,
+    title: `${hit.service.name} in India | ${SITE.name}`,
     description: `${hit.service.headline}. ${hit.service.description}`.slice(0, 158),
     path: `/services/${hit.category.slug}/${hit.service.slug}`,
     keywords: hit.service.keywords,
@@ -80,7 +80,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         <div className="container-x relative pt-14 md:pt-20 pb-14 grid lg:grid-cols-2 gap-10 items-start">
           <div>
             <nav className="text-xs text-muted mb-5" aria-label="Breadcrumb"><Link href="/" className="hover:text-fg">Home</Link> / <Link href="/services" className="hover:text-fg">Services</Link> / <span className="text-fg">{c.name}</span></nav>
-            <span className="eyebrow"><ServiceIcon name={c.icon} size={12} /> {c.name} · Delhi NCR</span>
+            <span className="eyebrow"><ServiceIcon name={c.icon} size={12} /> {c.name} · India</span>
             <h1 className="font-display text-4xl md:text-6xl font-extrabold mt-5 leading-[1.02]">{c.headline}</h1>
             {DIRECT_ANSWER[c.slug] && <p className="text-fg text-lg mt-5 leading-relaxed font-medium">{DIRECT_ANSWER[c.slug]}</p>}
             <p className="text-muted text-lg mt-4 leading-relaxed">{c.description}</p>
@@ -108,7 +108,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
       {/* by the numbers — quotable facts for AI citation (SEO cornerstone) */}
       {c.slug === "seo" && (
-        <FactStrip items={INDUSTRY_FACTS.seo} title="SEO timelines — by the numbers" note="Typical ranges for Delhi NCR businesses. Competitive categories such as dental or real estate sit at the longer end." />
+        <FactStrip items={INDUSTRY_FACTS.seo} title="SEO timelines — by the numbers" note="Typical ranges for Indian businesses. Competitive categories such as dental or real estate sit at the longer end." />
       )}
 
       {/* sub-services */}
@@ -158,7 +158,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         </section>
       )}
 
-      <RelatedWork items={work} limit={3} title={`${c.name} work you can open right now`} sub="Live projects for Delhi NCR brands. Hover a card to scroll the site, or tap for a full preview." />
+      <RelatedWork items={work} limit={3} title={`${c.name} work you can open right now`} sub="Live projects for Indian brands. Hover a card to scroll the site, or tap for a full preview." />
 
       {/* faq */}
       <section className="container-x py-16 grid lg:grid-cols-3 gap-10">

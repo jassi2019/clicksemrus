@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const layout = await getPublishedLayout(slug);
   if (!layout || isTakeoverSlug(slug)) return { title: "Page not found", robots: { index: false, follow: false } };
-  return pageMeta({ title: layout.seoTitle || layout.title, description: layout.seoDescription || `${layout.title}. Digital marketing in Delhi NCR.`, path: `/p/${slug}` });
+  return pageMeta({ title: layout.seoTitle || layout.title, description: layout.seoDescription || `${layout.title}. Digital marketing in India.`, path: `/p/${slug}` });
 }
 
 export default async function BuilderPage({ params }: Params) {
