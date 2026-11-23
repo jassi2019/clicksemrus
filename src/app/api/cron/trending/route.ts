@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   }
   // Manual re-index: ?pages=1 pings the Indexing API + IndexNow for the core money pages (after title/content changes).
   if (req.nextUrl.searchParams.get("pages") === "1") {
-    const core = ["/", "/services", "/services/seo", "/services/paid-ads", "/services/social-media-marketing", "/services/web-development", "/services/ecommerce", "/services/creative-branding", "/services/automation-crm", "/pricing", "/industries", "/about", "/contact", "/case-studies", "/blog", "/sitemap.xml"];
+    const core = ["/", "/services", "/services/seo", "/services/paid-ads", "/services/social-media-marketing", "/services/web-design-development", "/services/ecommerce", "/services/branding-creative", "/services/automation-crm", "/pricing", "/industries", "/about", "/contact", "/case-studies", "/blog", "/sitemap.xml"];
     const indexed = await notifyIndex(core);
     await submitSitemap().catch(() => "error");
     return NextResponse.json({ ok: true, reindexed: indexed.length, indexed });
