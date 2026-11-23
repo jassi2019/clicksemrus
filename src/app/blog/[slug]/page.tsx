@@ -79,8 +79,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <img src={coverFor(post)} alt={post.title} className="w-full max-h-[420px] object-cover" />
           {usesOriginalCover(post) && post.coverCredit && <figcaption className="text-xs text-muted px-4 py-2">Image: {post.coverCredit}</figcaption>}
         </figure>
-        <div className="grid lg:grid-cols-[1fr_300px] gap-10 mt-10">
-          <div>
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_320px] gap-10 mt-10">
+          <div className="min-w-0">
             {toc.length > 2 && (
               <nav className="card p-5 mb-8" aria-label="Table of contents">
                 <p className="font-semibold text-sm mb-2">In this article</p>
@@ -104,11 +104,13 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               {post.tags.map((t) => <span key={t} className="px-3 py-1 rounded-full text-xs bg-surface border border-border text-muted">#{t}</span>)}
             </div>
           </div>
-          <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
-            <div className="card p-5 bg-gradient-to-br from-brand/20 to-transparent">
-              <h3 className="font-display text-xl font-bold">Get a free marketing audit</h3>
-              <p className="text-sm text-muted mt-1 mb-4">See exactly how your brand can use ideas like these.</p>
+          <aside className="space-y-6 lg:sticky lg:top-24 h-fit min-w-0">
+            <div className="lead-side">
+              <span className="lead-side__badge">Free · No obligation</span>
+              <h3 className="font-display text-xl font-bold leading-tight mt-3">Get a free marketing audit</h3>
+              <p className="text-sm mt-1.5 mb-4 text-white/65">We review your website, Google and social presence and send you a 1-page growth plan.</p>
               <LeadForm compact source={`/blog/${post.slug}`} />
+              <ul className="lead-side__trust" aria-label="Why enquire"><li>Reply in 2 hrs</li><li>Pan-India</li><li>No spam</li></ul>
             </div>
             {moreTrending.length > 0 && (
               <div className="card p-5">

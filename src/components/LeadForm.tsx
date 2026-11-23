@@ -25,7 +25,6 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
   const [details, setDetails] = useState(false);
   const [done, setDone] = useState<{ firstName: string; whatsapp: string }>({ firstName: "", whatsapp: "" });
   const path = usePathname();
-  void compact;
 
   function toggle(name: string) {
     setServices((cur) => (cur.includes(name) ? cur.filter((x) => x !== name) : [...cur, name]));
@@ -77,9 +76,9 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
     const waText = `Hi ${SITE.name}, this is ${done.firstName || "a new enquiry"}. I just sent an enquiry on your website. My website and goals: `;
     const wa = `https://wa.me/${number}?text=${encodeURIComponent(waText)}`;
     return (
-      <div className="card p-8 text-center">
-        <CheckCircle2 className="mx-auto text-lime" size={44} />
-        <h3 className="font-display text-2xl font-bold mt-4">Thank you{done.firstName ? `, ${done.firstName}` : ""}! We will call you within 2 hours.</h3>
+      <div className={`card ${compact ? "p-5" : "p-8"} text-center`}>
+        <CheckCircle2 className="mx-auto text-lime" size={compact ? 36 : 44} />
+        <h3 className={`font-display ${compact ? "text-lg" : "text-2xl"} font-bold mt-4`}>Thank you{done.firstName ? `, ${done.firstName}` : ""}! We will call you within 2 hours.</h3>
         <p className="text-muted mt-2">Want a faster reply? Continue on WhatsApp so our strategist can message you right away.</p>
         {hasNumber && (
           <a href={wa} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("whatsapp_click")} className="btn btn-primary mt-5 !bg-[#25D366] !shadow-[0_14px_30px_-14px_rgba(37,211,102,.7)]">
@@ -92,6 +91,48 @@ export default function LeadForm({ compact = false, source = "" }: { compact?: b
   }
 
   const chips = moreServices ? SERVICE_OPTIONS : PRIMARY;
+
+  // Sidebar version (blog articles): one column, no chips/accordion, nothing wider than the column.
+  if (compact) {
+    return (
+      <form onSubmit={onSubmit} className="grid gap-2.5 min-w-0">
+        <input name="hp" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+        <input required name="name" placeholder="Your name" className="input" autoComplete="name" maxLength={120} aria-label="Your name" />
+        <div className="flex input !p-0 overflow-hidden items-stretch">
+          <span className="px-3 grid place-items-center text-sm font-semibold text-muted bg-surface-2 border-r border-border select-none shrink-0">+91</span>
+          <input
+            required
+            name="phone"
+            placeholder="98765 43210"
+            className="flex-1 min-w-0 bg-transparent px-3 py-[.75rem] outline-none"
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, "").slice(0, 11))}
+            aria-label="Mobile number"
+          />
+        </div>
+        <input required name="email" placeholder="Work email" className="input" type="email" autoComplete="email" maxLength={120} aria-label="Email address" />
+        <div className="relative">
+          <select aria-label="What do you need help with?" className="input appearance-none pr-10 cursor-pointer" value={services[0] ?? ""} onChange={(e) => setServices(e.target.value ? [e.target.value] : [])}>
+            <option value="">What do you need help with?</option>
+            {SERVICE_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+          <ChevronDown size={16} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted" />
+        </div>
+        <label className="flex gap-2 items-start text-[11px] text-muted leading-snug">
+          <input required name="consent" type="checkbox" className="accent-[#4f46e5] w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <span>I agree to be contacted on email/WhatsApp.</span>
+        </label>
+        <button disabled={state === "loading"} className="btn btn-primary w-full disabled:opacity-60">
+          {state === "loading" ? <Loader2 className="animate-spin" size={18} /> : <>Get my free audit <ArrowRight size={18} /></>}
+        </button>
+        {error && <p className="text-accent text-sm" role="alert">{error}</p>}
+      </form>
+    );
+  }
+
 
   return (
     <form onSubmit={onSubmit} className="grid gap-3">

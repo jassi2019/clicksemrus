@@ -84,8 +84,8 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
       <div className="hero-blob hero-blob-a" aria-hidden="true" />
       <div className="hero-blob hero-blob-b" aria-hidden="true" />
 
-      <div className="container-x relative grid lg:grid-cols-[1fr_1.05fr] gap-10 lg:gap-12 items-center">
-        <div className="max-w-2xl">
+      <div className="container-x relative grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 items-center">
+        <div className="max-w-2xl min-w-0">
           <span className="eyebrow">{hero.eyebrow}</span>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1] mt-5">
             {hero.headline}<br /><span className="gradient-text">{hero.headlineAccent}</span>
