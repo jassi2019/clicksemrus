@@ -205,6 +205,11 @@ export function cleanTitle(title: string): string {
 }
 
 /** Template-based article that reflects a live trend, with outbound links and marketing angle. */
+/** Tags for a news post: trending + its category + the topic. No marketing tags; the blog is news only. */
+export function trendTags(category: string | undefined, topic: string): string[] {
+  return Array.from(new Set(["trending", (category || "Trending").toLowerCase(), topic.toLowerCase()].filter(Boolean)));
+}
+
 export function composeTrendPost(t: Trend, date = new Date()): Post {
   const { category, kind } = classify(t);
   const topic = titleCase(t.title.trim());
@@ -336,7 +341,7 @@ Yes. Timely articles get picked up by Google Discover and News, and the links an
     excerpt: `${topic} is trending in India today. Here is why, plus a practical moment-marketing playbook with ideas brands can use within 24 hours.`,
     content,
     category,
-    tags: ["trending", "moment marketing", kind, t.title.toLowerCase()],
+    tags: ["trending", kind, t.title.toLowerCase()],
     cover: t.picture,
     coverCredit: t.pictureSource,
     status: "published",
@@ -370,6 +375,7 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
       if (!ai.content) throw new Error("empty AI response");
       const merged = { ...base, ...ai };
       merged.content = await withArticleImage(merged);
+      merged.tags = trendTags(merged.category, t.title); // from the writer's category, not the pre-write guess
       return { ...merged, title: cleanTitle(merged.title) };
     } catch (e) {
       lastErr = e as Error;
@@ -399,6 +405,7 @@ export async function regenerateTrendPost(post: Post): Promise<Post | null> {
     if (!ai.content) return null;
     const merged = { ...post, ...ai, updatedAt: new Date().toISOString() };
     merged.content = await withArticleImage(merged);
+    merged.tags = trendTags(merged.category, title);
     return { ...merged, title: cleanTitle(merged.title) };
   } catch {
     return null;
