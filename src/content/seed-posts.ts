@@ -61,6 +61,7 @@ Freelancers are cheaper for a single task. An agency gives you a team: strategis
   },
   {
     slug: "local-seo-checklist-for-delhi-businesses",
+    cover: "/covers/local-seo-checklist-for-delhi-businesses.webp",
     title: "Local SEO Checklist: 15 Steps to Rank on Google Maps in Delhi NCR",
     excerpt: "A step-by-step local SEO checklist for clinics, restaurants, showrooms and service businesses that want calls from Google Maps.",
     category: "SEO",
@@ -109,6 +110,7 @@ Need help? Our team handles Google Business Profile optimisation for clinics, sa
   },
   {
     slug: "instagram-reels-strategy-for-small-business-india",
+    cover: "/covers/instagram-reels-strategy-for-small-business-india.webp",
     title: "Instagram Reels Strategy for Small Businesses in India (2026 Playbook)",
     excerpt: "A practical reels framework: hooks, posting frequency, trending audio, and how to turn views into WhatsApp enquiries.",
     category: "Social Media",
