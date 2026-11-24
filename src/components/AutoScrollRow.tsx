@@ -16,26 +16,36 @@ export default function AutoScrollRow({ children, className = "", speed = 40, mo
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (mobileOnly && !window.matchMedia("(max-width: 767px)").matches) return;
-    let dir = 1, raf = 0, last = performance.now(), holdUntil = performance.now() + 1200, userUntil = 0, visible = true;
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.05 });
-    io.observe(el);
+    // The rAF loop only runs while the row is on screen (it used to tick every frame forever), pauses
+    // while the page itself is scrolling, and keeps a float position because scrollLeft rounds sub-pixel
+    // steps away on some phones (the row then stuttered or did not move).
+    let dir = 1, raf = 0, running = false, last = 0, pos = el.scrollLeft;
+    let holdUntil = performance.now() + 1200, userUntil = 0, pageUntil = 0;
     const tick = (now: number) => {
-      const dt = Math.min(200, now - last); last = now;
+      if (!running) return;
+      const dt = Math.min(100, now - last); last = now;
       const max = el.scrollWidth - el.clientWidth;
-      if (visible && max > 8 && now > holdUntil && now > userUntil && !pausedRef.current) {
-        el.scrollLeft += (dir * speed * dt) / 1000;
-        if (dir === 1 && el.scrollLeft >= max - 1) { dir = -1; holdUntil = now + 1400; }
-        else if (dir === -1 && el.scrollLeft <= 1) { dir = 1; holdUntil = now + 1400; }
+      if (max > 8 && now > holdUntil && now > userUntil && now > pageUntil && !pausedRef.current && !document.hidden) {
+        if (Math.abs(el.scrollLeft - pos) > 2) pos = el.scrollLeft; // the visitor swiped it
+        pos = Math.max(0, Math.min(max, pos + (dir * speed * dt) / 1000));
+        el.scrollLeft = pos;
+        if (dir === 1 && pos >= max - 1) { dir = -1; holdUntil = now + 1400; }
+        else if (dir === -1 && pos <= 1) { dir = 1; holdUntil = now + 1400; }
       }
       raf = requestAnimationFrame(tick);
     };
+    const start = () => { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(tick); };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { threshold: 0.05 });
+    io.observe(el);
+    const onPageScroll = () => { pageUntil = performance.now() + 350; };
+    window.addEventListener("scroll", onPageScroll, { passive: true });
     const user = (ms: number) => () => { userUntil = performance.now() + ms; };
     const onTouchStart = user(1e9), onTouchEnd = user(2500), onWheel = user(2500), onEnter = user(1e9), onLeave = user(1200);
     el.addEventListener("touchstart", onTouchStart, { passive: true }); el.addEventListener("touchend", onTouchEnd);
     el.addEventListener("wheel", onWheel, { passive: true }); el.addEventListener("mouseenter", onEnter); el.addEventListener("mouseleave", onLeave);
-    raf = requestAnimationFrame(tick);
     return () => {
-      cancelAnimationFrame(raf); io.disconnect();
+      stop(); io.disconnect(); window.removeEventListener("scroll", onPageScroll);
       el.removeEventListener("touchstart", onTouchStart); el.removeEventListener("touchend", onTouchEnd);
       el.removeEventListener("wheel", onWheel); el.removeEventListener("mouseenter", onEnter); el.removeEventListener("mouseleave", onLeave);
     };

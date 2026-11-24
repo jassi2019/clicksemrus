@@ -250,7 +250,7 @@ select.input option { background: #fff; color: #0b0b14; }
 .wa-bubble { animation: wa-bubble-in .45s cubic-bezier(.2,.8,.2,1) both; transform-origin: bottom right; }
 @keyframes wa-bubble-in { from { opacity: 0; transform: translateY(10px) scale(.92); } to { opacity: 1; transform: none; } }
 @keyframes wa-pulse { 0% { transform: scale(1); opacity: .45; } 100% { transform: scale(1.55); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .wa-float::before, .rb-bob { animation: rb-bob 3.2s ease-in-out infinite; transform-origin: 32px 32px; }
+@media (prefers-reduced-motion: reduce) { .wa-float::before, .rb-bob { animation: none; }
 @keyframes rb-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 .wa-bubble { animation: none; } }
 
@@ -429,7 +429,7 @@ select.input option { background: #fff; color: #0b0b14; }
 /* timeline */
 .gs2-timeline { position: relative; display: flex; justify-content: space-between; gap: .25rem; padding: .35rem .25rem .35rem; margin-bottom: .9rem; }
 .gs2-timeline::before { content: ""; position: absolute; left: 6%; right: 6%; top: 50%; height: 2px; background: rgba(255,255,255,.1); transform: translateY(-50%); }
-.gs2-timeline__fill { position: absolute; left: 6%; top: 50%; height: 2px; max-width: 88%; background: linear-gradient(90deg, #8b84ff, #fbbf24); transform: translateY(-50%); transition: width .9s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 12px rgba(139,132,255,.8); }
+.gs2-timeline__fill { position: absolute; left: 6%; top: 50%; height: 2px; width: 88%; transform-origin: left center; background: linear-gradient(90deg, #8b84ff, #fbbf24); transform: translateY(-50%) scaleX(0); transition: transform .9s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 12px rgba(139,132,255,.8); }
 .gs2-tick { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: .3rem; background: transparent; border: 0; color: rgba(255,255,255,.45); font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; padding: 0; }
 .gs2-tick i { display: block; width: .7rem; height: .7rem; border-radius: 50%; background: #1d1d33; border: 2px solid rgba(255,255,255,.18); transition: all .3s; }
 .gs2-tick.is-on { color: rgba(255,255,255,.85); }
@@ -543,9 +543,11 @@ select.input option { background: #fff; color: #0b0b14; }
 .hero-proof { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .8rem .4rem .4rem; border-radius: 999px; background: #0b0b14; color: #fff; font-size: .8rem; font-weight: 700; white-space: nowrap; box-shadow: 0 12px 26px -14px rgba(11,11,20,.7); }
 .hero-proof__ic { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 999px; background: linear-gradient(135deg, #fde68a, #f59e0b); color: #0b0b14; }
 .hero-proof__ok { color: #a3ff6b; }
+/* phones: the three chips wrap instead of auto-scrolling (a per-frame scroll here kept the hero repainting) */
 @media (max-width: 767px) {
-  .hero-proofs { flex-wrap: nowrap; overflow-x: auto; margin-left: -1rem; margin-right: -1rem; padding: .25rem 1rem .5rem; }
-  .hero-proof { flex: 0 0 auto; }
+  .hero-proofs { gap: .4rem; }
+  .hero-proof { font-size: .74rem; padding: .32rem .7rem .32rem .32rem; }
+  .hero-proof__ic { width: 1.3rem; height: 1.3rem; }
 }
 
 .reel__mute { position: absolute; left: .6rem; bottom: .7rem; z-index: 3; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: rgba(11,11,20,.7); color: #fff; backdrop-filter: blur(6px); cursor: pointer; }
@@ -571,3 +573,37 @@ select.input option { background: #fff; color: #0b0b14; }
 .lead-side__trust { display: flex; flex-wrap: wrap; gap: .35rem .9rem; margin-top: .9rem; font-size: .68rem; font-weight: 700; color: rgba(255,255,255,.62); list-style: none; padding: 0; }
 .lead-side__trust li { display: inline-flex; align-items: center; gap: .3rem; }
 .lead-side__trust li::before { content: "\2713"; color: #a3ff6b; }
+
+/* ===== phones: keep scrolling on the compositor =====
+   Measured on a throttled phone (Nov 2026): 148 composited layers / ~208 MP of GPU textures and live
+   blurs made Chrome skip painting during a fling (blank content), and the page was busy ~50% of the
+   time while idle. On phones: no backdrop-filter, no filtered or promoted decorative layers, no
+   never-ending paint animations, no will-change on the tall portfolio screenshots. */
+@media (max-width: 767px), (hover: none) {
+  .glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255,255,255,.97); }
+  .section-dark .glass { background: #17172b; }
+  [class*="backdrop-blur"] { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  .blob, .shape, .cube { display: none; }
+  .hero-blob { filter: none; transform: none; will-change: auto; }
+  .hero-blob-a { background: radial-gradient(closest-side, rgba(139,132,255,.75), rgba(79,70,229,0)); }
+  .hero-blob-b { background: radial-gradient(closest-side, rgba(125,211,252,.7), rgba(14,165,233,0)); }
+  .work-frame__img, .shape, .card-3d { will-change: auto; }
+  .work-frame.is-animated .work-frame__img { animation: none; }
+  .ticker-row { will-change: auto; }
+  .ticker__shine, .gp-tab__inner::after { display: none; }
+  .gp-tab { animation: gp-card .5s cubic-bezier(.2,.8,.2,1) both; }
+  .gp-tab__glow { animation: none; filter: none; }
+  .reels.has-focus .reel { filter: none; }
+  .gs2-scene { perspective: none; }
+  .gs2-board { transform: none !important; transform-style: flat; transition: box-shadow .6s; box-shadow: 0 24px 50px -28px rgba(79,70,229,.55), 0 0 0 1px rgba(255,255,255,.07); }
+  .gs2-pin { filter: none; }
+  /* an SVG <g> animation is repainted on the main thread every frame, on every page */
+  .rb-bob { animation: none; }
+  /* hero journey: same stages, no per-frame tweens (each one repainted the chart/SVG for ~half of every stage) */
+  .gs2-mod, .gs2-tick i, .gs2-chart__line, .gs2-chart__fill, .gs2-glow { transition: none; }
+  .gs2-map__route { animation: none; stroke-dashoffset: 0; }
+  .gs2-pin, .gs2-heart { animation: none; }
+  /* tiny never-ending pings/pulses force every later overlapping block into its own GPU layer
+     (a 7732px reviews row, 2000px+ sections): ~180 MP of textures, blank areas while flinging */
+  .animate-ping, .animate-pulse, .work-card { animation: none !important; }
+}

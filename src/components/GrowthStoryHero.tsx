@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Globe, Search, Megaphone, MessageCircle, Check, MapPin, Star, Heart, Phone, ShoppingBag, TrendingUp, Zap } from "lucide-react";
 import { HERO_DEFAULT, type HeroContent } from "./HeroStatic";
 import InstagramIcon from "./InstagramIcon";
-import AutoScrollRow from "./AutoScrollRow";
 import Image from "next/image";
 
 export type HeroReel = { thumb: string; video?: string; likes: number; comments: number; caption?: string };
@@ -37,49 +36,73 @@ const STEP_MS = 2800;
 const CHART = "M0,150 C40,148 60,146 90,142 S150,128 190,112 S250,78 300,52 S350,28 400,10";
 const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(Math.round(n)));
 
-function useCountUp(target: number, ms = 900) {
-  const [v, setV] = useState(target);
-  const from = useRef(target);
+const rupees = (n: number) => `₹${n.toFixed(1)}L`;
+
+/**
+ * Animated number that writes its own text node in rAF. It used to be state in the hero, which
+ * re-rendered the whole board ~60 times a second for most of every stage and made phones lag.
+ */
+function Count({ to, format, ms = 900 }: { to: number; format: (n: number) => string; ms?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const from = useRef(to);
   useEffect(() => {
-    const start = performance.now(); const a = from.current; let raf = 0;
-    const tick = (t: number) => { const p = Math.min(1, (t - start) / ms); setV(a + (target - a) * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); else from.current = target; };
+    const el = ref.current;
+    if (!el) return;
+    const a = from.current, start = performance.now(); // ms 0 = jump straight to the value (phones)
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = ms > 0 ? Math.min(1, (t - start) / ms) : 1;
+      const txt = format(a + (to - a) * (1 - Math.pow(1 - p, 3)));
+      if (txt !== el.textContent) el.textContent = txt; // write only when the shown number changes
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, ms]);
-  return v;
+    return () => { cancelAnimationFrame(raf); from.current = to; };
+  }, [to, format, ms]);
+  return <span ref={ref}>{format(to)}</span>;
 }
 
 export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: HeroContent; reel?: HeroReel | null }) {
   const [stage, setStage] = useState(0);
   const [paused, setPaused] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [lite, setLite] = useState(false); // phones: poster instead of video, no tilt
   const reduced = useRef(false);
+  const rootRef = useRef<HTMLElement>(null);
+  const onScreen = useRef(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLite(window.matchMedia("(max-width: 767px), (hover: none)").matches), 0);
+    const el = rootRef.current;
+    const io = el ? new IntersectionObserver(([e]) => { onScreen.current = e.isIntersecting; }, { threshold: 0.15 }) : null;
+    if (el && io) io.observe(el);
+    return () => { clearTimeout(t); io?.disconnect(); };
+  }, []);
 
   useEffect(() => {
     reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced.current) { setStage(STAGES.length - 1); return; }
+    if (reduced.current) { const t = setTimeout(() => setStage(STAGES.length - 1), 0); return () => clearTimeout(t); }
     const id = setInterval(() => {
-      if (paused) return;
+      if (paused || !onScreen.current || document.hidden) return; // no work while scrolled away
       setStage((cur) => (cur + 1) % STAGES.length);
-    }, STEP_MS);
+    }, lite ? STEP_MS + 600 : STEP_MS);
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, lite]);
   // a manual click holds the chosen stage for a few seconds, then the loop resumes
   const hold = (i: number) => { setStage(i); setPaused(true); window.clearTimeout((hold as unknown as { t?: number }).t); (hold as unknown as { t?: number }).t = window.setTimeout(() => setPaused(false), 7000); };
 
   const s = STAGES[stage];
   const progress = stage / (STAGES.length - 1);
-  const leads = useCountUp(s.leads), revenue = useCountUp(s.revenue), followers = useCountUp(s.followers);
   const dash = 520;
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reduced.current) return;
+    if (reduced.current || lite) return;
     const r = e.currentTarget.getBoundingClientRect();
     setTilt({ x: ((e.clientY - r.top) / r.height - 0.5) * -8, y: ((e.clientX - r.left) / r.width - 0.5) * 10 });
   };
 
   return (
-    <section className="relative overflow-hidden -mt-20 pt-28 pb-14 md:pt-40 md:pb-24 min-h-[92svh] flex items-center">
+    <section ref={rootRef} className="relative overflow-hidden -mt-20 pt-28 pb-14 md:pt-40 md:pb-24 min-h-[92svh] flex items-center">
       <div className="absolute inset-0 dots" aria-hidden="true" />
       <div className="hero-blob hero-blob-a" aria-hidden="true" />
       <div className="hero-blob hero-blob-b" aria-hidden="true" />
@@ -95,14 +118,14 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
             <Link href="/contact" className="btn btn-primary text-base !px-7 !py-4">{hero.primaryCta} <ArrowRight size={18} /></Link>
             <Link href="/case-studies" className="btn btn-ghost text-base !px-7 !py-4">{hero.secondaryCta}</Link>
           </div>
-          <AutoScrollRow className="hero-proofs mt-7" speed={22}>
+          <div className="hero-proofs mt-7">
             {[["Zero to launch in 7 days", Zap], ["Every channel, one team", Globe], ["Reports in rupees", TrendingUp]].map(([t, Icon]) => {
               const I = Icon as typeof Zap;
               return (
                 <span key={t as string} className="hero-proof"><span className="hero-proof__ic"><I size={13} /></span>{t as string}<Check size={12} className="hero-proof__ok" /></span>
               );
             })}
-          </AutoScrollRow>
+          </div>
         </div>
 
         {/* scene */}
@@ -112,7 +135,7 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
 
             {/* timeline */}
             <div className="gs2-timeline" role="list" aria-label="Timeline">
-              <span className="gs2-timeline__fill" style={{ width: `${progress * 100}%` }} />
+              <span className="gs2-timeline__fill" style={{ transform: `translateY(-50%) scaleX(${progress})` }} />
               {STAGES.map((st, i) => (
                 <button key={st.label} type="button" onClick={() => hold(i)} className={`gs2-tick ${i <= stage ? "is-on" : ""} ${i === stage ? "is-now" : ""}`} aria-current={i === stage} aria-label={st.label}>
                   <i /><span>{st.label}</span>
@@ -170,7 +193,7 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
                   {stage === 4 && (
                     <div className="gs2-shot gs2-shot--reel">
                       <div className="gs2-reel">
-                        {reel?.video ? <video src={reel.video} poster={reel.thumb} muted autoPlay loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" /> : reel?.thumb ? <Image src={reel.thumb} alt={reel.caption || "Reel"} fill sizes="170px" className="object-cover" unoptimized /> : null}
+                        {reel?.video && !lite ? <video src={reel.video} poster={reel.thumb} muted autoPlay loop playsInline preload="metadata" className="absolute inset-0 w-full h-full object-cover" /> : reel?.thumb ? <Image src={reel.thumb} alt={reel.caption || "Reel"} fill sizes="170px" className="object-cover" unoptimized /> : null}
                         <span className="gs2-reel__shade" />
                         <span className="gs2-reel__stats"><InstagramIcon size={12} /> Reel{reel ? <> · <Heart size={11} fill="currentColor" /> {reel.likes >= 1000 ? `${(reel.likes / 1000).toFixed(1)}k` : reel.likes} · 💬 {reel.comments}</> : null}</span>
                       </div>
@@ -212,8 +235,8 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
                 </ul>
 
                 <div className="gs2-kpi-row">
-                  <div className="gs2-kpi"><span>Leads</span><b>{fmt(leads)}</b></div>
-                  <div className="gs2-kpi"><span>Followers</span><b>{fmt(followers)}</b></div>
+                  <div className="gs2-kpi"><span>Leads</span><b><Count to={s.leads} format={fmt} ms={lite ? 0 : 900} /></b></div>
+                  <div className="gs2-kpi"><span>Followers</span><b><Count to={s.followers} format={fmt} ms={lite ? 0 : 900} /></b></div>
                   <div className="gs2-kpi"><span>Maps</span><b>{s.rank}</b></div>
                 </div>
 
@@ -228,12 +251,12 @@ export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: 
                     <path d={CHART} fill="none" stroke="url(#gs2-line)" strokeWidth="3.5" strokeLinecap="round" style={{ strokeDasharray: dash, strokeDashoffset: dash * (1 - progress) }} className="gs2-chart__line" />
                   </svg>
                   <div className="gs2-chart__label"><TrendingUp size={11} /> Revenue / month</div>
-                  <div className="gs2-chart__value">₹{revenue.toFixed(1)}L</div>
+                  <div className="gs2-chart__value"><Count to={s.revenue} format={rupees} ms={lite ? 0 : 900} /></div>
                 </div>
               </div>
             </div>
 
-            {stage === STAGES.length - 1 && (
+            {stage === STAGES.length - 1 && !lite && (
               <div className="gs2-confetti" aria-hidden="true">
                 {Array.from({ length: 18 }).map((_, i) => <i key={i} style={{ left: `${(i * 53) % 100}%`, animationDelay: `${(i % 6) * 0.12}s`, background: ["#fbbf24", "#8b84ff", "#4ade80", "#f472b6", "#38bdf8"][i % 5] }} />)}
               </div>

@@ -10,7 +10,7 @@ export default function MobileBar({ phone }: { phone: string }) {
   if (path?.startsWith("/admin")) return null;
   const hasPhone = Boolean(phone) && !phone.includes("00000");
   return (
-    <div className="mobile-bar md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-white/95 backdrop-blur px-3 py-2 flex gap-2" role="navigation" aria-label="Quick actions">
+    <div className="mobile-bar md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-white px-3 py-2 flex gap-2" role="navigation" aria-label="Quick actions">
       {hasPhone && (
         <a href={`tel:${phone.replace(/\s/g, "")}`} onClick={() => trackEvent("call_click")} className="btn btn-dark flex-1 !py-3 text-sm">
           <Phone size={16} /> Call now
