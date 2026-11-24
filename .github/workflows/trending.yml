@@ -8,6 +8,10 @@ on:
         description: "Publish one trend post about this topic right now (optional, e.g. GTA 6)"
         required: false
         default: ""
+      refresh:
+        description: "Set to 1 to refresh cached blog pages (after covers/posts were edited directly)"
+        required: false
+        default: ""
       pages:
         description: "Set to 1 to re-index the core pages (home, services, pricing...) instead of publishing"
         required: false
@@ -21,4 +25,4 @@ jobs:
           curl -sS -G --max-time 295 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "https://clicksemrus.vercel.app/api/cron/trending" \
             --data-urlencode "limit=1" --data-urlencode "keywords=0" \
-            --data-urlencode "topic=${{ github.event.inputs.topic || '' }}"             --data-urlencode "pages=${{ github.event.inputs.pages || '' }}" | head -c 2000
+            --data-urlencode "topic=${{ github.event.inputs.topic || '' }}"             --data-urlencode "pages=${{ github.event.inputs.pages || '' }}" --data-urlencode "refresh=${{ github.event.inputs.refresh || '' }}" | head -c 2000

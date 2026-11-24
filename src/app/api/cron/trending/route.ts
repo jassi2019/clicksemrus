@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { fetchAllTopics, buildTrendPost, fetchTopicTrend } from "@/lib/trending";
-import { postExists, savePost, getSettings } from "@/lib/posts";
+import { postExists, savePost, getSettings, POSTS_TAG } from "@/lib/posts";
 import { refreshGsc, getGscSnapshot } from "@/lib/gsc";
 import { buildKeywordPost, keywordSlug } from "@/lib/keywordPost";
 import { notifyIndex, submitSitemap } from "@/lib/indexing";
@@ -33,6 +33,13 @@ export async function GET(req: NextRequest) {
   if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+  // Manual refresh: ?refresh=1 drops the cached post reads and re-renders the blog (after editing posts in Redis directly, e.g. new covers).
+  if (req.nextUrl.searchParams.get("refresh") === "1") {
+    revalidateTag(POSTS_TAG, "max");
+    revalidatePath("/"); revalidatePath("/blog"); revalidatePath("/blog/[slug]", "page"); revalidatePath("/blog/category/[category]", "page");
+    return NextResponse.json({ ok: true, refreshed: true });
+  }
+
   // Manual re-index: ?pages=1 pings the Indexing API + IndexNow for the core money pages (after title/content changes).
   if (req.nextUrl.searchParams.get("pages") === "1") {
     const core = ["/", "/services", "/services/seo", "/services/paid-ads", "/services/social-media-marketing", "/services/web-design-development", "/services/ecommerce", "/services/branding-creative", "/services/automation-crm", "/pricing", "/industries", "/about", "/contact", "/case-studies", "/blog", "/sitemap.xml"];
