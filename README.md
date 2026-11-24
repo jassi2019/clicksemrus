@@ -268,5 +268,6 @@ vercel.json                      Cron schedules
 - Page builder (`/admin/builder`), code editor (`/admin/code`, GitHub-backed), text content (`/admin/pages`), visitors (`/admin/visitors`), Search & Indexing (`/admin/seo`), leads with WhatsApp log.
 
 ### Blog feature images
+- **Owner-supplied covers (Nov 2026):** all 29 live articles use images the owner made, stored as 1200px WebP in `public/covers/<slug>.webp`. DB posts point `cover` at that path in Redis; seed posts carry `cover:` in `src/content/seed-posts.ts`. They take priority over the generated covers below (cron `ensureCover` only fills posts without a cover). After editing posts directly in Redis, refresh cached pages with `gh workflow run trending.yml -R jassi2019/clicksemrus -f refresh=1`.
 - Every post gets a feature image. Order: **OPENAI_API_KEY** (gpt-image-1 illustration, stored in Redis, served at `/api/cover-img/<slug>`) -> **PEXELS_API_KEY** (relevant stock photo, topic words then a category theme, with credit) -> the branded `/api/cover` render (title + category on a gradient). Covers are generated on publish and by the cron; regenerate all from Admin -> Search & Indexing -> "Regenerate blog covers".
 - Env: `OPENAI_API_KEY` (optional, paid, ~$0.01-0.04/image, from platform.openai.com), `PEXELS_API_KEY` (free, from pexels.com/api).
