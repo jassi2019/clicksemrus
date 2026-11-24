@@ -23,7 +23,7 @@ const MARKETING_QUERY = /\b(seo|google ads|ppc|meta ads|facebook ads|instagram|s
 /**
  * Daily growth cron (see vercel.json / .github/workflows/trending.yml). In one run:
  *  1. Google Trends India -> the single most-searched topic, every other day (`limit`, default 1)
- *  2. Keyword articles (`keywords`, default 3): Search Console opportunities with digital-marketing
+ *  2. Keyword articles (`keywords`, default 0 = off; the owner wants one article per gap): Search Console opportunities with digital-marketing
  *     intent first, then the pan-India KEYWORD_QUEUE in site.ts. This is the ranking engine.
  *  3. Ping Google Indexing API + IndexNow for everything created, plus /blog and the sitemap
  * Protected by CRON_SECRET (Vercel sends it automatically).
@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
     }
     const existed = await postExists(post.slug);
     await savePost(post);
+    await db.set(TREND_LAST_KEY, Date.now()); // a manual post counts: the next automatic one waits the full gap
     await ensureCover(post, true);
     revalidatePath("/"); revalidatePath("/blog"); revalidatePath(`/blog/${post.slug}`); revalidatePath("/sitemap.xml");
     const indexed = await notifyIndex([`/blog/${post.slug}`, "/blog", "/sitemap.xml"]);
@@ -96,7 +97,8 @@ export async function GET(req: NextRequest) {
   } else notes.push("trend auto-publish disabled");
 
   // 2. Keyword articles: GSC marketing queries first, then the planned queue
-  const kwLimit = Number(req.nextUrl.searchParams.get("keywords") || settings.keywordPostsPerDay || 3);
+  // Owner's rule (24 Nov 2026): ONE article per gap, the top India trend. Keyword articles only when a run asks explicitly.
+  const kwLimit = Number(req.nextUrl.searchParams.get("keywords") || 0);
   let written = 0;
   const writeKeyword = async (o: Opportunity) => {
     const slug = keywordSlug(o.query);

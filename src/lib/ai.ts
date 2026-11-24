@@ -2,6 +2,7 @@ import type { Post } from "./posts";
 import type { Trend } from "./trending";
 import { SITE } from "./site";
 import { generateJson } from "./llm";
+import { allInternalLinks } from "./internalLinks";
 
 /**
  * Richer articles written by an LLM (Claude, Gemini or Groq, whichever key is set; see llm.ts).
@@ -30,7 +31,9 @@ Write a 700-1100 word informative news article about "${t.title}" using this str
 4. An intent-matched section with its own ## heading: a cricket/football match -> final score, key moments, standout performers, what is next; a film/show/celebrity -> release or episode details, cast, where to watch, reactions; an exam/result/admit card -> dates, official link, how to check steps; business/finance/stock -> the numbers, the reason, the impact; a general event -> background, who is involved, reactions, what happens next.
 5. "## Why it is in the news" — 2-3 short paragraphs of context.
 6. "## FAQ" — 4-5 real questions people type into Google about "${t.title}" (score? when? where to watch? result? next date? who won?), each answered in 1-2 factual lines.
-Keep it strictly factual and neutral. No marketing, no brand mentions, no CTA.
+Keep it strictly factual and neutral. No marketing pitch, no CTA.
+INTERNAL LINKS (required): weave 2-3 of these site pages into the body as normal markdown links with descriptive anchor text, where they fit the context (for example when the story touches social media buzz, ads, search interest or online audiences). Use the relative URLs exactly as given, do not invent others, and do not put them in the first paragraph:
+${allInternalLinks().map((l) => `- ${l.t}: ${l.u}`).join("\n")}
 
 TITLE RULES (important): the title must be a natural, readable news headline of 45-70 characters that a real news site would actually publish. Do NOT start the title with a truncated code, a slug fragment, or a single abbreviation followed by a colon (e.g. never "Pl: ..." or "U20: ..."). If the trending phrase "${t.title}" is an abbreviation, a code, or otherwise non-descriptive, EXPAND it into a full, natural headline that names the real subject and the factual hook. The exact phrase does not have to appear verbatim if using it would make the headline read unnaturally; a clear human-readable headline is the priority.
 Return JSON only with keys: title (45-70 chars, a natural news headline as described above), excerpt (max 155 chars, the direct factual answer), seoTitle (max 60, readable, no truncated prefix), seoDescription (max 155, factual), content (markdown), category (one of: Sports, Entertainment, Business, Technology, Education, India News, Trending).`;

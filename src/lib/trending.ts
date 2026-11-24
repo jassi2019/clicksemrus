@@ -3,6 +3,7 @@ import { db } from "./db";
 import type { Post } from "./posts";
 import { SITE } from "./site";
 import { writeWithClaude } from "./ai";
+import { ensureInternalLinks } from "./internalLinks";
 import { hasAiWriter } from "./llm";
 import { withArticleImage } from "./articleImages";
 
@@ -376,6 +377,7 @@ export async function buildTrendPost(t: Trend, date = new Date()): Promise<Post>
       const merged = { ...base, ...ai };
       merged.content = await withArticleImage(merged);
       merged.tags = trendTags(merged.category, t.title); // from the writer's category, not the pre-write guess
+      merged.content = ensureInternalLinks(merged.content, merged.category);
       return { ...merged, title: cleanTitle(merged.title) };
     } catch (e) {
       lastErr = e as Error;
@@ -406,6 +408,7 @@ export async function regenerateTrendPost(post: Post): Promise<Post | null> {
     const merged = { ...post, ...ai, updatedAt: new Date().toISOString() };
     merged.content = await withArticleImage(merged);
     merged.tags = trendTags(merged.category, title);
+    merged.content = ensureInternalLinks(merged.content, merged.category);
     return { ...merged, title: cleanTitle(merged.title) };
   } catch {
     return null;
