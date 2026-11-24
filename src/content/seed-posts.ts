@@ -270,6 +270,7 @@ Ready to turn traffic into customers? [Get a free website audit](/contact).`,
   },
   {
     slug: "moment-marketing-guide-india-brands",
+    cover: "/covers/moment-marketing-guide-india-brands.webp",
     title: "Moment Marketing in India: How Brands Win on Trending Topics (With Examples)",
     excerpt: "What moment marketing is, why Indian brands like Amul and Zomato win with it, and a repeatable process to do it safely.",
     category: "Entertainment Marketing",
