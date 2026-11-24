@@ -492,6 +492,9 @@ select.input option { background: #fff; color: #0b0b14; }
 .gs2-kpi { min-width: 0; padding: .45rem .5rem; border-radius: .8rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); }
 .gs2-kpi span { display: block; font-size: .52rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gs2-kpi b { display: block; font-family: var(--font-display); font-size: .95rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+/* the animated number is a span inside <b>: undo the KPI label styles above */
+.gs2-kpi .gs2-count { display: inline; font: inherit; letter-spacing: normal; text-transform: none; color: inherit; white-space: nowrap; overflow: visible; }
+.gs2-chart__label svg { position: static; display: inline-block; width: 11px; height: 11px; vertical-align: -1px; }
 @media (min-width: 640px) { .gs2-kpi b { font-size: 1.35rem; } .gs2-mod { font-size: .72rem; } }
 .gs2-chart { position: relative; flex: 1; min-height: 7.5rem; border-radius: .9rem; overflow: hidden; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
 .gs2-chart svg { position: absolute; inset: 0; width: 100%; height: 100%; }

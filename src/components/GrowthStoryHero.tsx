@@ -59,7 +59,7 @@ function Count({ to, format, ms = 900 }: { to: number; format: (n: number) => st
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); from.current = to; };
   }, [to, format, ms]);
-  return <span ref={ref}>{format(to)}</span>;
+  return <span ref={ref} className="gs2-count">{format(to)}</span>;
 }
 
 export default function GrowthStoryHero({ hero = HERO_DEFAULT, reel }: { hero?: HeroContent; reel?: HeroReel | null }) {
