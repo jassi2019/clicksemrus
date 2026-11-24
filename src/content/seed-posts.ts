@@ -162,6 +162,7 @@ Want a reels calendar built for your business? See our social media marketing pa
   },
   {
     slug: "google-ads-vs-meta-ads-which-is-better-for-leads",
+    cover: "/covers/google-ads-vs-meta-ads-which-is-better-for-leads.webp",
     title: "Google Ads vs Meta Ads: Which Is Better for Leads in 2026?",
     excerpt: "An honest comparison of Google Ads and Meta Ads for lead generation in India, with budgets, CPL benchmarks and when to use each.",
     category: "Paid Ads",
@@ -220,6 +221,7 @@ Want us to audit your accounts? Our Google Ads and Meta Ads teams offer a free a
   },
   {
     slug: "website-conversion-rate-optimisation-guide",
+    cover: "/covers/website-conversion-rate-optimisation-guide.webp",
     title: "Why Your Website Gets Traffic but No Leads (and 12 Fixes)",
     excerpt: "Conversion rate optimisation basics for business websites: messaging, CTAs, speed, trust signals and forms that actually get filled.",
     category: "Web",
