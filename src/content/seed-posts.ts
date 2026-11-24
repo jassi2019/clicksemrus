@@ -5,6 +5,7 @@ const d = (s: string) => new Date(s).toISOString();
 export const SEED_POSTS: Post[] = [
   {
     slug: "digital-marketing-cost-in-delhi-ncr-2026",
+    cover: "/covers/digital-marketing-cost-in-delhi-ncr-2026.webp",
     title: "How Much Does Digital Marketing Cost in Delhi NCR in 2026? (Real Price Guide)",
     excerpt: "SEO, social media, Google Ads, Meta Ads and website pricing in Delhi NCR explained, with what you should expect at each budget level.",
     category: "Paid Ads",
