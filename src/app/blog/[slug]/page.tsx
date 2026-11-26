@@ -32,6 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     image: coverFor(post, SITE.url),
     keywords: post.tags,
     markdownPath: `/blog/${post.slug}/md`,
+    // trend news stays readable on the site but out of Google: the site ranks for digital marketing only
+    noindex: post.source === "trend",
   });
 }
 

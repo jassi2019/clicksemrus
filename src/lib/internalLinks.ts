@@ -29,14 +29,21 @@ const BY_CATEGORY: Record<string, (keyof typeof LINKS)[]> = {
   Technology: ["search", "growth"],
   Education: ["search", "social"],
   "India News": ["social", "search"],
+  // digital-marketing article categories
+  SEO: ["search", "growth"],
+  "Social Media": ["social", "growth"],
+  "Paid Ads": ["growth", "social"],
+  Content: ["search", "social"],
+  Web: ["search", "growth"],
+  Branding: ["social", "search"],
 };
 
 export type InternalLink = { t: string; u: string };
 
-/** Three pages for a category: two from its main group, one from the second. */
-export function internalLinksFor(category?: string): InternalLink[] {
+/** Three pages for a category: two from its main group, one from the second (never the article itself). */
+export function internalLinksFor(category?: string, self = ""): InternalLink[] {
   const [a, b] = BY_CATEGORY[category || ""] || ["social", "search"];
-  return [LINKS[a][0], LINKS[a][2], LINKS[b][0]];
+  return [...LINKS[a], ...LINKS[b]].filter((l) => l.u !== self).filter((l, i, arr) => arr.findIndex((x) => x.u === l.u) === i).slice(0, 3);
 }
 
 /** Every page the writer may link to, for the prompt. */
@@ -45,9 +52,9 @@ export function allInternalLinks(): InternalLink[] {
 }
 
 /** Guarantee the interlinking: with fewer than 2 links to our pages, append a short related-reading list. */
-export function ensureInternalLinks(content: string, category?: string): string {
+export function ensureInternalLinks(content: string, category?: string, self = ""): string {
   const own = (content.match(/\]\(\/(blog|services|case-studies|pricing|contact)[^)]*\)/g) || []).length;
   if (own >= 2) return content;
-  const list = internalLinksFor(category).map((l) => `- [${l.t}](${l.u})`).join("\n");
+  const list = internalLinksFor(category, self).map((l) => `- [${l.t}](${l.u})`).join("\n");
   return `${content.trimEnd()}\n\n## Related reading\n\n${list}\n`;
 }

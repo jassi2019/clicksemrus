@@ -14,17 +14,19 @@ import { hasOldRedis, mergeOldRedis } from "@/lib/mergeOld";
 
 export const maxDuration = 300;
 
-/** Only the single top trend, and only if the last trend post is at least this old (every other day). */
+/** One article every other day: nothing is published while the last article is younger than this. */
 const TREND_GAP_MS = 40 * 3600_000;
-const TREND_LAST_KEY = "trend:lastAt";
+const TREND_LAST_KEY = "trend:lastAt"; // "last article published", any kind (name kept so the gap carries over)
 /** Search Console queries worth an article: digital-marketing intent only, not news/entertainment queries. */
 const MARKETING_QUERY = /\b(seo|google ads|ppc|meta ads|facebook ads|instagram|social media|digital marketing|content marketing|email marketing|whatsapp marketing|influencer|branding|website|landing page|ecommerce|e-commerce|shopify|lead generation|cpc|roas|backlink|google business|gmb|local seo|marketing agency|marketing cost|marketing strategy)\b/i;
 
 /**
- * Daily growth cron (see vercel.json / .github/workflows/trending.yml). In one run:
- *  1. Google Trends India -> the single most-searched topic, every other day (`limit`, default 1)
- *  2. Keyword articles (`keywords`, default 0 = off; the owner wants one article per gap): Search Console opportunities with digital-marketing
- *     intent first, then the pan-India KEYWORD_QUEUE in site.ts. This is the ranking engine.
+ * Daily growth cron (see vercel.json; the GitHub workflow is manual-only). Owner's rule (26 Nov 2026): the site is
+ * digital-marketing only, ONE article every other day. In one run:
+ *  1. Trend news only when asked (`trend=1`). Off by default: bulk off-topic news on an agency site is the likely
+ *     reason the whole site lost its rankings in the November 2026 core update; trend posts are noindexed.
+ *  2. One digital-marketing article when the gap has passed: Search Console marketing-intent queries first, then
+ *     KEYWORD_QUEUE in site.ts. `keywords=N` overrides the count for a manual run.
  *  3. Ping Google Indexing API + IndexNow for everything created, plus /blog and the sitemap
  * Protected by CRON_SECRET (Vercel sends it automatically).
  */
@@ -75,13 +77,14 @@ export async function GET(req: NextRequest) {
   const startedAt = Date.now();
   const inBudget = () => Date.now() - startedAt < 200_000; // stay inside the function budget
 
-  // 1. Trend post: one per run, skipped while the previous one is fresher than TREND_GAP_MS
-  if (settings.autoPublishTrends !== false) {
+  const lastAt = Number((await db.get<number>(TREND_LAST_KEY).catch(() => 0)) || 0);
+  const gapOk = Date.now() - lastAt >= TREND_GAP_MS;
+  if (!gapOk) notes.push(`no article: last one ${Math.round((Date.now() - lastAt) / 3600_000)}h ago (gap ${TREND_GAP_MS / 3600_000}h)`);
+
+  // 1. Trend news: only on an explicit trend=1 run, still one per gap
+  if (req.nextUrl.searchParams.get("trend") === "1" && settings.autoPublishTrends !== false) {
     const limit = Number(req.nextUrl.searchParams.get("limit") || 1);
-    const lastAt = Number((await db.get<number>(TREND_LAST_KEY).catch(() => 0)) || 0);
-    if (Date.now() - lastAt < TREND_GAP_MS) {
-      notes.push(`trend skipped: last one ${Math.round((Date.now() - lastAt) / 3600_000)}h ago`);
-    } else {
+    if (gapOk) {
       const trends = await fetchAllTopics(settings.trendGeo || "IN", 10); // traffic-ranked, top first
       let made = 0;
       for (const t of trends) {
@@ -101,17 +104,24 @@ export async function GET(req: NextRequest) {
       if (made) await db.set(TREND_LAST_KEY, Date.now());
       notes.push(`trends seen: ${trends.length}, written: ${made}`);
     }
-  } else notes.push("trend auto-publish disabled");
+  }
 
-  // 2. Keyword articles: GSC marketing queries first, then the planned queue
-  // Owner's rule (24 Nov 2026): ONE article per gap, the top India trend. Keyword articles only when a run asks explicitly.
-  const kwLimit = Number(req.nextUrl.searchParams.get("keywords") || 0);
+  // 2. The digital-marketing article: GSC marketing queries first, then the planned queue
+  const kwParam = req.nextUrl.searchParams.get("keywords");
+  const kwLimit = kwParam !== null && kwParam !== "" ? Number(kwParam) : created.length === 0 && gapOk ? 1 : 0;
   let written = 0;
   const writeKeyword = async (o: Opportunity) => {
     const slug = keywordSlug(o.query);
     if (await postExists(slug)) return false;
-    const post = await buildKeywordPost(o);
+    let post: Awaited<ReturnType<typeof buildKeywordPost>>;
+    try {
+      post = await buildKeywordPost(o);
+    } catch (e) {
+      notes.push(`"${o.query}" skipped: ${(e as Error).message.slice(0, 80)}`);
+      return false;
+    }
     await savePost(post);
+    await db.set(TREND_LAST_KEY, Date.now());
     created.push(post.slug);
     written++;
     return true;

@@ -72,7 +72,7 @@ export default async function Home() {
     getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)),
     getContent("home"),
   ]);
-  const latest = posts.slice(0, 3); // published articles only; never the unwritten trend template
+  const latest = posts.filter((p) => p.source !== "trend").slice(0, 3); // digital-marketing articles only
   const hero = {
     eyebrow: content.get("heroEyebrow"),
     headline: content.get("heroHeadline"),

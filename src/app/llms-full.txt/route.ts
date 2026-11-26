@@ -9,7 +9,7 @@ export const revalidate = 3600;
  * so AI engines can ingest the actual content, not just links. See llmstxt.org (llms-full.txt).
  */
 export async function GET() {
-  const posts = (await getAllPosts().catch(() => [])).slice(0, 20);
+  const posts = (await getAllPosts().catch(() => [])).filter((p) => p.source !== "trend").slice(0, 20);
 
   const articles = posts
     .map((p) => {

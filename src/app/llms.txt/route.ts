@@ -8,7 +8,7 @@ export const revalidate = 3600;
  * Gemini, Google AI Overviews). See llmstxt.org. Lists the pages worth citing, in markdown.
  */
 export async function GET() {
-  const posts = (await getAllPosts().catch(() => [])).slice(0, 40);
+  const posts = (await getAllPosts().catch(() => [])).filter((p) => p.source !== "trend").slice(0, 40);
   const L = (label: string, path: string, desc?: string) => `- [${label}](${SITE.url}${path})${desc ? `: ${desc}` : ""}`;
 
   const body = `# ${SITE.name}

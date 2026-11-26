@@ -228,11 +228,33 @@ export const KEYWORD_TOPICS: string[] = [
 ];
 
 /**
- * Planned pan-India digital-marketing queries the daily cron works through (3/day) when Search
- * Console has no marketing-intent opportunity of its own. Ordered by priority; each becomes
+ * Planned pan-India digital-marketing queries the cron works through (ONE article every other day) when Search
+ * Console has no marketing-intent opportunity of its own. The first block (Nov 2026) is our own angle on topics a
+ * competitor covers, never copied titles. Ordered by priority; each becomes
  * /blog/<slug> once and is then skipped (postExists). Add to the end, never reorder published ones.
  */
 export const KEYWORD_QUEUE: string[] = [
+  "How to redesign a website without losing Google rankings",
+  "Why ad clicks are not turning into enquiries and how landing pages fix it",
+  "Why a product sells on Amazon but not on Flipkart",
+  "Amazon sales dropping even with ads: what sellers should check first",
+  "What is crawl budget and when it matters for Indian websites",
+  "Free keyword research tools to find what your customers search",
+  "ChatGPT Business Hub vs Google Business Profile for local businesses",
+  "ChatGPT ads in India: what advertisers should test first",
+  "Why your Meta ads cost per lead keeps rising and how to bring it down",
+  "How to read a digital marketing report: the numbers that matter",
+  "Shopify vs WordPress vs custom website for Indian D2C brands",
+  "Selling on Meesho vs Myntra for small fashion brands",
+  "Amazon A+ content and listing images that increase sales",
+  "Website development contract checklist before you pay an agency",
+  "What makes a service business website get more calls",
+  "How to get your business cited in Google AI Overviews",
+  "WooCommerce speed and SEO fixes for growing online stores",
+  "Instagram reels vs paid ads for D2C brand growth",
+  "Local SEO for multi-location businesses in India",
+  "How to compare digital marketing agency proposals",
+
   "How to choose a digital marketing agency in India",
   "Digital marketing agency pricing in India",
   "SEO cost in India for small businesses",

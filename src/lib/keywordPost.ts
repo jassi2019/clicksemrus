@@ -6,6 +6,7 @@ import { SITE } from "./site";
 import { writeKeywordPostWithClaude } from "./ai";
 import { hasAiWriter } from "./llm";
 import { withArticleImage } from "./articleImages";
+import { ensureInternalLinks } from "./internalLinks";
 
 /**
  * Keyword-targeted articles for Search Console opportunities: queries that already
@@ -106,18 +107,28 @@ Yes. We serve clients across India remotely, with the same reporting and weekly 
   };
 }
 
+/**
+ * Write a keyword article with the AI writer. When a writer is configured and fails it THROWS after one retry
+ * (the caller skips the topic) instead of publishing the generic template, which is thin content.
+ */
 export async function buildKeywordPost(o: Opportunity, date = new Date()): Promise<Post> {
   const base = composeKeywordPost(o, date);
   if (!hasAiWriter()) return base;
-  try {
-    const ai = await writeKeywordPostWithClaude(o, base);
-    if (!ai.content) throw new Error("empty AI response");
-    const merged = { ...base, ...ai };
-    merged.content = await withArticleImage(merged);
-    return merged;
-  } catch (e) {
-    console.error("keyword post AI failed:", (e as Error).message);
-    try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "keyword", message: (e as Error).message.slice(0, 500) }); } catch {}
-    return base;
+  let lastErr: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt) await new Promise((r) => setTimeout(r, 8000));
+    try {
+      const ai = await writeKeywordPostWithClaude(o, base);
+      if (!ai.content) throw new Error("empty AI response");
+      const merged = { ...base, ...ai };
+      merged.content = await withArticleImage(merged);
+      merged.content = ensureInternalLinks(merged.content, merged.category, `/blog/${merged.slug}`);
+      return merged;
+    } catch (e) {
+      lastErr = e as Error;
+      console.error(`keyword post AI failed (attempt ${attempt + 1}):`, lastErr.message);
+    }
   }
+  try { await db.set("ai:lastError", { at: new Date().toISOString(), kind: "keyword", message: (lastErr?.message || "unknown").slice(0, 500) }); } catch {}
+  throw new Error(`AI writer failed for "${o.query}": ${(lastErr?.message || "unknown").slice(0, 160)}`);
 }
