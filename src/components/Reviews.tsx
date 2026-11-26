@@ -21,7 +21,7 @@ function ReviewCard({ r }: { r: Review }) {
       <span className="absolute top-4 right-4 grid place-items-center w-8 h-8 rounded-full bg-white border border-border shadow-sm"><GoogleG size={16} /></span>
       <div className="flex items-center gap-3 pr-9">
         {r.photo ? (
-          <Image src={r.photo} alt="" width={40} height={40} className="w-10 h-10 rounded-full object-cover" unoptimized />
+          <Image src={r.photo} alt={`${r.name} Google review photo`} width={40} height={40} className="w-10 h-10 rounded-full object-cover" unoptimized />
         ) : (
           <span className="w-10 h-10 rounded-full bg-brand text-white grid place-items-center font-bold">{r.name.charAt(0).toUpperCase()}</span>
         )}

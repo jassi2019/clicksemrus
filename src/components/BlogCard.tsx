@@ -15,7 +15,7 @@ export default function BlogCard({ post, i = 0, featured = false }: { post: Post
     <Link href={`/blog/${post.slug}`} className={`card overflow-hidden group flex flex-col h-full ${featured ? "md:flex-row" : ""}`}>
       <div className={`relative ${featured ? "md:w-1/2 min-h-56" : "h-44"} bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} overflow-hidden`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={coverFor(post)} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+        <img src={coverFor(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg/60 to-transparent" />
         {!branded && (
           <div className="absolute top-3 left-3 flex gap-2">

@@ -63,7 +63,7 @@ export default function InstagramGrid({ posts }: { posts: IgPost[] }) {
           <div className="absolute inset-0 bg-[#0b0b14]/80 backdrop-blur-sm gp-fade" onClick={() => setActive(null)} />
           <div className="gp-card relative w-full max-w-[420px] max-h-[92vh] rounded-3xl overflow-hidden bg-white shadow-[0_40px_90px_-30px_rgba(0,0,0,.8)] flex flex-col">
             <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
-              <Image src="/logo-160.png" alt="" width={32} height={32} className="rounded-full" />
+              <Image src="/logo-160.png" alt="ClickSemrus logo" width={32} height={32} className="rounded-full" />
               <div className="leading-tight">
                 <p className="text-sm font-bold">clicksemrus</p>
                 <p className="text-[11px] text-muted">{fmt(active.timestamp) || "Instagram"}</p>
