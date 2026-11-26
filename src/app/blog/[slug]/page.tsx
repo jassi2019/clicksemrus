@@ -103,7 +103,18 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 </ul>
               </section>
             )}
-            <div className="flex flex-wrap gap-2 mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-2 text-sm">
+              <span className="font-semibold mr-1">Share:</span>
+              {[
+                ["WhatsApp", `https://wa.me/?text=${encodeURIComponent(`${post.title} ${SITE.url}/blog/${post.slug}?utm_source=whatsapp&utm_medium=share&utm_campaign=blog_share`)}`],
+                ["LinkedIn", `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${SITE.url}/blog/${post.slug}?utm_source=linkedin&utm_medium=share&utm_campaign=blog_share`)}`],
+                ["X", `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${SITE.url}/blog/${post.slug}?utm_source=x&utm_medium=share&utm_campaign=blog_share`)}`],
+                ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${SITE.url}/blog/${post.slug}?utm_source=facebook&utm_medium=share&utm_campaign=blog_share`)}`],
+              ].map(([label, href]) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-full border border-border bg-surface hover:bg-surface-2 font-semibold text-xs">{label}</a>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
               {post.tags.map((t) => <span key={t} className="px-3 py-1 rounded-full text-xs bg-surface border border-border text-muted">#{t}</span>)}
             </div>
           </div>

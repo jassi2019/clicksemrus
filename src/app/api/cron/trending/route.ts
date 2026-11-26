@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { KEYWORD_QUEUE } from "@/lib/site";
 import type { Opportunity } from "@/lib/gsc";
 import { hasOldRedis, mergeOldRedis } from "@/lib/mergeOld";
+import { makeShareKit } from "@/lib/social";
 
 export const maxDuration = 300;
 
@@ -122,6 +123,7 @@ export async function GET(req: NextRequest) {
     }
     await savePost(post);
     await db.set(TREND_LAST_KEY, Date.now());
+    await makeShareKit(post).catch(() => null); // LinkedIn / Instagram / WhatsApp / X copy for Admin -> Share kit
     created.push(post.slug);
     written++;
     return true;
