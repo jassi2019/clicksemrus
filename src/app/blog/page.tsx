@@ -11,10 +11,10 @@ import JsonLd from "@/components/JsonLd";
 export const revalidate = 3600;
 
 export const metadata = pageMeta({
-  title: "Digital Marketing Blog & Trending News India | SEO, Social & Ads",
-  description: `Digital marketing blog and trending news India from ${SITE.name}: what is trending today across sports, entertainment, business and tech, plus SEO guides, social media playbooks and Google and Meta Ads tips.`,
+  title: "Digital Marketing Blog India | SEO, Google Ads, Meta Ads & Social Media Guides",
+  description: `Practical digital marketing guides for Indian businesses from ${SITE.name}: SEO, Google Ads, Meta Ads, social media, content and websites, with real costs, checklists and benchmarks.`,
   path: "/blog",
-  keywords: ["digital marketing blog india", "trending news india", "trending topics today india", "seo tips", "social media tips", "marketing blog"],
+  keywords: ["digital marketing blog india", "seo guide india", "google ads tips", "meta ads guide", "social media marketing tips", "digital marketing cost india"],
 });
 
 export default async function Blog({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
@@ -52,9 +52,9 @@ export default async function Blog({ searchParams }: { searchParams: Promise<{ q
     <>
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "" }, { name: "Blog", path: "/blog" }])} />
       <section className="container-x pt-16 md:pt-24 pb-8">
-        <p className="eyebrow"><Flame size={14} /> Updated daily from Google Trends India</p>
-        <h1 className="font-display text-4xl md:text-6xl font-bold mt-3">Marketing insights on what India is talking about</h1>
-        <p className="text-muted text-lg mt-4 max-w-2xl">Trending topics turned into marketing playbooks, plus evergreen guides on SEO, social media and paid ads.</p>
+        <p className="eyebrow"><Flame size={14} /> New guide every other day</p>
+        <h1 className="font-display text-4xl md:text-6xl font-bold mt-3">Digital marketing guides for Indian businesses</h1>
+        <p className="text-muted text-lg mt-4 max-w-2xl">Practical, no-fluff guides on SEO, Google and Meta ads, social media and websites, with real costs, checklists and benchmarks for India.</p>
         <form className="mt-6 flex gap-2 max-w-md" action="/blog">
           <input name="q" defaultValue={q} placeholder="Search articles" className="input" aria-label="Search articles" />
           <button className="btn btn-ghost">Search</button>
@@ -73,7 +73,7 @@ export default async function Blog({ searchParams }: { searchParams: Promise<{ q
       {showClusters ? (
         <>
           <section className="container-x pb-12">
-            <h2 className="font-display text-2xl md:text-3xl font-extrabold mb-6">Latest news &amp; insights</h2>
+            <h2 className="font-display text-2xl md:text-3xl font-extrabold mb-6">Latest guides</h2>
             {first && <BlogCard post={first} featured />}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
               {latest.slice(1).map((p, i) => <BlogCard key={p.slug} post={p} i={i + 1} />)}
