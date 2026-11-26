@@ -166,7 +166,7 @@ export default async function Pricing() {
         <Reveal className="max-w-4xl">
           <span className="eyebrow">Compare plans</span>
           <h2 className="font-display text-3xl md:text-5xl font-extrabold mt-4 leading-[1.05]">What is in each plan, line by line</h2>
-          <p className="text-muted mt-4 text-lg">Scroll sideways on a phone. Anything not listed here is quoted as an add-on below, never slipped onto the invoice.</p>
+          <p className="text-muted mt-4 text-lg">Anything not listed here is quoted as an add-on below, never slipped onto the invoice.</p>
         </Reveal>
         <Reveal delay={90} className="mt-10">
           <div className="card !transform-none overflow-hidden">

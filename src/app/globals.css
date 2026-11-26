@@ -330,7 +330,8 @@ select.input option { background: #fff; color: #0b0b14; }
   .mt-14 { margin-top: 2rem; } .mt-12 { margin-top: 1.75rem; }
   .text-lg { font-size: 1rem; }
   .gap-6 { gap: .9rem; }
-  main { padding-bottom: 4.5rem; }
+  /* no main padding here: body.has-mobile-bar already reserves the bar's height (the doubled padding showed
+     as a blank strip between the last section and the footer) */
 }
 
 /* phones: no scroll-reveal fades (content must never look like it vanishes), no splash */
@@ -609,4 +610,21 @@ select.input option { background: #fff; color: #0b0b14; }
   /* tiny never-ending pings/pulses force every later overlapping block into its own GPU layer
      (a 7732px reviews row, 2000px+ sections): ~180 MP of textures, blank areas while flinging */
   .animate-ping, .animate-pulse, .work-card { animation: none !important; }
+}
+
+/* ===== footer: floating widgets step aside (html.at-footer is set by FooterWatch) ===== */
+.gp-tab, .wa-bubble { transition: opacity .25s, transform .25s, visibility .25s; }
+.at-footer .gp-tab, .at-footer .wa-bubble { opacity: 0; visibility: hidden; transform: translateY(16px); pointer-events: none; }
+@media (min-width: 768px) { footer.section-dark { padding-bottom: 5.5rem; } } /* last row clears the WhatsApp button */
+
+/* ===== pricing compare table on phones: all three plans fit, no sideways scroll ===== */
+@media (max-width: 767px) {
+  .cmp { min-width: 0 !important; table-layout: fixed; font-size: .74rem; }
+  .cmp th, .cmp td { padding: .6rem .3rem; overflow-wrap: anywhere; line-height: 1.25; }
+  .cmp th:first-child, .cmp td:first-child { width: 36% !important; padding-left: .7rem; }
+  .cmp th { font-size: .8rem; }
+  .cmp th .block { font-size: 9px; line-height: 1.2; margin-top: 2px; }
+  .cmp td .text-sm { font-size: .72rem; }
+  .cmp td .w-7 { width: 1.35rem; height: 1.35rem; }
+  .cmp td .w-7 svg { width: 12px; height: 12px; }
 }

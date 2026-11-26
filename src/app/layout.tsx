@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HideOnAdmin from "@/components/HideOnAdmin";
 import NoInspect from "@/components/NoInspect";
+import FooterWatch from "@/components/FooterWatch";
 import Tracker from "@/components/Tracker";
 import Splash from "@/components/Splash";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <GrowthPopup />
         <Tracker />
         <NoInspect />
+        <FooterWatch />
         {(settings.gaId || GA_FALLBACK) && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${settings.gaId || GA_FALLBACK}`} strategy="lazyOnload" />

@@ -78,7 +78,7 @@ export default function ReelsShowcase({ clients }: { clients: ReelClient[] }) {
 
         {active && <button type="button" aria-label="Close" onClick={() => setActive(null)} className="reels__scrim" />}
 
-        <div ref={rowRef} key={c.key}><AutoScrollRow className="reels__row mt-8 md:mt-10" speed={26} pauseWhen={Boolean(active)}>
+        <div ref={rowRef} key={c.key}><AutoScrollRow className="reels__row mt-8 md:mt-10" speed={42} mobileOnly={false} pauseWhen={Boolean(active)}>
           {c.reels.map((r, i) => {
             const on = active === r.code;
             const top = i === 0 && r.likes >= 500;

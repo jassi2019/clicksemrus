@@ -114,7 +114,7 @@ export default async function Home() {
             <h2 className="font-display text-3xl md:text-5xl font-extrabold text-balance mt-5 leading-[1.02]">Every channel. One goal: <span className="gradient-text">growth.</span></h2>
             <p className="text-muted mt-5 text-lg">Pick one service or let us run the full funnel. Every plan includes tracking, a live dashboard and a dedicated growth manager.</p>
           </Reveal>
-          <AutoScrollRow className="svc-row grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14" speed={30}>
+          <AutoScrollRow className="svc-row grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-10 sm:mt-14" speed={42}>
             {SERVICES.map((s, i) => (
               <Reveal key={s.slug} delay={(i % 3) * 90}>
                 <Link href={serviceUrl(s.slug)} className="block h-full group">

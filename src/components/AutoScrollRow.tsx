@@ -41,12 +41,14 @@ export default function AutoScrollRow({ children, className = "", speed = 40, mo
     const onPageScroll = () => { pageUntil = performance.now() + 350; };
     window.addEventListener("scroll", onPageScroll, { passive: true });
     const user = (ms: number) => () => { userUntil = performance.now() + ms; };
-    const onTouchStart = user(1e9), onTouchEnd = user(2500), onWheel = user(2500), onEnter = user(1e9), onLeave = user(1200);
-    el.addEventListener("touchstart", onTouchStart, { passive: true }); el.addEventListener("touchend", onTouchEnd);
+    // touchstart pauses for a while, not forever: when a page swipe starts on the row the browser often sends
+    // touchcancel instead of touchend, which used to leave the row frozen for good on phones.
+    const onTouchStart = user(6000), onTouchEnd = user(2500), onWheel = user(2500), onEnter = user(1e9), onLeave = user(1200);
+    el.addEventListener("touchstart", onTouchStart, { passive: true }); el.addEventListener("touchend", onTouchEnd); el.addEventListener("touchcancel", onTouchEnd);
     el.addEventListener("wheel", onWheel, { passive: true }); el.addEventListener("mouseenter", onEnter); el.addEventListener("mouseleave", onLeave);
     return () => {
       stop(); io.disconnect(); window.removeEventListener("scroll", onPageScroll);
-      el.removeEventListener("touchstart", onTouchStart); el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchstart", onTouchStart); el.removeEventListener("touchend", onTouchEnd); el.removeEventListener("touchcancel", onTouchEnd);
       el.removeEventListener("wheel", onWheel); el.removeEventListener("mouseenter", onEnter); el.removeEventListener("mouseleave", onLeave);
     };
   }, [speed, mobileOnly]);
