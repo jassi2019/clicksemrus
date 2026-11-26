@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Clock, Flame, ExternalLink, ArrowRight } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, articleJsonLd, faqJsonLd } from "@/lib/seo";
-import { getAllPosts, getPost, related, type Post } from "@/lib/posts";
+import { getAllPosts, getPost, related, type Post, isDmPost } from "@/lib/posts";
 import { authorFor } from "@/lib/authors";
 import { renderMarkdown, extractHeadings, readingTime, slugify, interlinkPosts, parseFaq } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
@@ -44,8 +44,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const linkCandidates = all.filter((p) => p.slug !== post.slug).slice(0, 40);
   const html = renderMarkdown(interlinkPosts(post.content, linkCandidates, 2));
   const toc = extractHeadings(post.content);
-  const rel = related(all, post, 3);
+  const rel = related(all.filter(isDmPost), post, 3);
   const moreTrending = all
+    .filter(isDmPost)
     .filter((p) => p.slug !== post.slug && !rel.some((r) => r.slug === p.slug))
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
     .slice(0, 8);
@@ -116,7 +117,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             </div>
             {moreTrending.length > 0 && (
               <div className="card p-5">
-                <h3 className="font-semibold flex items-center gap-1"><Flame size={15} className="text-accent" /> More trending now</h3>
+                <h3 className="font-semibold flex items-center gap-1"><Flame size={15} className="text-accent" /> Latest marketing guides</h3>
                 <ul className="mt-3 text-sm space-y-2.5">
                   {moreTrending.map((p) => (
                     <li key={p.slug}>

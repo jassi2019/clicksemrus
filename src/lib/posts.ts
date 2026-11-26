@@ -63,6 +63,9 @@ const getDbPostCached = unstable_cache(
   { revalidate: POSTS_TTL, tags: [POSTS_TAG] }
 );
 
+/** Digital-marketing articles: what the site links to and lists. Trend news stays reachable by URL but noindexed. */
+export const isDmPost = (p: Pick<Post, "source">) => p.source !== "trend";
+
 export async function getPost(slug: string, includeDrafts = false): Promise<Post | null> {
   const seed = SEED_POSTS.find((s) => s.slug === slug) || null;
   let dbPost: Post | null = null;

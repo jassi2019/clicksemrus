@@ -5,10 +5,10 @@ import { SITE, SERVICE_CATEGORIES, NAV, LOCATIONS, INDUSTRIES } from "@/lib/site
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
 import { getContent } from "@/lib/pageContent";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, isDmPost } from "@/lib/posts";
 
 export default async function Footer() {
-  const recentPosts = (await getAllPosts().catch(() => [])).slice(0, 4);
+  const recentPosts = (await getAllPosts().catch(() => [])).filter(isDmPost).slice(0, 4);
   const c = await getContent("global");
   const hasPhone = !SITE.phone.includes("00000");
   return (

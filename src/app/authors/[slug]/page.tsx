@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd, personJsonLd, profilePageJsonLd } from "@/lib/seo";
 import { AUTHORS, getAuthor, postsByAuthor } from "@/lib/authors";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, isDmPost } from "@/lib/posts";
 import BlogCard from "@/components/BlogCard";
 import AuthorAvatar from "@/components/AuthorAvatar";
 import CTA from "@/components/CTA";
@@ -32,7 +32,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const author = getAuthor(slug);
   if (!author) notFound();
-  const all = await getAllPosts();
+  const all = (await getAllPosts()).filter(isDmPost);
   const posts = postsByAuthor(all, slug).slice(0, 24);
 
   return (

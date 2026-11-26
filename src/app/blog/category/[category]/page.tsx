@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BLOG_CATEGORIES, SITE } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, isDmPost } from "@/lib/posts";
 import { slugify } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import CTA from "@/components/CTA";
@@ -25,7 +25,7 @@ export default async function Category({ params }: { params: Promise<{ category:
   const { category } = await params;
   const name = BLOG_CATEGORIES.find((c) => slugify(c) === category);
   if (!name) notFound();
-  const stored = await getAllPosts();
+  const stored = (await getAllPosts()).filter(isDmPost);
   const posts = stored.filter((p) => p.category === name);
   return (
     <>

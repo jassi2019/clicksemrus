@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Check, IndianRupee, Rocket, Unlock, Target, Zap, BarChart3, TrendingUp, Building2, Store, Stethoscope, GraduationCap, ShoppingBag, Briefcase, Sparkles, MessageCircle } from "lucide-react";
 import { SERVICES, serviceUrl, workForService, type ServiceCategory, type SubService } from "@/lib/site";
 import { breadcrumbJsonLd, faqJsonLd, serviceJsonLd } from "@/lib/seo";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, isDmPost } from "@/lib/posts";
 import ServiceIcon from "@/components/ServiceIcon";
 import ServiceArt from "@/components/ServiceArt";
 import LeadForm from "@/components/LeadForm";
@@ -100,7 +100,7 @@ export default async function ServicePageTemplate({ s, category, path }: { s: Su
   const icon = SERVICES.find((x) => x.slug === s.slug)?.icon || category?.icon || "Sparkles";
   const siblings = (category ? category.subs : []).filter((x) => x.slug !== s.slug).slice(0, 5);
   const others = siblings.length ? siblings : SERVICES.filter((x) => x.slug !== s.slug).slice(0, 4);
-  const posts = (await getAllPosts()).filter((p) => p.content.toLowerCase().includes(s.name.split(" ")[0].toLowerCase())).slice(0, 3);
+  const posts = (await getAllPosts()).filter(isDmPost).filter((p) => p.content.toLowerCase().includes(s.name.split(" ")[0].toLowerCase())).slice(0, 3);
   const crumbs = [{ name: "Home", path: "" }, { name: "Services", path: "/services" }];
   if (category) crumbs.push({ name: category.name, path: `/services/${category.slug}` });
   crumbs.push({ name: s.name, path });

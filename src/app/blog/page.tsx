@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Flame } from "lucide-react";
 import { SITE, BLOG_CATEGORIES } from "@/lib/site";
 import { pageMeta, breadcrumbJsonLd } from "@/lib/seo";
-import { getAllPosts } from "@/lib/posts";
+import { getAllPosts, isDmPost } from "@/lib/posts";
 import { slugify } from "@/lib/markdown";
 import BlogCard from "@/components/BlogCard";
 import CTA from "@/components/CTA";
@@ -19,7 +19,7 @@ export const metadata = pageMeta({
 
 export default async function Blog({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
-  const stored = await getAllPosts();
+  const stored = (await getAllPosts()).filter(isDmPost); // trend news is noindexed and not listed
   const storedSlugs = new Set(stored.map((p) => p.slug));
   let posts = [...stored];
   if (q) {
